@@ -1,6 +1,7 @@
 // App.jsx
 import React, { useState, useEffect } from 'react';
 import {Line} from 'react-chartjs-2';
+import ScenarioForm from './ScenarioForm.jsx';
 import './styles.css';
 
 function App() {
@@ -11,27 +12,69 @@ function App() {
   });
   
   const [isConnected, setIsConnected] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [ws, setWs] = useState(null);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8000/ws');
+    const websocket = new WebSocket('ws://localhost:8000/ws');
     
-    ws.onopen = () => setIsConnected(true);
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      setAgentData(prev => ({
-        ...prev,
-        [message.agent]: message.data
-      }));
+    websocket.onopen = () => {
+      setIsConnected(true);
+      setWs(websocket);
     };
     
-    return () => ws.close();
+    websocket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      
+      if (message.type === 'agent_result') {
+        setAgentData(prev => ({
+          ...prev,
+          [message.agent]: message.data
+        }));
+      } else if (message.type === 'status') {
+        if (message.message.includes('completado')) {
+          setIsAnalyzing(false);
+        }
+      }
+    };
+    
+    websocket.onclose = () => {
+      setIsConnected(false);
+      setWs(null);
+    };
+    
+    return () => websocket.close();
   }, []);
+
+  const handleCustomScenario = (imageDescription, environmentDescription) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      setIsAnalyzing(true);
+      setAgentData({
+        AgriVision: null,
+        SoilSense: null, 
+        CropMaster: null
+      });
+      
+      ws.send(JSON.stringify({
+        type: 'custom_scenario',
+        image_description: imageDescription,
+        environment_description: environmentDescription
+      }));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-green-50 p-8">
       <h1 className="text-4xl font-bold text-center mb-8 text-green-800">
         🌱 AgroTech AI Agents Demo
       </h1>
+      
+      {/* Custom Scenario Form */}
+      <ScenarioForm 
+        onSubmit={handleCustomScenario}
+        isConnected={isConnected}
+        isAnalyzing={isAnalyzing}
+      />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Agente AgriVision */}
