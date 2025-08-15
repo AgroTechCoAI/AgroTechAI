@@ -4,8 +4,10 @@ Agricultural Monitoring System with Multi-Agent AI
 """
 import logging
 import sys
+import os
 from datetime import datetime
 from fastapi import FastAPI, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
 from agents import check_ollama_connection, MODEL_NAME
 from websocket_handler import websocket_handler
 
@@ -52,6 +54,22 @@ app = FastAPI(
     title="AgroTech AI Agents",
     description="Agricultural Monitoring System powered by AI agents",
     version="1.0.0"
+)
+
+# Configure CORS
+# Get allowed origins from environment variable or use frontend defaults
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000"
+).split(",")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
 )
 
 @app.websocket("/ws")
