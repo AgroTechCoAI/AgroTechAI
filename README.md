@@ -295,7 +295,136 @@ npm run build
 To change the AI model, edit `server/agents.py`:
 ```python
 MODEL_NAME = "gemma3:4b"  # Change to other Ollama models
-VISION_MODEL_NAME = "gemma3:4b"  # Model for image analysis
+VISION_MODEL_NAME = "qwen2.5vl:3b"  # Model for image analysis
+```
+
+### ⚡ Hardware Optimization
+
+Optimize OLLAMA performance based on your machine specifications. Update these environment variables in `docker-compose.yml`:
+
+#### **CPU Configuration**
+Check your CPU specs with: `lscpu | grep -E "^CPU\(s\)|^Core\(s\)|^Thread\(s\)"`
+
+```yaml
+# Example: 8 cores, 16 threads system
+environment:
+  - OLLAMA_NUM_THREADS=8        # Match your physical CPU cores
+  - OLLAMA_NUM_PARALLEL=6       # 75% of cores for parallel requests
+  - OMP_NUM_THREADS=6           # OpenMP threads (same as NUM_PARALLEL)
+  - GOMAXPROCS=6                # Go runtime threads
+```
+
+**Guidelines:**
+- **OLLAMA_NUM_THREADS**: Set to your physical CPU cores (not threads)
+- **OLLAMA_NUM_PARALLEL**: 75% of CPU cores (leave some for system)
+- **OMP_NUM_THREADS**: Same as NUM_PARALLEL for optimal performance
+- **GOMAXPROCS**: Match NUM_PARALLEL
+
+#### **Memory Configuration**
+Check available RAM with: `free -h`
+
+```yaml
+# Adjust container memory limits in docker-compose.yml
+deploy:
+  resources:
+    limits:
+      memory: 24G    # 60-80% of total RAM for Ollama
+    reservations:
+      memory: 16G    # Guaranteed minimum
+```
+
+**Memory Guidelines:**
+- **Small models (3-7B)**: 4-8GB RAM
+- **Medium models (7-13B)**: 8-16GB RAM  
+- **Large models (13B+)**: 16-32GB RAM
+
+#### **GPU Configuration (Optional)**
+For NVIDIA GPUs, update docker-compose.yml:
+
+```yaml
+# Replace ROCm configuration with NVIDIA
+image: ollama/ollama:latest  # Use standard image for NVIDIA
+runtime: nvidia
+environment:
+  - NVIDIA_VISIBLE_DEVICES=all
+  - OLLAMA_GPU_OVERHEAD=2048   # GPU memory buffer (MB)
+```
+
+For integrated GPUs or CPU-only:
+```yaml
+environment:
+  - OLLAMA_GPU_OVERHEAD=0      # No GPU acceleration
+```
+
+#### **Performance Tuning Examples**
+
+**High-Performance Desktop (16+ cores, 32GB+ RAM):**
+```yaml
+environment:
+  - OLLAMA_NUM_THREADS=12
+  - OLLAMA_NUM_PARALLEL=10
+  - OMP_NUM_THREADS=10
+  - GOMAXPROCS=10
+  - OLLAMA_MAX_LOADED_MODELS=3
+deploy:
+  resources:
+    limits:
+      memory: 28G
+      cpus: '14.0'
+```
+
+**Mid-Range System (8 cores, 16GB RAM):**
+```yaml
+environment:
+  - OLLAMA_NUM_THREADS=8
+  - OLLAMA_NUM_PARALLEL=6
+  - OMP_NUM_THREADS=6
+  - GOMAXPROCS=6
+  - OLLAMA_MAX_LOADED_MODELS=2
+deploy:
+  resources:
+    limits:
+      memory: 12G
+      cpus: '6.0'
+```
+
+**Budget System (4 cores, 8GB RAM):**
+```yaml
+environment:
+  - OLLAMA_NUM_THREADS=4
+  - OLLAMA_NUM_PARALLEL=3
+  - OMP_NUM_THREADS=3
+  - GOMAXPROCS=3
+  - OLLAMA_MAX_LOADED_MODELS=1
+deploy:
+  resources:
+    limits:
+      memory: 6G
+      cpus: '3.5'
+```
+
+#### **Custom OLLAMA URL**
+To use external OLLAMA instance:
+```bash
+# Set environment variable
+export OLLAMA_URL=http://your-ollama-server:11434
+
+# Or in docker-compose.yml for api-server:
+environment:
+  - OLLAMA_URL=http://external-ollama:11434
+```
+
+#### **Monitoring Performance**
+Check if your settings are working:
+```bash
+# Monitor resource usage
+docker stats
+
+# Check Ollama logs
+docker compose logs ollama
+
+# Test API response time
+curl -w "@curl-format.txt" http://localhost:11434/api/tags
 ```
 
 ### Port Configuration
