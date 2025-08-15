@@ -48,7 +48,13 @@ class WebSocketHandler:
         message_type = message.get("type")
         logger.info(f"📨 Received message type: {message_type}")
         
-        if message_type == "custom_scenario":
+        if message_type == "ping":
+            logger.info("📸 Processing ping")
+            await websocket.send_json({
+                "type": "pong",
+                "message": "connection success"
+            })
+        elif message_type == "custom_scenario":
             logger.info("🔍 Processing custom scenario")
             await self.handle_custom_scenario(websocket, message)
         elif message_type == "image_analysis":

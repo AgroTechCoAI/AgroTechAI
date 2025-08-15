@@ -112,19 +112,162 @@ class OllamaAgent:
             return self._get_fallback_response()
     
     def _parse_json_response(self, response: str) -> Dict[str, Any]:
-        """Intenta extraer JSON de la respuesta de Ollama"""
+        """Enhanced JSON parsing with multiple fallback strategies"""
+        logger.debug(f"📝 [{self.role}] Raw response length: {len(response)}")
+        logger.debug(f"📝 [{self.role}] Raw response preview: {response[:200]}...")
+        
         try:
-            # Buscar JSON en la respuesta
+            # Strategy 1: Direct JSON parsing (best case)
+            try:
+                return json.loads(response.strip())
+            except json.JSONDecodeError:
+                pass
+            
+            # Strategy 2: Extract JSON block
             start_idx = response.find('{')
             end_idx = response.rfind('}') + 1
             
             if start_idx != -1 and end_idx > start_idx:
                 json_str = response[start_idx:end_idx]
-                return json.loads(json_str)
-            else:
-                return self._get_fallback_response()
-        except:
+                logger.debug(f"📝 [{self.role}] Extracted JSON: {json_str}")
+                
+                try:
+                    return json.loads(json_str)
+                except json.JSONDecodeError as e:
+                    logger.warning(f"⚠️ [{self.role}] JSON parsing failed: {e}")
+                    
+                    # Strategy 3: Try to fix incomplete JSON
+                    return self._find_and_fix_json(json_str)
+            
+            # Strategy 4: No JSON found, return fallback
+            logger.warning(f"⚠️ [{self.role}] No valid JSON structure found in response")
             return self._get_fallback_response()
+            
+        except Exception as e:
+            logger.error(f"❌ [{self.role}] JSON parsing exception: {e}")
+            return self._get_fallback_response()
+        
+    def _find_and_fix_json(self, text_blob: str) -> Dict[str, Any]:
+        """
+        Finds the last, most likely JSON object in a string containing extraneous text
+        and then attempts to fix it if it's incomplete.
+        """
+        logger.info("🕵️‍♂️ Searching for JSON in the text blob...")
+
+        # Find the last occurrence of a JSON-starting character.
+        # This is a robust way to isolate the most recent JSON block in logs.
+        last_brace_index = text_blob.rfind('{')
+        last_bracket_index = text_blob.rfind('[')
+
+        if last_brace_index == -1 and last_bracket_index == -1:
+            logger.error("❌ No JSON object/array start found in the text.")
+            return self._create_partial_response(text_blob)
+
+        # Slice the string from the start of the last potential JSON object
+        start_index = max(last_brace_index, last_bracket_index)
+        potential_json = text_blob[start_index:]
+
+        logger.info(f"💡 Found potential JSON fragment to repair: {potential_json[:100]}...")
+
+        # Now, use the existing smarter fixer on this cleaned-up string
+        return self._fix_incomplete_json(potential_json)
+
+
+    # (This is the same trusted repair function from the previous answer)
+    def _fix_incomplete_json(self, json_str: str) -> Dict[str, Any]:
+        """
+        Robustly attempts to fix an incomplete JSON string using a stack-based parser.
+        """
+        try:
+            return json.loads(json_str)
+        except json.JSONDecodeError:
+            pass
+
+        fixed_chars: List[str] = []
+        stack: List[str] = []
+        in_string = False
+        escaped = False
+
+        json_str = re.sub(r',\s*([}\]])', r'\1', json_str.strip())
+
+        for char in json_str:
+            fixed_chars.append(char)
+            if in_string:
+                if char == '"' and not escaped: in_string = False
+                elif char == '\\': escaped = not escaped
+                else: escaped = False
+            else:
+                if char == '"': in_string = True; escaped = False
+                elif char == '{': stack.append('}')
+                elif char == '[': stack.append(']')
+                elif char in ('}', ']'):
+                    if stack and stack[-1] == char: stack.pop()
+        
+        if in_string:
+            fixed_chars.append('"')
+            if stack and stack[-1] == '}':
+                temp_str = "".join(fixed_chars).rstrip()
+                if not temp_str.endswith(':'): fixed_chars.append(': null')
+        
+        while stack:
+            fixed_chars.append(stack.pop())
+
+        fixed_json_str = "".join(fixed_chars)
+        logger.info(f"🔧 Repaired JSON string: {fixed_json_str}")
+
+        try:
+            return json.loads(fixed_json_str)
+        except json.JSONDecodeError as e:
+            logger.error(f"❌ Failed to fix JSON after all attempts: {e}")
+            return self._create_partial_response(json_str)
+    
+    def _create_partial_response(self, partial_json: str) -> Dict[str, Any]:
+        """Create a response from partial JSON data"""
+        logger.info(f"🔨 [{self.role}] Creating partial response from incomplete data")
+        
+        # Extract what we can from the partial response
+        result = {}
+        
+        # Try to extract individual fields using regex
+        patterns = {
+            'image_description': r'"image_description"\s*:\s*"([^"]*)"',
+            'soil_visual_indicators': r'"soil_visual_indicators"\s*:\s*"([^"]*)"',
+            'environmental_context': r'"environmental_context"\s*:\s*"([^"]*)"',
+            'plant_health_indicators': r'"plant_health_indicators"\s*:\s*"([^"]*)"',
+            'recommended_focus_areas': r'"recommended_focus_areas"\s*:\s*\[([^\]]*)\]',
+            'confidence': r'"confidence"\s*:\s*([0-9.]+)'
+        }
+        
+        for field, pattern in patterns.items():
+            match = re.search(pattern, partial_json)
+            if match:
+                if field == 'confidence':
+                    try:
+                        result[field] = float(match.group(1))
+                    except:
+                        result[field] = 0.5
+                elif field == 'recommended_focus_areas':
+                    try:
+                        # Parse array content
+                        array_content = match.group(1)
+                        items = re.findall(r'"([^"]*)"', array_content)
+                        result[field] = items if items else ["análisis visual", "condiciones ambientales"]
+                    except:
+                        result[field] = ["análisis visual", "condiciones ambientales"]
+                else:
+                    result[field] = match.group(1)
+            else:
+                # Provide fallback values
+                if field == 'confidence':
+                    result[field] = 0.3
+                elif field == 'recommended_focus_areas':
+                    result[field] = ["análisis visual", "condiciones ambientales"]
+                else:
+                    result[field] = f"Información parcial - {field}"
+        
+        result['parsing_status'] = 'partial_recovery'
+        logger.info(f"🔨 [{self.role}] Partial response created with {len(result)} fields")
+        return result
     
     def _get_fallback_response(self) -> Dict[str, Any]:
         """Respuesta por defecto si falla el parsing"""
