@@ -79,34 +79,39 @@ function App() {
                 isAnalyzing={isAnalyzing}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {/* Agente ImageVision */}
-                <AgentCard
-                    title="📸 ImageVision"
-                    data={agentData.ImageVision}
-                    color="purple"
-                />
+            {/* AI Agents Dashboard */}
+            <div className="space-y-6 mb-8">
+                {/* Row 1: ImageVision Agent (Full Width) */}
+                <div className="w-full">
+                    <AgentCard
+                        title="📸 ImageVision"
+                        data={agentData.ImageVision}
+                        color="purple"
+                    />
+                </div>
 
-                {/* Agente AgriVision */}
-                <AgentCard
-                    title="🔍 AgriVision"
-                    data={agentData.AgriVision}
-                    color="blue"
-                />
+                {/* Row 2: AgriVision and SoilSense Agents (Side by Side, Full Width) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <AgentCard
+                        title="🔍 AgriVision"
+                        data={agentData.AgriVision}
+                        color="blue"
+                    />
+                    <AgentCard
+                        title="🌍 SoilSense"
+                        data={agentData.SoilSense}
+                        color="brown"
+                    />
+                </div>
 
-                {/* Agente SoilSense */}
-                <AgentCard
-                    title="🌍 SoilSense"
-                    data={agentData.SoilSense}
-                    color="brown"
-                />
-
-                {/* Agente CropMaster */}
-                <AgentCard
-                    title="🧠 CropMaster"
-                    data={agentData.CropMaster}
-                    color="green"
-                />
+                {/* Row 3: CropMaster Agent (Full Width) */}
+                <div className="w-full">
+                    <AgentCard
+                        title="🧠 CropMaster"
+                        data={agentData.CropMaster}
+                        color="green"
+                    />
+                </div>
             </div>
 
             {/* Panel de Decisión Final */}

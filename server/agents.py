@@ -189,6 +189,7 @@ class ImageVisionAgent(OllamaAgent):
         optimized_image = self._optimize_image(image_base64)
         prompt = """You are ImageVision, a specialized AI agent that provides detailed visual descriptions of agricultural images for other AI systems to analyze.
 
+IMPORTANT: ALWAYS respond in SPANISH. All descriptions, recommendations, and text must be in Spanish.
 TASK: Analyze this agricultural image and provide a comprehensive description.
 
 RESPOND ONLY WITH A JSON in this exact format:
@@ -210,6 +211,8 @@ DESCRIPTION GUIDELINES:
 - confidence: Your confidence level in the description accuracy (0.0-1.0)
 
 Focus on quantifiable visual elements (percentages, sizes, distributions) and use agricultural terminology.
+Also focus on spanish answer for the description.
+
 JSON:"""
 
         payload = {
