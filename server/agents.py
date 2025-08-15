@@ -15,7 +15,8 @@ from urllib3.util.retry import Retry
 
 # Configuración de Ollama
 import os
-OLLAMA_URL = "http://localhost:11434/api/generate"
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
+OLLAMA_GENERATE_API=f"{OLLAMA_URL}/api/generate"
 MODEL_NAME = "gemma3:4b"
 VISION_MODEL_NAME = "gemma3:4b"  # Modelo para análisis de imágenes
 
@@ -83,7 +84,7 @@ class OllamaAgent:
         
         try:
             logger.info(f"🌐 [{self.role}] Sending request to Ollama: {OLLAMA_URL}")
-            response = self.session.post(OLLAMA_URL, json=payload, timeout=60)
+            response = self.session.post(OLLAMA_GENERATE_API, json=payload, timeout=60)
             
             elapsed_time = time.time() - start_time
             logger.info(f"✅ [{self.role}] LLM call completed in {elapsed_time:.2f}s")
@@ -209,7 +210,6 @@ DESCRIPTION GUIDELINES:
 - confidence: Your confidence level in the description accuracy (0.0-1.0)
 
 Focus on quantifiable visual elements (percentages, sizes, distributions) and use agricultural terminology.
-
 JSON:"""
 
         payload = {
@@ -227,18 +227,19 @@ JSON:"""
                 "low_vram": False    # Set to True if running out of VRAM
             }
         }
+        timeoutReq = 180
         
         logger.debug(f"🔧 [{self.role}] Vision payload created - Model: {payload['model']}, Options: {payload['options']}, Image data length: {len(optimized_image)}, Stream: {payload['stream']}")
         
         try:
-            logger.info(f"🌐 [{self.role}] Sending vision request to Ollama (timeout: 120s)")
+            logger.info(f"🌐 [{self.role}] Sending vision request to Ollama (timeout: {timeoutReq}s)")
             logger.debug(f"🌐 [{self.role}] Prompt length: {len(prompt)} chars, Image size: {len(optimized_image)} chars")
             
             # Use asyncio to run in thread pool for better async handling
             loop = asyncio.get_event_loop()
             response = await loop.run_in_executor(
                 None, 
-                lambda: self.session.post(OLLAMA_URL, json=payload, timeout=120)
+                lambda: self.session.post(OLLAMA_GENERATE_API, json=payload, timeout=timeoutReq)
             )
             
             elapsed_time = time.time() - start_time
@@ -249,7 +250,7 @@ JSON:"""
             parsed_result = self._parse_json_response(result.get("response", "{}"))
             
             logger.info(f"📊 [{self.role}] Vision response parsed successfully")
-            logger.debug(f"📊 [{self.role}] Response keys: {list(parsed_result.keys())}")
+            logger.debug(f"📊 [{self.role}] Response: {parsed_result}")
             
             return parsed_result
         except Exception as e:
@@ -432,7 +433,8 @@ JSON:"""
 def check_ollama_connection() -> bool:
     """Check if Ollama is running and accessible"""
     try:
-        response = requests.get("http://localhost:11434/api/tags", timeout=5)
+        logger.info(f"✅ checking OLLAMA_HEALTH {OLLAMA_URL}/api/tags")
+        response = requests.get(f"{OLLAMA_URL}/api/tags", timeout=5)
         return response.status_code == 200
     except requests.exceptions.RequestException:
         return False

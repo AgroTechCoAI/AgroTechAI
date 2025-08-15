@@ -8,7 +8,7 @@ services:
       resources:
         limits:
           memory: 24G
-          cpus: '4.0'
+          cpus: '6.0'
         reservations:
           memory: 16G
           cpus: '4.0'
@@ -28,19 +28,19 @@ services:
     
     # Environment variables for performance optimization
     environment:
-      - OLLAMA_NUM_PARALLEL=4
+      - OLLAMA_NUM_PARALLEL=6
+      - OMP_NUM_THREADS=6
+      - OLLAMA_NUM_THREADS=8
       - OLLAMA_MAX_LOADED_MODELS=2
       - OLLAMA_FLASH_ATTENTION=1
-      - OLLAMA_NUM_THREADS=8
       - OLLAMA_HOST=0.0.0.0
       - ROCM_VISIBLE_DEVICES=all
       - HIP_VISIBLE_DEVICES=all
-      - OMP_NUM_THREADS=4
-      - GOMAXPROCS=4
+      - GOMAXPROCS=6
     
     # Health check
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      test: ["CMD", "ollama", "list"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -59,7 +59,7 @@ services:
       resources:
         limits:
           memory: 2G
-          cpus: '2.0'
+          cpus: '1.5'
         reservations:
           memory: 512M
           cpus: '0.5'
@@ -70,7 +70,7 @@ services:
     
     # Environment variables
     environment:
-      - OLLAMA_URL=http://ollama:11434/api/generate
+      - OLLAMA_URL=http://ollama:11434
     
     # Dependencies
     depends_on:
@@ -101,10 +101,10 @@ services:
       resources:
         limits:
           memory: 1G
-          cpus: '1.0'
+          cpus: '1.5'
         reservations:
           memory: 256M
-          cpus: '0.25'
+          cpus: '0.5'
     
     # Ports
     ports:
