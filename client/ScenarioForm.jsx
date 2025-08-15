@@ -67,29 +67,31 @@ function ScenarioForm({ onSubmit, isConnected, isAnalyzing }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Image Upload */}
-        <div>
-          <ImageUpload
-            onImageSelect={handleImageSelect}
-            selectedImage={selectedImage}
-            disabled={isAnalyzing}
-          />
-        </div>
+        {/* Image Upload and Environment Description in one row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Image Upload - 50% width */}
+          <div>
+            <ImageUpload
+              onImageSelect={handleImageSelect}
+              selectedImage={selectedImage}
+              disabled={isAnalyzing}
+            />
+          </div>
 
-        {/* Environment Description */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            🌍 Condiciones Ambientales
-          </label>
-          <textarea
-            value={environmentDescription}
-            onChange={(e) => setEnvironmentDescription(e.target.value)}
-            placeholder="Describe las condiciones del entorno: humedad del suelo, temperatura, pH, clima, etc."
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            rows="4"
-            disabled={isAnalyzing}
-            required
-          />
+          {/* Environment Description - 50% width */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              🌍 Condiciones Ambientales
+            </label>
+            <textarea
+              value={environmentDescription}
+              onChange={(e) => setEnvironmentDescription(e.target.value)}
+              placeholder="Describe las condiciones del entorno: humedad del suelo, temperatura, pH, clima, etc."
+              className="w-full h-64 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+              disabled={isAnalyzing}
+              required
+            />
+          </div>
         </div>
 
         {/* Submit Button */}
