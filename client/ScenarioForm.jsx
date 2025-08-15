@@ -1,58 +1,62 @@
 import React, { useState } from 'react';
+import ImageUpload from './ImageUpload';
 
 function ScenarioForm({ onSubmit, isConnected, isAnalyzing }) {
-  const [imageDescription, setImageDescription] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [environmentDescription, setEnvironmentDescription] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (imageDescription.trim() && environmentDescription.trim()) {
-      onSubmit(imageDescription, environmentDescription);
+    if (selectedImage && environmentDescription.trim()) {
+      // Convert image to base64 for transmission
+      const base64Image = selectedImage.split(',')[1]; // Remove data:image/...;base64, prefix
+      onSubmit(base64Image, environmentDescription);
     }
   };
 
-  const predefinedScenarios = [
+  const handleImageSelect = (imageData, file) => {
+    setSelectedImage(imageData);
+    setSelectedImageFile(file);
+  };
+
+  const predefinedEnvironments = [
     {
-      name: "🌱 Cultivo Saludable",
-      image: "Plantas de tomate con hojas verdes brillantes, sin manchas, tallos firmes",
+      name: "🌱 Condiciones Ideales",
       environment: "Humedad del suelo 65%, Temperatura 23°C, pH 6.7, sin viento fuerte"
     },
     {
-      name: "🐛 Detección de Plaga",
-      image: "Hojas con pequeñas manchas marrones circulares, algunos agujeros, bordes amarillentos",
+      name: "🐛 Alta Humedad",
       environment: "Humedad del suelo 80%, Temperatura 28°C, pH 6.4, alta humedad relativa"
     },
     {
-      name: "💧 Estrés Hídrico",
-      image: "Hojas marchitas, bordes secos y amarillos, suelo agrietado visible",
+      name: "💧 Condiciones Secas",
       environment: "Humedad del suelo 15%, Temperatura 35°C, pH 7.1, viento fuerte"
     },
     {
-      name: "🧪 Deficiencia Nutricional",
-      image: "Hojas con amarillamiento entre las venas, crecimiento lento, hojas pequeñas",
+      name: "🧪 pH Elevado",
       environment: "Humedad del suelo 55%, Temperatura 25°C, pH 8.2, condiciones normales"
     }
   ];
 
-  const loadPredefinedScenario = (scenario) => {
-    setImageDescription(scenario.image);
+  const loadPredefinedEnvironment = (scenario) => {
     setEnvironmentDescription(scenario.environment);
   };
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
       <h2 className="text-2xl font-bold mb-6 text-center text-green-800">
-        📝 Describe tu Escenario Agrícola
+        📸 Análisis de Imagen Agrícola
       </h2>
       
-      {/* Quick Load Predefined Scenarios */}
+      {/* Quick Load Predefined Environments */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3">Escenarios Predefinidos:</h3>
+        <h3 className="text-lg font-semibold mb-3">Condiciones Ambientales Predefinidas:</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-          {predefinedScenarios.map((scenario, index) => (
+          {predefinedEnvironments.map((scenario, index) => (
             <button
               key={index}
-              onClick={() => loadPredefinedScenario(scenario)}
+              onClick={() => loadPredefinedEnvironment(scenario)}
               className="p-2 text-sm bg-green-100 hover:bg-green-200 rounded-lg transition-colors"
               disabled={isAnalyzing}
             >
@@ -63,19 +67,12 @@ function ScenarioForm({ onSubmit, isConnected, isAnalyzing }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Image Description */}
+        {/* Image Upload */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            🔍 Descripción Visual del Cultivo
-          </label>
-          <textarea
-            value={imageDescription}
-            onChange={(e) => setImageDescription(e.target.value)}
-            placeholder="Describe lo que observas en el cultivo: color de las hojas, manchas, plagas, estado general, etc."
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            rows="4"
+          <ImageUpload
+            onImageSelect={handleImageSelect}
+            selectedImage={selectedImage}
             disabled={isAnalyzing}
-            required
           />
         </div>
 
@@ -99,9 +96,9 @@ function ScenarioForm({ onSubmit, isConnected, isAnalyzing }) {
         <div className="flex justify-center">
           <button
             type="submit"
-            disabled={!isConnected || isAnalyzing || !imageDescription.trim() || !environmentDescription.trim()}
+            disabled={!isConnected || isAnalyzing || !selectedImage || !environmentDescription.trim()}
             className={`px-8 py-3 rounded-lg font-semibold transition-all ${
-              !isConnected || isAnalyzing || !imageDescription.trim() || !environmentDescription.trim()
+              !isConnected || isAnalyzing || !selectedImage || !environmentDescription.trim()
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl'
             }`}
@@ -115,7 +112,7 @@ function ScenarioForm({ onSubmit, isConnected, isAnalyzing }) {
                 Analizando...
               </span>
             ) : (
-              '🚀 Analizar Escenario'
+              '🚀 Analizar Imagen'
             )}
           </button>
         </div>

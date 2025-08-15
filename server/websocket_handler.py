@@ -2,15 +2,19 @@
 WebSocket handler for real-time agricultural monitoring
 """
 import asyncio
+import logging
 from fastapi import WebSocket
 from typing import Dict, Any
-from agents import AgriVisionAgent, SoilSenseAgent, CropMasterAgent, check_ollama_connection
+from agents import ImageVisionAgent, AgriVisionAgent, SoilSenseAgent, CropMasterAgent, check_ollama_connection
+
+logger = logging.getLogger(__name__)
 
 
 class WebSocketHandler:
     """Handles WebSocket connections and agent orchestration"""
     
     def __init__(self):
+        self.image_vision = ImageVisionAgent()
         self.agri_vision = AgriVisionAgent()
         self.soil_sense = SoilSenseAgent()
         self.crop_master = CropMasterAgent()
@@ -42,10 +46,16 @@ class WebSocketHandler:
     async def process_message(self, websocket: WebSocket, message: Dict[str, Any]):
         """Process incoming WebSocket messages"""
         message_type = message.get("type")
+        logger.info(f"📨 Received message type: {message_type}")
         
         if message_type == "custom_scenario":
+            logger.info("🔍 Processing custom scenario")
             await self.handle_custom_scenario(websocket, message)
+        elif message_type == "image_analysis":
+            logger.info("📸 Processing image analysis")
+            await self.handle_image_analysis(websocket, message)
         else:
+            logger.warning(f"❓ Unknown message type: {message_type}")
             await websocket.send_json({
                 "type": "error",
                 "message": f"Tipo de mensaje no reconocido: {message_type}"
@@ -69,6 +79,121 @@ class WebSocketHandler:
             environment_description,
             "🔍 Escenario Personalizado"
         )
+    
+    async def handle_image_analysis(self, websocket: WebSocket, message: Dict[str, Any]):
+        """Handle image analysis with ImageVision agent"""
+        image_base64 = message.get("image_data", "")
+        environment_description = message.get("environment_description", "")
+        
+        if not image_base64:
+            await websocket.send_json({
+                "type": "error",
+                "message": "Se requiere una imagen para el análisis"
+            })
+            return
+        
+        if not environment_description:
+            await websocket.send_json({
+                "type": "error", 
+                "message": "Se requiere descripción de condiciones ambientales"
+            })
+            return
+        
+        await self.analyze_image_scenario(
+            websocket,
+            image_base64,
+            environment_description,
+            "📸 Análisis de Imagen"
+        )
+    
+    async def analyze_image_scenario(self, websocket: WebSocket, image_base64: str,
+                                   environment_description: str, scenario_name: str):
+        """Analyze a scenario starting with image analysis using ImageVision"""
+        try:
+            # Informar escenario actual
+            await websocket.send_json({
+                "type": "scenario",
+                "data": {
+                    "name": scenario_name,
+                    "description": f"Analizando: {scenario_name}"
+                }
+            })
+            
+            # Paso 1: ImageVision (análisis de imagen)
+            await websocket.send_json({
+                "type": "status",
+                "message": "📸 ImageVision procesando imagen..."
+            })
+            
+            image_analysis = await self.image_vision.analyze_image(image_base64)
+            await websocket.send_json({
+                "type": "agent_result",
+                "agent": "ImageVision", 
+                "data": image_analysis
+            })
+            
+            await asyncio.sleep(2)
+            
+            # Extraer descripción de la imagen para AgriVision
+            image_description = image_analysis.get("image_description", "Error en análisis")
+            
+            # Paso 2: AgriVision (usando descripción de ImageVision)
+            await websocket.send_json({
+                "type": "status",
+                "message": "🔍 AgriVision analizando salud del cultivo..."
+            })
+            
+            vision_result = await self.agri_vision.analyze_image(image_description)
+            await websocket.send_json({
+                "type": "agent_result",
+                "agent": "AgriVision",
+                "data": vision_result
+            })
+            
+            await asyncio.sleep(2)
+            
+            # Paso 3: SoilSense (condiciones ambientales + indicadores visuales del suelo)
+            soil_indicators = image_analysis.get("soil_visual_indicators", "")
+            environmental_context = image_analysis.get("environmental_context", "")
+            combined_environment = f"{environment_description}. Indicadores visuales: {soil_indicators}. Contexto: {environmental_context}"
+            
+            await websocket.send_json({
+                "type": "status",
+                "message": "🌍 SoilSense analizando condiciones ambientales..."
+            })
+            
+            soil_result = await self.soil_sense.analyze_environment(combined_environment)
+            await websocket.send_json({
+                "type": "agent_result",
+                "agent": "SoilSense",
+                "data": soil_result
+            })
+            
+            await asyncio.sleep(2)
+            
+            # Paso 4: CropMaster (decisión final integrando todos los datos)
+            await websocket.send_json({
+                "type": "status",
+                "message": "🧠 CropMaster fusionando datos y decidiendo..."
+            })
+            
+            final_decision = await self.crop_master.make_decision(vision_result, soil_result)
+            await websocket.send_json({
+                "type": "agent_result",
+                "agent": "CropMaster",
+                "data": final_decision
+            })
+            
+            await websocket.send_json({
+                "type": "status",
+                "message": "✅ Análisis completado"
+            })
+            
+        except Exception as e:
+            await websocket.send_json({
+                "type": "error",
+                "message": f"Error en análisis de imagen: {str(e)}"
+            })
     
     async def analyze_scenario(self, websocket: WebSocket, image_description: str, 
                               environment_description: str, scenario_name: str):

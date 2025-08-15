@@ -3,11 +3,58 @@ AI Agents for Agricultural Monitoring System
 """
 import requests
 import json
+import base64
 from typing import Dict, Any
+from PIL import Image
+import io
+import asyncio
+import logging
+import time
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Configuración de Ollama
+import os
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "gemma3"  # Cambia por llama2 o codellama si prefieres
+MODEL_NAME = "gemma3:4b"
+VISION_MODEL_NAME = "gemma3:4b"  # Modelo para análisis de imágenes
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Shared session pool for all agents
+_shared_session = None
+
+def get_shared_session():
+    """Get or create shared session with connection pooling"""
+    global _shared_session
+    if _shared_session is None:
+        _shared_session = requests.Session()
+        
+        # Retry strategy
+        retry_strategy = Retry(
+            total=3,
+            backoff_factor=1,
+            status_forcelist=[429, 500, 502, 503, 504],
+        )
+        
+        # Mount adapter with retry strategy
+        adapter = HTTPAdapter(
+            max_retries=retry_strategy,
+            pool_connections=20,
+            pool_maxsize=50
+        )
+        _shared_session.mount("http://", adapter)
+        _shared_session.mount("https://", adapter)
+    
+    return _shared_session
+
+def reset_shared_session():
+    """Reset shared session in case of persistent connection issues"""
+    global _shared_session
+    if _shared_session:
+        _shared_session.close()
+        _shared_session = None
 
 class OllamaAgent:
     """Base class for all Ollama-powered AI agents"""
@@ -15,9 +62,14 @@ class OllamaAgent:
     def __init__(self, role: str, expertise: str):
         self.role = role
         self.expertise = expertise
+        self.session = get_shared_session()
     
     async def generate_response(self, prompt: str) -> Dict[str, Any]:
         """Generate response from Ollama model"""
+        start_time = time.time()
+        logger.info(f"🤖 [{self.role}] Starting LLM call to {MODEL_NAME}")
+        logger.debug(f"🤖 [{self.role}] Prompt length: {len(prompt)} characters")
+        
         payload = {
             "model": MODEL_NAME,
             "prompt": prompt,
@@ -30,11 +82,32 @@ class OllamaAgent:
         }
         
         try:
-            response = requests.post(OLLAMA_URL, json=payload, timeout=30)
+            logger.info(f"🌐 [{self.role}] Sending request to Ollama: {OLLAMA_URL}")
+            response = self.session.post(OLLAMA_URL, json=payload, timeout=60)
+            
+            elapsed_time = time.time() - start_time
+            logger.info(f"✅ [{self.role}] LLM call completed in {elapsed_time:.2f}s")
+            logger.debug(f"🌐 [{self.role}] Response status: {response.status_code}")
+            if response.status_code != 200:
+                return self._get_fallback_response()
+            
             result = response.json()
-            return self._parse_json_response(result.get("response", "{}"))
+            parsed_result = self._parse_json_response(result.get("response", "{}"))
+            
+            logger.info(f"📊 [{self.role}] Response parsed successfully")
+            logger.debug(f"📊 [{self.role}] Response keys: {list(parsed_result.keys())}")
+            
+            return parsed_result
         except Exception as e:
-            print(f"Error en {self.role}: {e}")
+            elapsed_time = time.time() - start_time
+            logger.error(f"❌ [{self.role}] LLM call failed after {elapsed_time:.2f}s: {e}")
+            
+            # Reset shared session if connection issues persist
+            if "timeout" in str(e).lower() or "connection" in str(e).lower():
+                logger.warning(f"🔄 [{self.role}] Resetting shared session due to connection issues")
+                reset_shared_session()
+                self.session = get_shared_session()
+            
             return self._get_fallback_response()
     
     def _parse_json_response(self, response: str) -> Dict[str, Any]:
@@ -55,6 +128,151 @@ class OllamaAgent:
     def _get_fallback_response(self) -> Dict[str, Any]:
         """Respuesta por defecto si falla el parsing"""
         return {"error": "No se pudo procesar la respuesta", "confidence": 0.0}
+
+
+class ImageVisionAgent(OllamaAgent):
+    """Agent specialized in analyzing agricultural images and providing detailed descriptions"""
+    
+    def __init__(self):
+        super().__init__("ImageVision", "análisis visual de imágenes agrícolas")
+    
+    def _optimize_image(self, image_base64: str) -> str:
+        """Optimize image size and quality for faster processing"""
+        start_time = time.time()
+        logger.info(f"🖼️  [{self.role}] Starting image optimization")
+        
+        try:
+            # Decode base64 image
+            image_data = base64.b64decode(image_base64)
+            original_size = len(image_data)
+            image = Image.open(io.BytesIO(image_data))
+            
+            logger.debug(f"🖼️  [{self.role}] Original image: {image.size}, format: {image.format}, size: {original_size/1024:.1f}KB")
+            
+            # Resize if too large (max 1024px on longest side)
+            max_size = 1024
+            if max(image.size) > max_size:
+                ratio = max_size / max(image.size)
+                new_size = tuple(int(dim * ratio) for dim in image.size)
+                image = image.resize(new_size, Image.Resampling.LANCZOS)
+                logger.info(f"🖼️  [{self.role}] Image resized from {image.size} to {new_size}")
+            
+            # Convert to RGB if necessary
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
+                logger.debug(f"🖼️  [{self.role}] Image converted to RGB")
+            
+            # Save optimized image
+            buffer = io.BytesIO()
+            image.save(buffer, format='JPEG', quality=85, optimize=True)
+            optimized_data = buffer.getvalue()
+            optimized_size = len(optimized_data)
+            
+            elapsed_time = time.time() - start_time
+            compression_ratio = (1 - optimized_size/original_size) * 100
+            
+            logger.info(f"✅ [{self.role}] Image optimized in {elapsed_time:.2f}s: {original_size/1024:.1f}KB → {optimized_size/1024:.1f}KB ({compression_ratio:.1f}% reduction)")
+            
+            return base64.b64encode(optimized_data).decode('utf-8')
+        except Exception as e:
+            elapsed_time = time.time() - start_time
+            logger.error(f"❌ [{self.role}] Image optimization failed after {elapsed_time:.2f}s: {e}")
+            return image_base64  # Return original if optimization fails
+
+    async def analyze_image(self, image_base64: str) -> Dict[str, Any]:
+        """Analyze agricultural image and provide detailed description for other agents"""
+        start_time = time.time()
+        logger.info(f"🔍 [{self.role}] Starting image analysis with {VISION_MODEL_NAME}")
+        
+        # Optimize image first
+        optimized_image = self._optimize_image(image_base64)
+        prompt = """You are ImageVision, a specialized AI agent that provides detailed visual descriptions of agricultural images for other AI systems to analyze.
+
+TASK: Analyze this agricultural image and provide a comprehensive description.
+
+RESPOND ONLY WITH A JSON in this exact format:
+{
+    "image_description": "Detailed visual description of the crop/plant",
+    "soil_visual_indicators": "Visual cues about soil condition visible in image",
+    "environmental_context": "Environmental factors visible in the image",
+    "plant_health_indicators": "Specific visual signs of plant health/disease",
+    "recommended_focus_areas": ["area1", "area2", "area3"],
+    "confidence": 0.95
+}
+
+DESCRIPTION GUIDELINES:
+- image_description: Comprehensive overview of what's visible (plants, leaves, stems, fruits, overall layout)
+- soil_visual_indicators: Soil color, moisture appearance, texture, cracking, erosion signs
+- environmental_context: Lighting conditions, weather signs, surrounding environment, growth stage
+- plant_health_indicators: Leaf color variations, spots, wilting, pest damage, growth patterns
+- recommended_focus_areas: Key areas that SoilSense and AgriVision should prioritize
+- confidence: Your confidence level in the description accuracy (0.0-1.0)
+
+Focus on quantifiable visual elements (percentages, sizes, distributions) and use agricultural terminology.
+
+JSON:"""
+
+        payload = {
+            "model": VISION_MODEL_NAME,
+            "prompt": prompt,
+            "images": [optimized_image],
+            "stream": False,
+            "options": {
+                "temperature": 0.3,
+                "top_p": 0.9,
+                "num_predict": 300,  # Reduced from 400
+                "num_ctx": 4096,     # Context window
+                "num_batch": 512,    # Batch size for processing
+                "num_gpu": -1,       # Use all available GPUs
+                "low_vram": False    # Set to True if running out of VRAM
+            }
+        }
+        
+        logger.debug(f"🔧 [{self.role}] Vision payload created - Model: {payload['model']}, Options: {payload['options']}, Image data length: {len(optimized_image)}, Stream: {payload['stream']}")
+        
+        try:
+            logger.info(f"🌐 [{self.role}] Sending vision request to Ollama (timeout: 120s)")
+            logger.debug(f"🌐 [{self.role}] Prompt length: {len(prompt)} chars, Image size: {len(optimized_image)} chars")
+            
+            # Use asyncio to run in thread pool for better async handling
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(
+                None, 
+                lambda: self.session.post(OLLAMA_URL, json=payload, timeout=120)
+            )
+            
+            elapsed_time = time.time() - start_time
+            logger.info(f"✅ [{self.role}] Vision analysis completed in {elapsed_time:.2f}s")
+            logger.debug(f"🌐 [{self.role}] Response status: {response.status_code}")
+            
+            result = response.json()
+            parsed_result = self._parse_json_response(result.get("response", "{}"))
+            
+            logger.info(f"📊 [{self.role}] Vision response parsed successfully")
+            logger.debug(f"📊 [{self.role}] Response keys: {list(parsed_result.keys())}")
+            
+            return parsed_result
+        except Exception as e:
+            elapsed_time = time.time() - start_time
+            logger.error(f"❌ [{self.role}] Vision analysis failed after {elapsed_time:.2f}s: {e}")
+            
+            # Reset shared session if connection issues persist
+            if "timeout" in str(e).lower() or "connection" in str(e).lower():
+                logger.warning(f"🔄 [{self.role}] Resetting shared session due to connection issues")
+                reset_shared_session()
+                self.session = get_shared_session()
+            
+            return self._get_fallback_response()
+    
+    def _get_fallback_response(self) -> Dict[str, Any]:
+        return {
+            "image_description": "Error en análisis de imagen",
+            "soil_visual_indicators": "No disponible",
+            "environmental_context": "No disponible", 
+            "plant_health_indicators": "No disponible",
+            "recommended_focus_areas": ["Error en análisis"],
+            "confidence": 0.0
+        }
 
 
 class AgriVisionAgent(OllamaAgent):
