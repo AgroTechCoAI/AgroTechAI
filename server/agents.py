@@ -18,7 +18,7 @@ import os
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_GENERATE_API=f"{OLLAMA_URL}/api/generate"
 MODEL_NAME = "gemma3:4b"
-VISION_MODEL_NAME = "gemma3:4b"  # Modelo para análisis de imágenes
+VISION_MODEL_NAME = "qwen2.5vl:3b"  # Modelo para análisis de imágenes
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -247,7 +247,9 @@ JSON:"""
             logger.debug(f"🌐 [{self.role}] Response status: {response.status_code}")
             
             result = response.json()
-            parsed_result = self._parse_json_response(result.get("response", "{}"))
+            resp = result.get("response", "{}")
+            logger.debug(f"📊 [{self.role}] Actual Response: {resp}")
+            parsed_result = self._parse_json_response(resp)
             
             logger.info(f"📊 [{self.role}] Vision response parsed successfully")
             logger.debug(f"📊 [{self.role}] Response: {parsed_result}")

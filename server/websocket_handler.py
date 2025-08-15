@@ -137,41 +137,40 @@ class WebSocketHandler:
             # Extraer descripción de la imagen para AgriVision
             image_description = image_analysis.get("image_description", "Error en análisis")
             
-            # Paso 2: AgriVision (usando descripción de ImageVision)
+            # Preparar datos para SoilSense
+            soil_indicators = image_analysis.get("soil_visual_indicators", "")
+            environmental_context = image_analysis.get("environmental_context", "")
+            combined_environment = f"{environment_description}. Indicadores visuales: {soil_indicators}. Contexto: {environmental_context}"
+            
+            # Paso 2: Ejecutar AgriVision y SoilSense CONCURRENTEMENTE
             await websocket.send_json({
                 "type": "status",
-                "message": "🔍 AgriVision analizando salud del cultivo..."
+                "message": "🔍🌍 Analizando salud del cultivo y condiciones ambientales concurrentemente..."
             })
             
-            vision_result = await self.agri_vision.analyze_image(image_description)
+            # Ejecutar ambos agentes en paralelo
+            vision_task = self.agri_vision.analyze_image(image_description)
+            soil_task = self.soil_sense.analyze_environment(combined_environment)
+            
+            # Esperar a que ambos terminen
+            vision_result, soil_result = await asyncio.gather(vision_task, soil_task)
+            
+            # Enviar resultados tan pronto como estén listos
             await websocket.send_json({
                 "type": "agent_result",
                 "agent": "AgriVision",
                 "data": vision_result
             })
             
-            await asyncio.sleep(2)
-            
-            # Paso 3: SoilSense (condiciones ambientales + indicadores visuales del suelo)
-            soil_indicators = image_analysis.get("soil_visual_indicators", "")
-            environmental_context = image_analysis.get("environmental_context", "")
-            combined_environment = f"{environment_description}. Indicadores visuales: {soil_indicators}. Contexto: {environmental_context}"
-            
-            await websocket.send_json({
-                "type": "status",
-                "message": "🌍 SoilSense analizando condiciones ambientales..."
-            })
-            
-            soil_result = await self.soil_sense.analyze_environment(combined_environment)
             await websocket.send_json({
                 "type": "agent_result",
                 "agent": "SoilSense",
                 "data": soil_result
             })
             
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)  # Reduced delay since they ran concurrently
             
-            # Paso 4: CropMaster (decisión final integrando todos los datos)
+            # Paso 3: CropMaster (decisión final integrando todos los datos)
             await websocket.send_json({
                 "type": "status",
                 "message": "🧠 CropMaster fusionando datos y decidiendo..."
@@ -208,37 +207,35 @@ class WebSocketHandler:
                 }
             })
             
-            # Paso 1: AgriVision
+            # Paso 1: Ejecutar AgriVision y SoilSense CONCURRENTEMENTE
             await websocket.send_json({
                 "type": "status", 
-                "message": "🔍 AgriVision procesando imagen..."
+                "message": "🔍🌍 Analizando imagen y condiciones ambientales concurrentemente..."
             })
             
-            vision_result = await self.agri_vision.analyze_image(image_description)
+            # Ejecutar ambos agentes en paralelo
+            vision_task = self.agri_vision.analyze_image(image_description)
+            soil_task = self.soil_sense.analyze_environment(environment_description)
+            
+            # Esperar a que ambos terminen
+            vision_result, soil_result = await asyncio.gather(vision_task, soil_task)
+            
+            # Enviar resultados tan pronto como estén listos
             await websocket.send_json({
                 "type": "agent_result",
                 "agent": "AgriVision",
                 "data": vision_result
             })
             
-            await asyncio.sleep(2)
-            
-            # Paso 2: SoilSense
-            await websocket.send_json({
-                "type": "status", 
-                "message": "🌍 SoilSense analizando condiciones ambientales..."
-            })
-            
-            soil_result = await self.soil_sense.analyze_environment(environment_description)
             await websocket.send_json({
                 "type": "agent_result",
                 "agent": "SoilSense",
                 "data": soil_result
             })
             
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)  # Reduced delay since they ran concurrently
             
-            # Paso 3: CropMaster (decisión final)
+            # Paso 2: CropMaster (decisión final)
             await websocket.send_json({
                 "type": "status", 
                 "message": "🧠 CropMaster fusionando datos y decidiendo..."
