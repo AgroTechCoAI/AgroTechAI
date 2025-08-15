@@ -319,6 +319,182 @@ MODEL_NAME = "gemma3:4b"  # Change to other Ollama models
 VISION_MODEL_NAME = "qwen2.5vl:3b"  # Model for image analysis
 ```
 
+### 🎛️ **Ollama Model Parameters**
+
+Fine-tune AI agent behavior by adjusting Ollama model parameters in `server/agents.py`. These parameters control response quality, creativity, and processing characteristics.
+
+#### **Core Parameters**
+
+```python
+# In OllamaAgent.generate_response() and ImageVisionAgent.analyze_image()
+"options": {
+    "temperature": 0.7,      # Creativity vs consistency (0.0-1.0)
+    "top_p": 0.9,           # Nucleus sampling threshold (0.0-1.0)
+    "num_predict": 300,     # Maximum tokens in response
+    "num_ctx": 4096,        # Context window size
+    "num_batch": 512,       # Processing batch size
+    "num_gpu": -1,          # GPU layers (-1 = auto)
+    "low_vram": False       # Memory optimization
+}
+```
+
+#### **Parameter Explanations**
+
+**🌡️ Temperature (0.0 - 1.0)**
+- **0.1-0.3**: Very focused, consistent responses (ideal for technical analysis)
+- **0.7**: Balanced creativity and consistency (current default)
+- **0.9-1.0**: More creative, varied responses (still coherent)
+
+```python
+# Conservative agricultural analysis
+"temperature": 0.3
+
+# Creative crop recommendations  
+"temperature": 0.9
+```
+
+**🎯 Top-p (0.0 - 1.0)**
+- **0.5**: Very focused vocabulary (safe, predictable)
+- **0.9**: Balanced vocabulary selection (current default)
+- **0.95-1.0**: Full vocabulary access (more diverse)
+
+```python
+# Precise technical terms only
+"top_p": 0.7
+
+# Rich agricultural vocabulary
+"top_p": 0.95
+```
+
+**📝 num_predict (50 - 2048)**
+- **100-200**: Brief, concise responses
+- **300**: Detailed analysis (current default)
+- **500+**: Comprehensive, verbose responses
+
+```python
+# Quick assessments
+"num_predict": 150
+
+# Detailed agricultural reports
+"num_predict": 500
+```
+
+**🧠 num_ctx (1024 - 32768)**
+- **2048**: Basic context retention
+- **4096**: Good context for complex analysis (current default)
+- **8192+**: Extended context for complex scenarios
+
+```python
+# Simple image analysis
+"num_ctx": 2048
+
+# Complex multi-factor analysis
+"num_ctx": 8192
+```
+
+#### **Performance Parameters**
+
+**⚡ num_batch (128 - 1024)**
+- **256**: Conservative processing
+- **512**: Balanced performance (current default)
+- **1024**: High throughput (requires more memory)
+
+**🎮 num_gpu (-1, 0, or specific number)**
+- **-1**: Auto-detect and use all available GPU layers
+- **0**: CPU-only processing
+- **20**: Use specific number of GPU layers
+
+**💾 low_vram (true/false)**
+- **false**: Normal memory usage (current default)
+- **true**: Optimized for systems with limited VRAM
+
+#### **Use Case Examples**
+
+**🔬 Scientific Analysis (High Precision)**
+```python
+"options": {
+    "temperature": 0.2,
+    "top_p": 0.8,
+    "num_predict": 400,
+    "num_ctx": 8192
+}
+```
+
+**🌱 General Farming Advice (Balanced)**
+```python
+"options": {
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "num_predict": 300,
+    "num_ctx": 4096
+}
+```
+
+**🚀 Creative Recommendations (High Creativity)**
+```python
+"options": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "num_predict": 500,
+    "num_ctx": 4096
+}
+```
+
+**💨 Fast Processing (Speed Optimized)**
+```python
+"options": {
+    "temperature": 0.5,
+    "top_p": 0.8,
+    "num_predict": 200,
+    "num_ctx": 2048,
+    "num_batch": 256
+}
+```
+
+#### **Customization Locations**
+
+**General Agents** (`server/agents.py` line ~75):
+```python
+"options": {
+    "temperature": 0.7,    # Modify this
+    "top_p": 0.9,         # And this
+    "num_predict": 300    # And this
+}
+```
+
+**Vision Agent** (`server/agents.py` line ~220):
+```python
+"options": {
+    "temperature": 0.3,    # Lower for precise image analysis
+    "num_predict": 300,    # Reduced from 400
+    "num_ctx": 4096,      # Context window
+    "low_vram": False     # Set to True if running out of VRAM
+}
+```
+
+#### **Performance Impact**
+- **Higher temperature/top_p**: More creative but potentially slower
+- **Larger num_ctx**: Better context but more memory usage
+- **Higher num_predict**: Longer responses but slower processing
+- **Larger num_batch**: Faster throughput but more memory usage
+
+#### **Monitoring Results**
+Check parameter effectiveness:
+```bash
+# Monitor response times
+docker compose logs api-server | grep "completed in"
+
+# Monitor memory usage
+docker stats
+
+# Test different configurations
+curl -X POST http://localhost:11434/api/generate -d '{
+  "model": "gemma3:4b",
+  "prompt": "Test prompt",
+  "options": {"temperature": 0.3, "top_p": 0.8}
+}'
+```
+
 ### ⚡ Hardware Optimization
 
 Optimize OLLAMA performance based on your machine specifications. Update these environment variables in `docker-compose.yml`:
