@@ -392,7 +392,74 @@ function ConnectionStatusBanner({ connectionState, onReconnect }) {
     );
 }
 
-function AgentCard({ title, data, color }) {
+// A helper function to render values more intelligently
+const renderValue = (value) => {
+    if (typeof value === 'boolean') {
+        return (
+            <span
+                className={`px-2 py-1 text-xs font-semibold rounded-full ${value ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                    }`}
+            >
+                {value ? 'Yes' : 'No'}
+            </span>
+        );
+    }
+
+    if (Array.isArray(value)) {
+        return value.join(', ');
+    }
+
+    if (typeof value === 'object' && value !== null) {
+        return <pre className="text-xs bg-gray-50 p-2 rounded">{JSON.stringify(value, null, 2)}</pre>;
+    }
+
+    // Convert numbers and other primitives to a string
+    return String(value);
+};
+
+// IMPORTANT: A mapping for Tailwind's JIT compiler to find the classes
+const colorVariants = {
+    blue: 'border-blue-500',
+    green: 'border-green-500',
+    red: 'border-red-500',
+    yellow: 'border-yellow-500',
+    purple: 'border-purple-500',
+    // Add any other colors you plan to use
+};
+
+function AgentCard({ title, data, color = 'blue' }) {
+    return (
+        <div className={`bg-white rounded-lg shadow-lg p-6 border-l-4 ${colorVariants[color] || colorVariants.blue}`}>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b">{title}</h3>
+            {data ? (
+                // Use CSS Grid for a clean, two-column layout
+                <div className="grid grid-cols-[max-content,1fr] gap-x-4 gap-y-3">
+                    {Object.entries(data).map(([key, value]) => (
+                        // Use a React Fragment for each row to avoid adding extra divs to the DOM
+                        <React.Fragment key={key}>
+                            <span className="text-gray-500 font-medium text-right capitalize">
+                                {key.replace(/_/g, ' ')}:
+                            </span>
+                            <span className="text-gray-900 font-medium break-words">
+                                {renderValue(value)}
+                            </span>
+                        </React.Fragment>
+                    ))}
+                </div>
+            ) : (
+                // An improved "skeleton" loading state
+                <div className="space-y-4 animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+
+function AgentCard1({ title, data, color }) {
     console.log('AgentCard::data', data);
     return (
         <div className={`bg-white rounded-lg shadow-lg p-6 border-l-4 border-${color}-500`}>
