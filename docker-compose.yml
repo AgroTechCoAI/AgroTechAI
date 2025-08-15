@@ -1,0 +1,130 @@
+services:
+  ollama:
+    image: ollama/ollama:rocm
+    restart: unless-stopped
+    
+    # Memory and CPU limits
+    deploy:
+      resources:
+        limits:
+          memory: 24G
+          cpus: '4.0'
+        reservations:
+          memory: 16G
+          cpus: '4.0'
+    
+    # AMD ROCm GPU devices
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    
+    # Ports
+    ports:
+      - "11434:11434"
+    
+    # Volumes
+    volumes:
+      - ollama_data:/root/.ollama
+    
+    # Environment variables for performance optimization
+    environment:
+      - OLLAMA_NUM_PARALLEL=4
+      - OLLAMA_MAX_LOADED_MODELS=2
+      - OLLAMA_FLASH_ATTENTION=1
+      - OLLAMA_NUM_THREADS=8
+      - OLLAMA_HOST=0.0.0.0
+      - ROCM_VISIBLE_DEVICES=all
+      - HIP_VISIBLE_DEVICES=all
+      - OMP_NUM_THREADS=4
+      - GOMAXPROCS=4
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Python FastAPI Server
+  api-server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: agrotech_api
+    restart: unless-stopped
+    
+    # CPU and memory limits
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+    
+    # Ports
+    ports:
+      - "8000:8000"
+    
+    # Environment variables
+    environment:
+      - OLLAMA_URL=http://ollama:11434/api/generate
+    
+    # Dependencies
+    depends_on:
+      ollama:
+        condition: service_healthy
+    
+    # Volumes (optional: for development)
+    volumes:
+      - ./server:/app
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # React Frontend (optional)
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: agrotech_frontend
+    restart: unless-stopped
+    
+    # CPU and memory limits
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    
+    # Ports
+    ports:
+      - "3000:3000"
+    
+    # Environment variables
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_WS_URL=ws://localhost:8000/ws
+    
+    # Dependencies
+    depends_on:
+      - api-server
+
+# Named volumes
+volumes:
+  ollama_data:
+    driver: local
+
+# Networks
+networks:
+  default:
+    driver: bridge
