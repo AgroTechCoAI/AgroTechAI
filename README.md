@@ -38,7 +38,7 @@ This proof of concept serves as:
 
 ## 🏗️ Architecture
 
-This project follows a client-server architecture:
+This project follows a client-server architecture with multi-agent AI coordination:
 
 ```
 AgroTech AI/
@@ -58,6 +58,87 @@ AgroTech AI/
 │   └── Dockerfile       # Docker container configuration
 └── docker-compose.yml   # Multi-service Docker orchestration
 ```
+
+### 🔄 Client-WebSocket-Agent Workflow
+
+The following diagram illustrates the real-time communication flow between the React client, WebSocket server, and AI agents:
+
+```mermaid
+sequenceDiagram
+    participant C as React Client
+    participant WS as WebSocket Handler
+    participant IV as ImageVision Agent
+    participant AV as AgriVision Agent
+    participant SS as SoilSense Agent
+    participant CM as CropMaster Agent
+    participant O as Ollama LLM
+
+    Note over C: User uploads image + environment data
+    C->>WS: WebSocket: image_analysis event
+    Note over WS: {type: "image_analysis", image_data: "base64...", environment_description: "..."}
+    
+    WS->>C: Status: "📸 ImageVision procesando imagen..."
+    
+    %% ImageVision Analysis Phase
+    WS->>IV: analyze_image(base64_image)
+    IV->>IV: _optimize_image() - Resize, compress, convert to JPEG
+    IV->>O: POST /api/generate (with optimized image)
+    Note over O: Vision Model: qwen2.5vl:3b
+    O-->>IV: JSON response with image analysis
+    IV-->>WS: Detailed image description + visual indicators
+    WS->>C: Agent Result: ImageVision data
+    
+    %% Parallel Analysis Phase  
+    WS->>C: Status: "🔍🌍 Analizando salud del cultivo y condiciones ambientales..."
+    
+    par AgriVision Analysis
+        WS->>AV: analyze_image(image_description)
+        AV->>O: POST /api/generate (text prompt)
+        Note over O: Text Model: gemma3:4b
+        O-->>AV: Crop health assessment JSON
+        AV-->>WS: Crop analysis results
+    and SoilSense Analysis  
+        WS->>SS: analyze_environment(combined_environment)
+        SS->>O: POST /api/generate (text prompt)
+        Note over O: Text Model: gemma3:4b  
+        O-->>SS: Soil/environment analysis JSON
+        SS-->>WS: Environmental results
+    end
+    
+    WS->>C: Agent Result: AgriVision data
+    WS->>C: Agent Result: SoilSense data
+    
+    %% Final Decision Phase
+    WS->>C: Status: "🧠 CropMaster fusionando datos y decidiendo..."
+    WS->>CM: make_decision(vision_data, soil_data)
+    CM->>O: POST /api/generate (integrated analysis prompt)
+    Note over O: Text Model: gemma3:4b
+    O-->>CM: Final recommendations JSON
+    CM-->>WS: Integrated decision
+    WS->>C: Agent Result: CropMaster data
+    
+    WS->>C: Status: "✅ Análisis completado"
+    
+    Note over C: Client displays results in real-time dashboard
+```
+
+### 🔧 WebSocket Communication Protocol
+
+**Client → Server Events:**
+- `ping` - Heartbeat to maintain connection
+- `image_analysis` - Trigger AI analysis with image data
+- `custom_scenario` - Analyze text-based scenarios
+
+**Server → Client Events:**
+- `pong` - Heartbeat response
+- `agent_result` - Results from individual AI agents
+- `status` - Progress updates during analysis
+- `error` - Error messages and diagnostics
+
+**Agent Processing Pipeline:**
+1. **ImageVision** - Visual analysis and image optimization
+2. **AgriVision & SoilSense** - Parallel crop and environmental analysis  
+3. **CropMaster** - Integrated decision-making and recommendations
 
 ## 🚀 Getting Started
 
