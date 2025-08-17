@@ -83,23 +83,41 @@ class ImageVisionAgent(OllamaAgent):
 IMPORTANT: ALWAYS respond in SPANISH. All descriptions, recommendations, and text must be in Spanish.
 TASK: Analyze this agricultural image and provide a comprehensive description.
 
-RESPOND ONLY WITH A JSON in this exact format:
+IF THE IMAGE IS NOT RELATED TO AGRICULTURE, use this specific format:
 {
-    "image_description": "Detailed visual description of the crop/plant",
-    "soil_visual_indicators": "Visual cues about soil condition visible in image",
-    "environmental_context": "Environmental factors visible in the image",
-    "plant_health_indicators": "Specific visual signs of plant health/disease",
-    "recommended_focus_areas": ["area1", "area2", "area3"],
-    "confidence": 0.95
+"is_agricultural_image": false,
+"reason": "Brief explanation in Spanish why the image is not relevant.",
+"confidence": 0.98,
+"image_description": null,
+"soil_visual_indicators": null,
+"environmental_context": null,
+"plant_health_indicators": null,
+"recommended_focus_areas": null
+}
+
+IF THE IMAGE IS RELATED TO AGRICULTURE, RESPOND ONLY WITH A JSON in this exact format:
+{
+"image_description": "Detailed visual description of the crop/plant",
+"soil_visual_indicators": "Visual cues about soil condition visible in image",
+"environmental_context": "Environmental factors visible in the image",
+"plant_health_indicators": "Specific visual signs of plant health/disease",
+"recommended_focus_areas": ["area1", "area2", "area3"],
+"confidence": 0.95
 }
 
 DESCRIPTION GUIDELINES:
-- image_description: Comprehensive overview of what's visible (plants, leaves, stems, fruits, overall layout)
-- soil_visual_indicators: Soil color, moisture appearance, texture, cracking, erosion signs
-- environmental_context: Lighting conditions, weather signs, surrounding environment, growth stage
-- plant_health_indicators: Leaf color variations, spots, wilting, pest damage, growth patterns
-- recommended_focus_areas: Key areas that SoilSense and AgriVision should prioritize
-- confidence: Your confidence level in the description accuracy (0.0-1.0)
+
+image_description: Comprehensive overview of what's visible (plants, leaves, stems, fruits, overall layout)
+
+soil_visual_indicators: Soil color, moisture appearance, texture, cracking, erosion signs
+
+environmental_context: Lighting conditions, weather signs, surrounding environment, growth stage
+
+plant_health_indicators: Leaf color variations, spots, wilting, pest damage, growth patterns
+
+recommended_focus_areas: Key areas that SoilSense and AgriVision should prioritize
+
+confidence: Your confidence level in the description accuracy (0.0-1.0)
 
 Focus on quantifiable visual elements (percentages, sizes, distributions) and use agricultural terminology.
 Also focus on spanish answer for the description.
