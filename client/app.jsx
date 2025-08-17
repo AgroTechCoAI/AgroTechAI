@@ -170,7 +170,7 @@ function App() {
                 websocket.send(JSON.stringify({ type: 'ping' }));
                 console.log('💓 Heartbeat sent');
             }
-        }, 30000); // Send ping every 30 seconds
+        }, 4000); // Send ping every 4 seconds
     };
 
     const stopHeartbeat = () => {
