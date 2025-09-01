@@ -1,4 +1,4 @@
-# Construcción de JOBS TO BE DONE (JTBD)
+# Construcción de la "Definición y selección de funcionalidades"
 
 ## Contexto
 
@@ -19,6 +19,7 @@ Para su construcción se usaron las siguientes herramientas:
 - **Gemini**
 - **Claude**
 
+---
 
 ## Prompt
 
@@ -59,7 +60,7 @@ Esta información la podras tomar de la base de conocimiento suministrada en el 
 
 ### 4. JOBS TO BE DONE (JTBD)
 
-Esta información la podras tomar de la base de conocimiento suministrada en el archivo `4_jtbd_resultado.md`
+Esta información la podras tomar de la base de conocimiento suministrada en el archivo `1_jtbd_resultado.md`
 
 -----
 
