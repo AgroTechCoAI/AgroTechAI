@@ -45,6 +45,8 @@ Evaluando los journeys actuales, seleccionamos los 3 más críticos que represen
 
 A continuación, el mapeo detallado del journey más crítico seleccionado.
 
+---
+
 # **JOURNEY AS-IS 1: Diagnóstico de Emergencia vía WhatsApp y Consulta Local**
 
 **📋 INFORMACIÓN GENERAL**
@@ -294,3 +296,267 @@ A continuación, el mapeo detallado del journey más crítico seleccionado.
 1.  **Diagnóstico Inmediato y Confiable:** La mayor oportunidad es reemplazar la incertidumbre de WhatsApp con un diagnóstico instantáneo, visual y basado en datos, directamente en el campo.
 2.  **Recomendaciones Específicas y No Sesgadas:** Proporcionar una recomendación de tratamiento basada en la efectividad y no en el inventario de una tienda, incluyendo opciones de manejo integrado y diferentes rangos de precios.
 3.  **Monitoreo Guiado y Cuantificación de Resultados:** Ayudar al usuario a seguir el progreso del tratamiento con indicadores claros y a documentar el proceso para futuros aprendizajes, cerrando el ciclo de manera efectiva.
+
+***
+
+# **JOURNEY AS-IS 2: Consulta Técnica Pagada con Demoras**
+
+**📋 INFORMACIÓN GENERAL**
+* **Arquetipo principal:** Productora Mediana (Diana Cárdenas, productora de Aguacate Hass).
+* **Situación que dispara el journey:** Durante una revisión de calidad pre-cosecha, Diana detecta manchas negras sospechosas en varios frutos de aguacate, lo que pone en riesgo el cumplimiento de un contrato de exportación.
+* **Método actual principal:** Contacto directo con su agrónoma asesora de confianza para agendar una visita técnica pagada.
+* **Frecuencia típica:** Moderada, 2-4 veces por ciclo de cultivo para validaciones críticas o problemas complejos.
+* **Duración total actual:** De 4 a 8 días desde la detección hasta la aplicación del tratamiento recomendado.
+* **Recursos/herramientas actuales:** Smartphone (WhatsApp Business, llamadas), presupuesto para consultoría ($1.5-3M COP/mes o $200-500K COP por visita), registros en Excel, su propio vehículo para recorrer la finca.
+
+---
+
+## **🗺️ PROCESO ACTUAL (AS-IS)**
+
+### **FASE 1: DETECCIÓN DEL PROBLEMA**
+**Cómo actualmente identifica problemas en el cultivo**
+
+**🎬 SITUACIÓN ACTUAL:**
+* **Ubicación:** En un lote de aguacates Hass destinado a exportación en el Oriente antioqueño.
+* **Momento:** Durante una inspección semanal programada para evaluar el calibre y la sanidad de la fruta.
+* **Método de detección:** Visual y metódico. Utiliza su experiencia para diferenciar daños mecánicos de posibles patógenos. Las manchas son circulares y hundidas, un patrón que le preocupa.
+
+**👤 COMPORTAMIENTO ACTUAL:**
+* **Acciones:** Toma varias fotos en alta resolución con su smartphone, asegurándose de capturar el patrón de la lesión, la distribución en el árbol y la ubicación del lote. Marca los árboles afectados con cinta.
+* **Pensamientos:** *"Esto parece antracnosis. Si se extiende, la exportadora me va a rechazar el contenedor completo. Necesito que Laura (su agrónoma) lo vea ya mismo. No puedo arriesgarme."*
+* **Emociones:** Preocupación financiera, estrés por el cumplimiento del contrato, urgencia profesional.
+* **Herramientas:** Smartphone, cintas de marcación, cuaderno de notas o Excel en el celular.
+
+**⏱️ TIEMPO INVERTIDO:** 1 - 2 horas.
+
+**😤 FRUSTRACIONES ACTUALES:**
+* Aunque tiene una sospecha informada, no tiene la certeza del 100% para iniciar un tratamiento costoso.
+* Sabe que cada hora que pasa es crítica para la calidad de la fruta y el control de la enfermedad.
+
+**💸 COSTOS ACTUALES:**
+* El costo de su tiempo y el inicio de la posible pérdida de valor de la cosecha.
+
+---
+
+### **FASE 2: INVESTIGACIÓN Y DIAGNÓSTICO INICIAL**
+**Cómo actualmente intenta diagnosticar el problema**
+
+**🎬 SITUACIÓN ACTUAL:**
+* **Recursos consultados:** Su agrónoma asesora independiente.
+* **Personas contactadas:** Llama o escribe por WhatsApp Business a "Laura Restrepo".
+* **Herramientas usadas:** Celular.
+
+**👤 COMPORTAMIENTO ACTUAL:**
+* **Acciones:** Le envía a Laura las fotos por WhatsApp con un mensaje de voz: *"Laurita, buen día. Estoy viendo estas manchas en el lote 7, el de exportación. Parece antracnosis, ¿cuándo podrías venir? Es urgente."*
+* **Pensamientos:** *"Ojalá tenga espacio en su agenda esta semana. Sé que está muy ocupada. Mientras tanto, no puedo hacer nada, no voy a aplicar un fungicida caro sin su visto bueno."*
+* **Emociones:** Ansiedad por la espera. La respuesta de Laura llega una hora después: *"Diana, qué tal. Sí parece eso. Estoy terminando una visita en Jardín. Lo más pronto que puedo ir es en 3 días."* La frustración aumenta.
+* **Criterios de decisión:** Confía plenamente en su asesora, por lo que su única opción es esperar.
+
+**⏱️ TIEMPO INVERTIDO:** **2 a 7 días de espera** para la visita técnica.
+
+**🔧 TOUCHPOINTS ACTUALES:**
+* Llamada directa y WhatsApp Business con la agrónoma.
+
+**😤 FRUSTRACIONES ACTUALES:**
+* **La disponibilidad limitada del experto es el mayor pain point.** La enfermedad avanza mientras ella espera.
+* El diagnóstico preliminar por foto es útil pero no definitivo, lo que le impide tomar acciones inmediatas.
+* El costo de la inacción durante la espera es alto y se acumula día a día.
+
+**💸 COSTOS ACTUALES:**
+* **Costo de oportunidad:** Pérdidas estimadas del 15-30% de daño adicional por el retraso en el diagnóstico y tratamiento.
+
+---
+
+### **FASE 3: BÚSQUEDA DE SEGUNDA OPINIÓN (Visita del Experto)**
+**Cómo valida su diagnóstico inicial**
+
+**🎬 SITUACIÓN ACTUAL:**
+* **Fuentes de validación:** La visita presencial de la agrónoma.
+* **Métodos de comunicación:** Interacción cara a cara en la finca.
+
+**👤 COMPORTAMIENTO ACTUAL:**
+* **Acciones:** Recorre el lote con Laura. Le muestra los árboles marcados y los registros que ha tomado. Laura usa una lupa de campo, toma sus propias notas y posiblemente muestras para el laboratorio si el caso es complejo.
+* **Pensamientos:** *"Finalmente. Ahora sí vamos a saber qué hacer. Vale la pena pagar la visita para tener esta tranquilidad y un plan de acción claro."*
+* **Emociones:** Alivio, confianza. Se siente empoderada al recibir información experta.
+
+**⏱️ TIEMPO INVERTIDO:** 2 - 4 horas de la visita técnica.
+
+**😤 FRUSTRACIONES ACTUALES:**
+* El alto costo de la visita ($200K - $500K COP), que se suma a los costos del tratamiento.
+* A veces, incluso el experto puede necesitar una confirmación de laboratorio, lo que añade otra semana de espera y más costos.
+
+**💸 COSTOS ACTUALES:**
+* Honorarios de la agrónoma: **$200,000 - $500,000 COP**.
+
+---
+
+### **FASE 4: TOMA DE DECISIÓN**
+**Cómo decide qué tratamiento aplicar**
+
+**🎬 SITUACIÓN ACTUAL:**
+* **Proceso de decisión:** Al final de la visita, Laura le presenta un diagnóstico confirmado y 2-3 opciones de tratamiento, explicando los pros y contras de cada uno (costo, efectividad, residualidad).
+* **Factores considerados:** Efectividad del tratamiento, costo/beneficio, período de carencia (importante para la exportación), y la recomendación específica de la experta.
+
+**👤 COMPORTAMIENTO ACTUAL:**
+* **Acciones:** Discute el plan con Laura. Toman una decisión conjunta basada en los datos. Laura le envía el plan de acción detallado por correo electrónico o WhatsApp Business.
+* **Pensamientos:** *"La opción A es la más efectiva pero también la más cara. La B es más barata pero podría necesitar una segunda aplicación. Con el contrato en juego, no puedo arriesgar. Vamos con la A."*
+* **Emociones:** Determinación, claridad. La incertidumbre ha sido reemplazada por un plan de acción.
+
+**⏱️ TIEMPO INVERTIDO:** 30 minutos de análisis y decisión.
+
+**😤 FRUSTRACIONES ACTUALES:**
+* Las soluciones más efectivas suelen ser las más costosas, presionando su presupuesto.
+* Debe confiar en que la recomendación es la mejor y no está influenciada por relaciones comerciales del agrónomo.
+
+**💸 COSTOS ACTUALES:**
+* El costo mental de aprobar un gasto significativo.
+
+---
+
+### **FASE 5, 6, 7 y 8: ADQUISICIÓN, APLICACIÓN, MONITOREO Y EVALUACIÓN**
+Estas fases son similares al journey anterior, pero con un mayor nivel de profesionalismo:
+
+* **Adquisición:** Compra insumos específicos en distribuidores regionales, no solo en la tienda local, buscando calidad y disponibilidad garantizada.
+* **Aplicación:** Supervisa a su equipo o a su mayordomo para asegurar que la aplicación se haga siguiendo el protocolo exacto de la agrónoma (dosis, calibración de equipos, EPP).
+* **Monitoreo:** Es sistemático. Toma fotos de seguimiento y se las envía a la agrónoma para una evaluación remota. Documenta el progreso en sus registros.
+* **Evaluación:** El éxito se mide con KPIs claros: reducción del % de fruta rechazada, control efectivo de la enfermedad. El aprendizaje se documenta formalmente para ajustar el plan de manejo del próximo ciclo. La efectividad del tratamiento es alta (75-90%).
+
+---
+
+## **📊 ANÁLISis DEL JOURNEY AS-IS**
+
+**⏱️ TIEMPOS TOTALES:**
+* Desde detección hasta inicio de tratamiento: **4 - 8 días**.
+* Proceso completo hasta evaluación: **3 - 5 semanas**.
+
+**💰 COSTOS TOTALES:**
+* **Monetarios:** **$500,000 - $2,000,000 COP** (visita técnica + insumos de alta gama + pérdida de fruta durante la espera).
+* **Tiempo:** 6 - 10 horas de su propio tiempo directivo.
+* **Oportunidad:** La pérdida de valor de la cosecha por el avance de la enfermedad durante los días de espera.
+
+**😤 PAIN POINTS CRÍTICOS:**
+1.  **El Tiempo de Espera del Experto:** Es el cuello de botella más costoso y frustrante. El sistema depende de la disponibilidad de un recurso humano escaso, lo que crea un retraso inaceptable en situaciones críticas.
+2.  **Alto Costo Acumulado:** El costo de la visita experta, sumado a los tratamientos recomendados (que suelen ser caros), representa una inversión significativa y un riesgo financiero.
+3.  **Dependencia de una Sola Persona:** Todo el proceso se detiene si su agrónomo de confianza no está disponible, creando un punto único de fallo.
+
+**🎯 OPORTUNIDADES DE MEJORA:**
+1.  **Triaje y Diagnóstico Preliminar Inmediato:** Ofrecer una herramienta de IA que le dé a Diana un diagnóstico preliminar con un alto grado de confianza (>85%) en minutos, no en días. Esto le permitiría tomar acciones de contención inmediatas mientras espera al experto.
+2.  **Empoderar al Experto Remotamente:** Crear un canal donde la agrónoma pueda recibir datos estructurados y de alta calidad (fotos guiadas, historial del lote, clima) para dar una recomendación remota más rápida y precisa, quizás convirtiendo la visita física en una excepción y no en la regla.
+3.  **Optimización de Decisiones:** Utilizar datos para comparar la efectividad y el costo de diferentes tratamientos, ayudando a Diana a tomar la decisión más rentable sin sacrificar la calidad de exportación.
+
+***
+
+# **JOURNEY AS-IS 3: Diagnóstico por Experiencia y Prueba y Error**
+
+**📋 INFORMACIÓN GENERAL**
+* **Arquetipo principal:** Administrador/Mayordomo de Finca (Luis Alberto Mosquera, en una finca de banano en Urabá).
+* **Situación que dispara el journey:** Durante una ronda de supervisión, Luis identifica síntomas que él reconoce como un problema recurrente y bien conocido en la finca, como un brote inicial de Sigatoka Negra.
+* **Método actual principal:** Autodiagnóstico basado en su amplia experiencia de campo y aplicación inmediata del protocolo o tratamiento estándar de la finca, sin buscar una segunda opinión externa.
+* **Frecuencia típica:** Muy alta. Es el mecanismo por defecto para el 80% de los problemas "conocidos".
+* **Duración total actual:** Muy rápido para iniciar (2-4 horas), pero el ciclo completo puede ser largo y fallido si el diagnóstico fue incorrecto.
+* **Recursos/herramientas actuales:** Su experiencia, protocolos de la finca (a veces solo mentales), equipo de aplicación, y el inventario de insumos en la bodega de la finca.
+
+---
+
+## **🗺️ PROCESO ACTUAL (AS-IS)**
+
+### **FASE 1: DETECCIÓN DEL PROBLEMA**
+**🎬 SITUACIÓN ACTUAL:**
+* **Ubicación:** Un sector de una finca bananera grande en Urabá.
+* **Momento:** Supervisando a la cuadrilla de trabajo a media mañana.
+* **Método de detección:** Ojo entrenado. Reconoce el patrón de las manchas de Sigatoka casi instantáneamente.
+
+**👤 COMPORTAMIENTO ACTUAL:**
+* **Acciones:** Se acerca, evalúa visualmente la severidad y la extensión del brote. No duda.
+* **Pensamientos:** *"Esto es Sigatoka, etapa 2. Ya sabemos cómo manejarla. Si no actuamos hoy, para el fin de semana se nos contamina todo el lote. Hay que aplicar el fungicida de rotación que toca esta semana."*
+* **Emociones:** Confianza, proactividad, sentido del deber. No hay pánico, es "business as usual".
+* **Herramientas:** Su vista y su memoria.
+
+**⏱️ TIEMPO INVERTIDO:** 5 - 10 minutos.
+
+### **FASE 2 Y 3: INVESTIGACIÓN Y SEGUNDA OPINIÓN (Omitidas)**
+**Cómo actualmente intenta diagnosticar el problema**
+
+**🎬 SITUACIÓN ACTUAL:**
+* Luis **no investiga ni busca una segunda opinión** para problemas que considera rutinarios. Su rol es ejecutar rápidamente, y consultar al ingeniero de la empresa (que puede estar en otra finca o en la oficina) por cada brote de Sigatoka sería visto como ineficiente y una falta de autonomía.
+* Su "base de conocimiento" es la experiencia acumulada y los protocolos establecidos.
+
+**😤 FRUSTRACIONES ACTUALES (Latentes):**
+* El riesgo oculto: ¿Y si no es la cepa habitual de Sigatoka? ¿Y si los síntomas son similares pero la causa es otra (ej. una deficiencia nutricional o un nuevo patógeno)?
+* La experiencia puede generar un "sesgo de confirmación", viendo lo que espera ver.
+
+---
+
+### **FASE 4: TOMA DE DECISIÓN**
+**Cómo decide qué tratamiento aplicar**
+
+**🎬 SITUACIÓN ACTUAL:**
+* **Proceso de decisión:** Instantáneo y basado en el protocolo.
+* **Factores considerados:** El calendario de rotación de fungicidas de la finca (para evitar resistencia), la disponibilidad de personal y equipos, y el pronóstico del tiempo.
+
+**👤 COMPORTAMIENTO ACTUAL:**
+* **Acciones:** Llama por radio o WhatsApp al jefe de cuadrilla. *"Preparen la mezcla del fungicida X para el lote 12. Aplicación inmediata."*
+* **Pensamientos:** *"Listo. Problema visto, problema siendo solucionado. Puedo pasar al siguiente tema."*
+* **Emociones:** Eficiencia, control.
+
+**⏱️ TIEMPO INVERTIDO:** 2 minutos.
+
+---
+
+### **FASE 5 Y 6: ADQUISICIÓN Y APLICACIÓN**
+**Cómo obtiene y aplica la solución**
+
+* **Adquisición:** No hay compra. Luis va a la bodega de la finca y solicita los insumos del inventario.
+* **Aplicación:** Dirige y supervisa a su equipo para que realice la aspersión según los estándares de la finca. Se enfoca en la eficiencia operativa: hectáreas cubiertas por hora.
+
+**⏱️ TIEMPO INVERTIDO:** 4 - 6 horas para la aplicación en el lote afectado.
+
+---
+
+### **FASE 7: MONITOREO DE RESULTADOS (EL MOMENTO DE LA VERDAD)**
+**Cómo evalúa si el tratamiento está funcionando**
+
+**🎬 SITUACIÓN ACTUAL:**
+* **Frecuencia de revisión:** En sus rondas diarias durante la siguiente semana.
+* **Método de evaluación:** Visual.
+
+**👤 COMPORTAMIENTO ACTUAL:**
+* **Escenario A (Éxito):** Las lesiones se secan y la propagación se detiene. **Pensamientos:** *"Perfecto, el protocolo funcionó como siempre."* **Emociones:** Satisfacción. El ciclo termina aquí.
+* **Escenario B (Fracaso):** Las lesiones continúan expandiéndose. El tratamiento no tuvo efecto. **Pensamientos:** *"Carajo. Esto no está funcionando. ¿Por qué? ¿Usamos la dosis incorrecta? ¿El producto está malo? ¿O no es Sigatoka...?"* **Emociones:** Duda, frustración, preocupación por tener que reportar el fallo a su jefe.
+
+**⏱️ TIEMPO INVERTIDO:** 10 minutos diarios durante una semana.
+
+### **FASE 8: EVALUACIÓN FINAL Y APRENDIZAJE (EN CASO DE FRACASO)**
+**Cómo determina si fue exitoso y qué aprendió**
+
+**🎬 SITUACIÓN ACTUAL:**
+* El tratamiento estándar falló. El problema se ha agravado.
+* Ahora la situación pasó de "rutinaria" a "crítica".
+
+**👤 COMPORTAMIENTO ACTUAL:**
+* **Acciones:** Ahora sí, contacta al ingeniero agrónomo de la empresa. Le explica la situación: "Ingeniero, aplicamos el protocolo para Sigatoka hace una semana en el lote 12, pero el problema empeoró." Inicia un nuevo journey (el **Journey 2: Consulta Técnica**), pero desde una posición mucho peor.
+* **Pensamientos:** *"Perdimos tiempo valioso y gastamos insumos para nada. Ahora el daño es mayor y la solución será más cara. El jefe no va a estar contento."*
+* **Emociones:** Decepción, estrés, sensación de haber fallado.
+
+---
+
+## **📊 ANÁLISis DEL JOURNEY AS-IS**
+
+**⏱️ TIEMPOS TOTALES:**
+* **En caso de éxito:** 1 semana.
+* **En caso de fracaso:** 1 semana perdida + el tiempo del nuevo journey (4-8 días), totalizando **11-15 días** para una solución real.
+
+**💰 COSTOS TOTALES (EN CASO DE FRACASO):**
+* **Monetarios:** El costo de la aplicación fallida ($150-500K/ha en insumos) + el costo del nuevo tratamiento correcto + las pérdidas agravadas por la demora. Un error puede costar **$800K - $2M COP por hectárea**.
+* **Tiempo:** Horas de trabajo del equipo desperdiciadas en la primera aplicación.
+* **Oportunidad:** La ventana crítica para un control efectivo se perdió.
+
+**😤 PAIN POINTS CRÍTICOS:**
+1.  **El Alto Costo del Falso Positivo:** El mayor riesgo de este journey es la confianza ciega en la experiencia. Cuando la experiencia falla, los costos (tiempo, dinero, rendimiento) se disparan exponencialmente.
+2.  **Falta de un Bucle de Retroalimentación:** El sistema no tiene un mecanismo para cuestionar el protocolo. Si un tratamiento empieza a perder efectividad (ej. por resistencia), el modelo de "prueba y error" no lo detecta hasta que el fracaso es evidente y costoso.
+3.  **Invisibilidad de Problemas Nuevos:** Este journey es incapaz de identificar correctamente problemas nuevos o emergentes que se disfrazan con síntomas de problemas conocidos.
+
+**🎯 OPORTUNIDADES DE MEJORA:**
+1.  **Herramienta de Verificación Rápida:** Proporcionar a Luis una herramienta de IA que le permita, en 30 segundos, verificar su diagnóstico visual antes de movilizar a su equipo. Un "segundo ojo digital" que confirme: "Sí, 95% de probabilidad de Sigatoka Negra" o que alerte: "Alerta: se detectan patrones atípicos, podría ser una deficiencia de X. Se recomienda verificar antes de aplicar fungicida".
+2.  **Sistema de Alerta Temprana de Resistencia:** Si la IA empieza a detectar que tratamientos estándar están fallando en múltiples fincas de la región para un problema específico, puede generar una alerta regional sobre posible resistencia, ayudando a ajustar los protocolos de forma proactiva.
+3.  **Documentación Automática de Aplicaciones:** Permitir que Luis registre cada aplicación con una foto y geolocalización. Esto crea un historial invaluable para la finca, permitiendo correlacionar tratamientos con resultados y optimizar protocolos basándose en datos reales, no solo en la memoria.
