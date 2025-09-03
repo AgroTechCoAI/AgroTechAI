@@ -26,7 +26,8 @@ Actúa como un investigador de sistemas y ecosistemas agrícolas. Tu tarea es ma
 - Objetivo: Entender el ecosistema completo actual de diagnóstico agrícola
 - Enfoque: AS-IS (estado presente, sin nuestro sistema de IA)
 - Región objetivo: [ESPECIFICAR REGIÓN]
-- Arquetipos base: [REFERENCIAR LOS 3-4 ARQUETIPOS DESARROLLADOS PREVIAMENTE]
+- Arquetipos base: Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
+- Consulta información de páginas como https://mintic.gov.co/portal/inicio/Sala-de-prensa/Noticias/276923:Con-AgroTECH-el-MinTIC-potenciara-el-campo-con-Inteligencia-Artificial, https://agroexpo.com/es para ayudar a determinar el estado actual del agro en Colombia.
 
 ## FASE 1: INVESTIGACIÓN DEL ECOSISTEMA ACTUAL
 
