@@ -53,8 +53,9 @@ Actúa como un investigador UX senior especializado en agricultura. Tu tarea es 
 - Objetivo: Entender el proceso actual de diagnóstico de cultivos
 - Enfoque: AS-IS (estado actual, sin tecnología de IA)
 - Región objetivo: [ESPECIFICAR REGIÓN]
-- Arquetipos base: [REFERENCIAR LOS 3-4 ARQUETIPOS DESARROLLADOS PREVIAMENTE]
-- System Map AS-IS: [REFERENCIAR EL ECOSISTEMA ACTUAL MAPEADO]
+- Arquetipos base: Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
+- System Map AS-IS: Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
+- Consulta información de páginas como https://mintic.gov.co/portal/inicio/Sala-de-prensa/Noticias/276923:Con-AgroTECH-el-MinTIC-potenciara-el-campo-con-Inteligencia-Artificial, https://agroexpo.com/es para ayudar a determinar el estado actual del agro en Colombia.
 
 ## FASE 1: INVESTIGACIÓN DE JOURNEYS ACTUALES
 
