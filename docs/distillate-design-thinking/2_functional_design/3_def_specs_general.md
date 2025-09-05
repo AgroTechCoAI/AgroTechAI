@@ -46,21 +46,27 @@ A continuación, te proporciono toda la información necesaria. Debes basar tu r
 
 -----
 
-### **1. ARQUETIPOS DE USUARIO Y JOBS TO BE DONE (JTBD)**
+#### 1. ARQUETIPOS DE USUARIO (Contenido del archivo Markdown de Arquetipos)
 
-Esta información la podras tomar de la base de conocimiento suministrada en los archivos `1_arquetipo_resultado.md` y `1_jtbd_resultado.md` respectivamente.
-
------
-
-### **2. SYSTEM MAP AS-IS**
-
-Esta información la podras tomar de la base de conocimiento suministrada en el archivo `2_systemmaps-as-is_resultado.md`
+Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
 
 -----
 
-### **3. JOURNEY MAP AS-IS**
+#### 2. SYSTEM MAPS AS-IS (Contenido del archivo Markdown de System Maps)
 
-Esta información la podras tomar de la base de conocimiento suministrada en el archivo `3_journeymaps-as-is_resultado.md`
+Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
+
+-----
+
+#### 3. JOURNEY MAPS AS-IS (Contenido del archivo Markdown de Journey Maps)
+
+Toma como referencia el journey maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `3_journeymaps-as-is_resultado.md`
+
+-----
+
+### 4. JOBS TO BE DONE (JTBD)
+
+Toma como referencia los Jobs to be done que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `1_jtbd_resultado.md`
 
 -----
 

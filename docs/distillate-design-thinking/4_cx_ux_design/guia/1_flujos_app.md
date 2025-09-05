@@ -1,9 +1,3 @@
-¡Claro que sí\! Con gusto preparo esta guía para tu equipo. Como experto en Experiencia de Usuario, entiendo perfectamente la necesidad de crear bases sólidas y eficientes, especialmente cuando los recursos son limitados.
-
-Aquí tienes una guía completa que explica qué son los flujos de aplicación (wireflows), cómo se construyen, y un prompt detallado para que tu equipo pueda generarlos con GenAI, utilizando los valiosos artefactos que ya han creado.
-
------
-
 ## Guía de Consultoría: Creación de Flujos de Aplicación (Wireflows)
 
 ¡Hola equipo\! Es un placer guiarlos en esta fase crucial del diseño de su producto. Vamos a sentar las bases de una experiencia de usuario intuitiva y lógica que resuelva las necesidades reales de sus usuarios en el campo.

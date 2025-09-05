@@ -43,38 +43,47 @@ A continuación, te proporciono el corpus completo de conocimiento sobre el prod
 
 -----
 
-#### **1. ARQUETIPOS DE USUARIO**
-*Contenido del archivo `1_arquetipo_resultado.md` va aquí.*
+#### 1. ARQUETIPOS DE USUARIO (Contenido del archivo Markdown de Arquetipos)
+
+Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
 
 -----
 
-#### **2. SYSTEM MAP AS-IS**
-*Contenido del archivo `2_systemmaps-as-is_resultado.md` va aquí.*
+#### 2. SYSTEM MAPS AS-IS (Contenido del archivo Markdown de System Maps)
+
+Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
 
 -----
 
-#### **3. JOURNEY MAP AS-IS**
-*Contenido del archivo `3_journeymaps-as-is_resultado.md` va aquí.*
+#### 3. JOURNEY MAPS AS-IS (Contenido del archivo Markdown de Journey Maps)
+
+Toma como referencia el journey maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `3_journeymaps-as-is_resultado.md`
 
 -----
 
-#### **4. JOBS TO BE DONE (JTBD)**
-*Contenido del archivo `4_jtbd_resultado.md` va aquí.*
+### 4. JOBS TO BE DONE (JTBD)
+
+Toma como referencia los Jobs to be done que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `1_jtbd_resultado.md`
 
 -----
+
 
 #### **5. DEFINICIÓN Y SELECCIÓN DE FUNCIONALIDADES**
-*Contenido del archivo `5_funcionalidades_resultado.md` va aquí.*
+
+Toma como referencia las funcionalidades que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_def_y_select_func_general.md`.
 
 -----
 
 #### **6. DEFINICIÓN DE ESPECIFICACIONES**
-*Contenido del archivo `6_especificaciones_resultado.md` va aquí.*
+
+Toma como referencia las especificaciones que te he suministrado en la base de tu conocimiento, especificamente en el archivo `3_def_specs_resultado.md`
 
 -----
 
 #### **7. ARQUITECTURA DE LA INFORMACIÓN (AI)**
-*Contenido del archivo `canvas_arquitectura_informacion.md` va aquí.*
+
+Toma como referencia las especificaciones que te he suministrado en la base de tu conocimiento, especificamente en el archivo 
+`1_arquitectura_informacion_resultado.md`
 
 -----
 

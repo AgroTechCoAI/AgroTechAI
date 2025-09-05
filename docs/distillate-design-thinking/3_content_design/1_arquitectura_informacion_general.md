@@ -26,138 +26,117 @@ Para su construcción se usaron las siguientes herramientas:
 
 ## Prompt
 ```markdown
-### Experto en Arquitectura de Información para una App de Agro-Tech
+### ROL: Arquitecto de Información y Estratega UX Senior
 
-**ROL Y OBJETIVO:**
+**OBJETIVO PRINCIPAL:**
 
-Actúa como un experto de clase mundial en Arquitectura de Información (AI) y Experiencia de Usuario (UX), con especialización en productos digitales para la industria agrícola. Tu objetivo es analizar de forma exhaustiva todos los documentos de investigación y diseño funcional que te proporcionaré para construir una Arquitectura de Información sólida, intuitiva y centrada en el usuario para una nueva aplicación de agricultura de precisión.
+Actúa como un Arquitecto de Información y Estratega de Experiencia de Usuario (UX) de clase mundial, con especialización en productos complejos de software como servicio (SaaS) para industrias especializadas como la agricultura.
 
-Tu tarea final es organizar todo el contenido y las funcionalidades de la aplicación en una estructura lógica que responda directamente a las necesidades, modelos mentales y "Jobs to be Done" de los usuarios finales (agricultores, mayordomos, agrónomos). Debes priorizar la claridad, la facilidad de búsqueda y la eficiencia.
+Tu misión es analizar la documentación de investigación y diseño funcional que te proporcionaré para sintetizarla en una **Arquitectura de Información (AI)** robusta, intuitiva y centrada en el usuario para una nueva aplicación agrícola basada en IA. El resultado final debe ser un "canvas" claro que sirva como el esqueleto para el diseño de la interfaz y la navegación, garantizando que usuarios con diferentes niveles de habilidad técnica (desde un agricultor hasta un agrónomo) puedan navegar el sistema sin esfuerzo.
 
 **CONTEXTO (INFORMACIÓN DE ENTRADA):**
 
-A continuación, te proporciono toda la información necesaria. Debes internalizarla por completo antes de proceder. Asume que todo lo descrito a continuación es un reflejo fiel de la realidad de los usuarios.
+A continuación, te proporciono el corpus completo de conocimiento sobre el producto, sus usuarios y sus funcionalidades. Debes internalizar cada pieza de información antes de comenzar tu análisis y construcción.
 
 -----
 
-#### **1. ARQUETIPOS DE USUARIO**
-Esta información la podras tomar de la base de conocimiento suministrada en el archivo `1_arquetipo_resultado.md`, ten cuenta que los arquetipos seleccionados son aquellos que se encuentran en la fases No 3 y 4.
+#### 1. ARQUETIPOS DE USUARIO (Contenido del archivo Markdown de Arquetipos)
+
+Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
 
 -----
 
-#### **2. SYSTEM MAPS AS-IS**
-Esta información la podras tomar de la base de conocimiento suministrada en el archivo `2_systemmaps-as-is_resultado.md`
+#### 2. SYSTEM MAPS AS-IS (Contenido del archivo Markdown de System Maps)
+
+Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
 
 -----
 
-#### **3. JOURNEY MAPS AS-IS**
-Esta información la podras tomar de la base de conocimiento suministrada en el archivo `3_journeymaps-as-is_resultado.md`
+#### 3. JOURNEY MAPS AS-IS (Contenido del archivo Markdown de Journey Maps)
+
+Toma como referencia el journey maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `3_journeymaps-as-is_resultado.md`
 
 -----
 
-#### **4. JOBS TO BE DONE (JTBD)**
-Esta información la podras tomar de la base de conocimiento suministrada en el archivo `1_jtbd_resultado.md`
+### 4. JOBS TO BE DONE (JTBD)
+
+Toma como referencia los Jobs to be done que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `1_jtbd_resultado.md`
 
 -----
 
 #### **5. DEFINICIÓN Y SELECCIÓN DE FUNCIONALIDADES**
-Esta información la podras tomar de la base de conocimiento suministrada en el archivo `2_def_y_select_func_resultado.md`
+
+Toma como referencia las funcionalidades que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_def_y_select_func_general.md`.
 
 -----
 
 #### **6. DEFINICIÓN DE ESPECIFICACIONES**
-Esta información la podras tomar de la base de conocimiento suministrada en el archivo `2_def_y_select_func_resultado.md`
+
+Toma como referencia las especificaciones que te he suministrado en la base de tu conocimiento, especificamente en el archivo `3_def_specs_resultado.md`
 
 -----
 
-**INSTRUCCIONES Y TAREAS:**
+**INSTRUCCIONES Y TAREAS (EJECÚTALAS EN ORDEN):**
 
-Ahora que has procesado toda la información, sigue estos pasos de forma rigurosa y estructurada.
+**Paso 1: Análisis y Síntesis Holística**
+Primero, lee y comprende la interconexión entre todos los documentos. Identifica los dolores del usuario (`Journey Map`), sus metas fundamentales (`JTBD`) y cómo las funcionalidades propuestas (`Funcionalidades`) pretenden resolverlos. Presta especial atención al lenguaje y la terminología que usan los `Arquetipos`.
 
-**Paso 1: Inventario y Abstracción de Contenido y Funcionalidades**
+**Paso 2: Extracción de Entidades y Tareas Clave**
+A partir de tu análisis, extrae todas las "entidades" (sustantivos conceptuales como: *Cultivo, Lote, Análisis, Diagnóstico, Plaga, Recomendación, Finca, Historial*) y las "tareas clave" (verbos o acciones que el usuario realiza como: *Analizar, Comparar, Registrar, Compartir, Notificar, Configurar*).
 
-Primero, revisa los documentos de "Funcionalidades" y "Especificaciones". Crea una lista plana (un inventario) de cada pieza de contenido individual y cada función que debe ser organizada. Por ejemplo:
-* Función: Tomar/subir foto del cultivo.
-* Contenido: Diagnóstico de plaga (resultado).
-* Contenido: Sugerencia de tratamiento (resultado).
-* Contenido: Nivel de confianza del diagnóstico AI.
-* Función: Ver historial de diagnósticos por lote.
-* Contenido: Reporte de salud del cultivo (PDF).
-* Función: Contactar a un agrónomo.
-* Contenido: Perfil del usuario/finca.
-* etc.
+**Paso 3: Simulación de Agrupación por Modelo Mental (Card Sorting Sintético)**
+Basándote en las prioridades, lenguaje y contexto de cada `Arquetipo`, agrupa las entidades y tareas del paso anterior en categorías lógicas. Piensa:
+* ¿Un "Mayordomo de Finca" agruparía las cosas por "Tareas del Día" o por "Lotes a mi Cargo"?
+* ¿Un "Ingeniero Agrónomo" preferiría ver todo agrupado por "Tipo de Análisis" o "Historial de Cliente"?
+* El objetivo es encontrar una estructura que funcione para la mayoría, priorizando al arquetipo principal. Nombra cada grupo con una etiqueta preliminar.
 
-**Paso 2: Simulación de "Card Sorting" Sintético**
+**Paso 4: Diseño de la Jerarquía y Estructura Navegacional**
+Organiza los grupos del paso anterior en una jerarquía lógica. Define qué elementos pertenecen a la navegación principal (Nivel 1), qué elementos son subsecciones de estos (Nivel 2), y así sucesivamente. La estructura debe ser lo más plana posible para evitar que los usuarios se pierdan en menús profundos.
 
-Este es el paso más crítico. Adoptando la mentalidad, el lenguaje y las prioridades de los **Arquetipos** que te he proporcionado, agrupa los elementos del inventario del Paso 1 en categorías lógicas.
+**Paso 5: Creación del Canvas de Arquitectura de Información**
+Finalmente, presenta toda la estructura en un formato de "Canvas" claro y detallado usando Markdown. Para cada elemento de la arquitectura, proporciona:
+* **Nivel Jerárquico:** (ej: 1.0, 1.1, 2.0).
+* **Etiqueta Sugerida:** Un nombre claro, conciso y en español, utilizando el lenguaje del usuario. ¡Evita la jerga técnica!
+* **Descripción / Contenido:** Una breve explicación de qué información o funcionalidades contiene esta sección.
+* **Arquetipo Principal:** Indica qué arquetipo se beneficiaría más de esta sección.
+* **JTBD Asociado:** Menciona el/los JTBD principal(es) que esta sección ayuda a resolver.
 
-Para cada grupo que crees, debes:
-1.  **Darle un nombre (etiqueta):** Usa un lenguaje claro, simple y directo que resuene con los usuarios. Evita la jerga técnica.
-2.  **Listar los elementos que contiene:** Enumera qué funcionalidades y piezas de contenido pertenecen a este grupo.
-3.  **Justificar la agrupación:** Explica *por qué* un arquetipo específico agruparía estas cosas juntas. Basa tu justificación directamente en sus **JTBD**, dolores y motivaciones. (Ej: "El Mayordomo agruparía 'Historial de Lotes' y 'Reportes Anteriores' bajo una sección llamada 'Mis Registros' porque su JTBD es 'Cuando planifico la siembra, quiero revisar el rendimiento pasado para poder optimizar la inversión'").
+**FORMATO DE SALIDA (EL CANVAS):**
 
-Realiza este ejercicio para todos los elementos del inventario.
-
-**Paso 3: Creación de la Arquitectura de Información (Sitemap Jerárquico)**
-
-Usando los grupos que creaste en el Paso 2, organiza todo en un mapa del sitio jerárquico y coherente. Este mapa representará la navegación principal y la estructura de la aplicación.
-
-* Define las 4 o 5 secciones principales que conformarían el menú de navegación principal (Ej: Inicio, Diagnosticar, Mis Cultivos, Ayuda).
-* Debajo de cada sección principal, anida las sub-secciones, funcionalidades y páginas de contenido correspondientes.
-* Utiliza una lista anidada (markdown) para representar la jerarquía visualmente.
-* Para cada elemento del sitemap, añade un breve comentario explicando su propósito y el arquetipo principal al que sirve.
-
-**FORMATO DE SALIDA:**
-
-Presenta tu respuesta final utilizando la siguiente estructura de Markdown. No incluyas explicaciones previas, solo el resultado final estructurado como se pide a continuación.
+Utiliza el siguiente formato para tu respuesta final.
 
 -----
 
-## **Arquitectura de Información Propuesta**
+### **Canvas: Arquitectura de Información para [Nombre del Producto]**
 
-### **1. Grupos de Contenido Clave (Resultado del Card Sorting Sintético)**
+#### **1.0 [Etiqueta Sugerida para Navegación Principal 1]**
+* **Descripción:** [Ej: "Dashboard principal que muestra el estado general de todos los cultivos y alertas importantes."]
+* **Arquetipo Principal:** [Ej: Mayordomo de Finca]
+* **JTBD Asociado:** [Ej: "Cuando reviso la finca por la mañana, quiero tener una vista rápida del estado de salud general, para poder priorizar mis tareas del día."]
+* **1.1 [Etiqueta Sugerida para Sub-sección 1]**
+    * **Descripción:** [Contenido de la sub-sección]
+    * **Arquetipo Principal:** [...]
+    * **JTBD Asociado:** [...]
+* **1.2 [Etiqueta Sugerida para Sub-sección 2]**
+    * **Descripción:** [...]
+    * **Arquetipo Principal:** [...]
+    * **JTBD Asociado:** [...]
 
-#### **Grupo A: [Nombre del Grupo 1]**
-* **Justificación:** [Explicación basada en los arquetipos y JTBD]
-* **Contenido:**
-    * [Elemento 1]
-    * [Elemento 2]
-    * ...
+#### **2.0 [Etiqueta Sugerida para Navegación Principal 2]**
+* **Descripción:** [Ej: "Sección para realizar nuevos análisis a partir de imágenes y ver los resultados detallados de la IA."]
+* **Arquetipo Principal:** [Ej: Todos]
+* **JTBD Asociado:** [Ej: "Cuando encuentro una hoja con aspecto enfermo, quiero obtener un diagnóstico rápido y fiable, para poder tomar acciones antes de que se propague."]
+* **2.1 [Etiqueta Sugerida para Sub-sección 1]**
+    * **Descripción:** [...]
+    * **Arquetipo Principal:** [...]
+    * **JTBD Asociado:** [...]
 
-#### **Grupo B: [Nombre del Grupo 2]**
-* **Justificación:** [Explicación basada en los arquetipos y JTBD]
-* **Contenido:**
-    * [Elemento 3]
-    * [Elemento 4]
-    * ...
+#### **3.0 [Etiqueta Sugerida para Navegación Principal 3]**
+* **Descripción:** [Ej: "Repositorio histórico de todos los análisis realizados, con filtros por fecha, cultivo y diagnóstico."]
+* **Arquetipo Principal:** [Ej: Ingeniero Agrónomo]
+* **JTBD Asociado:** [Ej: "Cuando planifico la estrategia para la próxima cosecha, quiero analizar tendencias y patrones de enfermedades pasadas, para poder tomar medidas preventivas."]
 
-*(Repetir para todos los grupos identificados)*
 
------
-
-### **2. Mapa del Sitio Jerárquico (Sitemap)**
-
-* **1.0 Inicio / Dashboard** *(Propósito: Vista rápida del estado general de los cultivos, alertas y accesos directos. Primario para Mayordomo y Agrónomo)*
-    * 1.1 Resumen de Alertas Recientes
-    * 1.2 Estado General de los Lotes
-    * 1.3 Acceso Rápido a "Nuevo Diagnóstico"
-
-* **2.0 Diagnosticar** *(Propósito: El core de la app, donde el usuario inicia el análisis. Primario para todos los arquetipos)*
-    * 2.1 Tomar o Subir Fotografía del Cultivo
-    * 2.2 Pantalla de Análisis en Progreso
-    * 2.3 Página de Resultado del Diagnóstico
-        * 2.3.1 Identificación del Problema (Plaga, enfermedad, etc.)
-        * 2.3.2 Nivel de Confianza de la IA
-        * 2.3.3 Sugerencias y Plan de Acción
-        * 2.3.4 Opción de Guardar o Descartar Reporte
-
-* **3.0 Mis Cultivos / Finca** *(Propósito: Centro de gestión de la información histórica y por lotes. Primario para Mayordomo y Agrónomo)*
-    * 3.1 Vista de Lotes/Sectores
-        * 3.1.1 Historial de Diagnósticos del Lote
-        * 3.1.2 Reportes Históricos (PDFs)
-        * 3.1.3 Notas y Observaciones del Lote
-    * 3.2 Vista por Tipo de Cultivo
-
-*(Continúa estructurando el resto de las secciones como "Recursos/Ayuda", "Perfil/Configuración", etc., basándote en los grupos del card sorting)*
+**Continúa con todas las secciones principales y sub-secciones necesarias para cubrir todas las funcionalidades y contenidos**
 
 ```
