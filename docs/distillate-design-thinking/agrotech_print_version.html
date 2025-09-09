@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroTechAI - Design Thinking Process - Presentación Completa</title>
+    <style>
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+
+            .page-break-avoid {
+                page-break-inside: avoid;
+            }
+
+            h1,
+            h2,
+            h3 {
+                page-break-after: avoid;
+            }
+
+            .section {
+                page-break-before: auto;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+            font-size: 12pt;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20mm;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #28a745;
+        }
+
+        .header h1 {
+            font-size: 28pt;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 14pt;
+            color: #666;
+            font-style: italic;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 30px 0;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        .toc h2 {
+            color: #28a745;
+            margin-bottom: 15px;
+            font-size: 16pt;
+        }
+
+        .toc ol {
+            padding-left: 20px;
+        }
+
+        .toc li {
+            margin: 8px 0;
+            font-size: 12pt;
+        }
+
+        .section {
+            margin: 40px 0;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 20pt;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .section h3 {
+            color: #34495e;
+            font-size: 16pt;
+            margin: 25px 0 12px 0;
+            font-weight: bold;
+        }
+
+        .section h4 {
+            color: #495057;
+            font-size: 14pt;
+            margin: 20px 0 8px 0;
+            font-weight: bold;
+        }
+
+        .section p {
+            margin: 10px 0;
+            text-align: justify;
+        }
+
+        .section ul,
+        .section ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .section li {
+            margin: 8px 0;
+        }
+
+        .highlight-box {
+            background: #e8f5e8;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .highlight-box p {
+            margin: 8px 0;
+        }
+
+        .methodology-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        .methodology-section h4 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .arquetype-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .arquetype-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            page-break-inside: avoid;
+        }
+
+        .arquetype-card h4 {
+            color: #28a745;
+            margin-bottom: 8px;
+            font-size: 13pt;
+        }
+
+        .arquetype-card p {
+            font-size: 11pt;
+            margin: 5px 0;
+        }
+
+        .timeline-item {
+            border-left: 3px solid #28a745;
+            padding-left: 20px;
+            margin: 20px 0;
+            position: relative;
+            page-break-inside: avoid;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: #28a745;
+            border-radius: 50%;
+        }
+
+        .phase-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 10pt;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .stats-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .stat-number {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 10pt;
+            color: #666;
+        }
+
+        .prototype-section {
+            text-align: center;
+            margin: 30px 0;
+            page-break-inside: avoid;
+        }
+
+        .prototype-placeholder {
+            width: 100%;
+            height: 400px;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .prototype-placeholder p {
+            color: #666;
+            font-size: 14pt;
+            text-align: center;
+        }
+
+        .reference-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .reference-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .reference-box a {
+            color: #495057;
+            word-break: break-all;
+        }
+
+        .conclusion-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #666;
+            font-size: 10pt;
+        }
+
+        .prototype-image {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            margin: 20px auto;
+            display: block;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 15mm;
+                font-size: 11pt;
+            }
+
+            .page-break {
+                page-break-after: always;
+                page-break-inside: avoid;
+                margin: 0;
+                padding: 25mm;
+                width: 100%;
+                min-height: 297mm;
+                max-height: 297mm;
+                box-sizing: border-box;
+                background: white !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+
+            .page-break:last-child {
+                page-break-after: auto;
+            }
+
+            .page-break:first-child {
+                page-break-after: auto;
+                min-height: calc(297mm - 60mm);
+            }
+
+            .header h1 {
+                font-size: 24pt;
+            }
+
+            .section h2 {
+                font-size: 18pt;
+            }
+
+            .section h3 {
+                font-size: 14pt;
+            }
+
+            .section h4 {
+                font-size: 12pt;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .arquetype-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🌱 AgroTechAI</h1>
+        <p>Documentación Completa del Proceso de Design Thinking</p>
+        <p>Inteligencia Artificial para Diagnóstico de Cultivos</p>
+    </div>
+
+    <div class="section page-break-avoid">
+        <div class="toc">
+            <h2>📋 Tabla de Contenidos</h2>
+            <ol>
+                <li>Introducción General del Proyecto</li>
+                <li>FASE 1: RESEARCH (Investigación)
+                    <ol>
+                        <li>Construcción de arquetipos</li>
+                        <li>Mapas del sistema actual (as-is)</li>
+                        <li>Mapas de viaje del usuario (journey maps)</li>
+                    </ol>
+                </li>
+                <li>FASE 2: FUNCTIONAL DESIGN (Diseño Funcional)
+                    <ol>
+                        <li>Jobs to be Done</li>
+                        <li>Definición y selección de funcionalidades</li>
+                        <li>Definición de especificaciones</li>
+                    </ol>
+                </li>
+                <li>FASE 3: CONTENT DESIGN (Diseño de Contenido)
+                    <ol>
+                        <li>Arquitectura de la información</li>
+                    </ol>
+                </li>
+                <li>FASE 4: CX/UX DESIGN (Experiencia del Usuario)
+                    <ol>
+                        <li>Wireframing</li>
+                    </ol>
+                </li>
+                <li>FASE 5: UI DESIGN (Interfaz de Usuario)
+                    <ol>
+                        <li>Prototipos</li>
+                    </ol>
+                </li>
+            </ol>
+        </div>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/">https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/</a>
+            </p>
+        </div>
+
+
+        <h3>Integrantes</h3>
+        <p>El trabajo fue realizado por:</p>
+        <ul>
+            <li>Santiago Andres Cardona Julio</li>
+            <li>Edward Alejandro Rayo Cortés</li>
+        </ul>
+
+    </div>
+
+    <div class="section page-break">
+        <h2>1. Introducción General del Proyecto</h2>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/README.md">README.md</a>
+            </p>
+        </div>
+
+        <h3>¿Qué es AgroTechAI?</h3>
+        <div class="highlight-box">
+            <p><strong>Este proyecto es como hacer los planos de una casa antes de construirla.</strong> Pero en vez de
+                una casa, estamos haciendo los planos de una aplicación que ayuda a los agricultores a cuidar mejor sus
+                cultivos.</p>
+        </div>
+
+        <p>El objetivo del proyecto es que, a partir de una simple imagen, la app pueda diagnosticar la salud de los
+            cultivos y ofrecer sugerencias para su mejoramiento. El desarrollo prioriza una interfaz amigable para todo
+            tipo de usuario (agricultores, agrónomos, etc.) y está diseñada para operar de forma offline, garantizando
+            su uso en el campo.</p>
+
+        <h3>¿Para quién es esta app?</h3>
+        <p>Nuestra app está pensada para 4 tipos de personas:</p>
+
+        <div class="arquetype-grid">
+            <div class="arquetype-card">
+                <h4>Laura - Ingeniera Agrónoma</h4>
+                <p>Una ingeniera agrónoma consultora que visita muchas fincas y necesita diagnósticos rápidos y precisos
+                    para optimizar su tiempo y ofrecer recomendaciones inmediatas.</p>
+            </div>
+            <div class="arquetype-card">
+                <h4>Luis - Administrador/Mayordomo</h4>
+                <p>Un administrador que cuida una finca grande, responsable de operaciones diarias y que necesita
+                    herramientas simples pero efectivas para tomar decisiones críticas.</p>
+            </div>
+            <div class="arquetype-card">
+                <h4>Diana - Productora Independiente</h4>
+                <p>Una productora que tiene su propia finca mediana y busca reducir costos y tiempo de respuesta sin
+                    depender constantemente de consultores externos.</p>
+            </div>
+            <div class="arquetype-card">
+                <h4>Jhonatan - Técnico de Cooperativa</h4>
+                <p>Un técnico que trabaja en una cooperativa, asiste a múltiples pequeños productores y requiere
+                    herramientas que funcionen offline en zonas remotas.</p>
+            </div>
+        </div>
+
+        <h3>¿Qué hace la app?</h3>
+        <p>La app ayuda a estas personas a:</p>
+        <ul>
+            <li>Tomar fotos de las plantas enfermas</li>
+            <li>Saber qué enfermedad tienen</li>
+            <li>Decidir qué medicina darles</li>
+            <li>Hacer reportes para sus jefes o clientes</li>
+            <li>Trabajar aunque no tengan internet</li>
+        </ul>
+    </div>
+
+    <div class="section page-break">
+        <h2>2. FASE 1: RESEARCH (Investigación)</h2>
+
+        <h3>2.1 Construcción de arquetipos</h3>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido general completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/1_research/1_arquetipo_general.md">1_arquetipo_general.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>📋 Metodología</h4>
+            <p><strong>Contexto:</strong> Esta es una propuesta para la creación de una aplicación móvil que ofrezca una
+                solución de inteligencia artificial al sector agrícola.</p>
+            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude</p>
+
+            <p><strong>Proceso metodológico:</strong></p>
+            <ol>
+                <li><strong>FASE 1: INVESTIGACIÓN DE ROLES AGRÍCOLAS</strong> - Investigación y análisis de todos los
+                    posibles roles/usuarios que podrían beneficiarse de un sistema de análisis de cultivos con IA</li>
+                <li><strong>FASE 2: ANÁLISIS Y SELECCIÓN</strong> - Análisis de priorización considerando 5 criterios
+                    específicos (potencial de adopción, frecuencia de uso, impacto en resultados, capacidad de pago,
+                    influencia en otros)</li>
+                <li><strong>FASE 3: DESARROLLO DETALLADO DE ARQUETIPOS</strong> - Desarrollo de perfil completo para
+                    cada arquetipo seleccionado</li>
+            </ol>
+        </div>
+
+    </div>
+
+    <div class="section page-break">
+        <h2>2. FASE 1: RESEARCH (Investigación)</h2>
+        <h4>Resultado - Arquetipos principales identificados:</h4>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El resultado se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/1_research/1_arquetipo_resultado.md">1_arquetipo_resultado.md</a>
+            </p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">ARQUETIPO 1</div>
+            <h4>Laura Restrepo - Ingeniera Agrónoma Consultora</h4>
+            <ul>
+                <li>Atiende múltiples fincas</li>
+                <li>Necesita diagnósticos rápidos y precisos</li>
+                <li>Alta capacidad tecnológica</li>
+                <li>Influencia en decisiones de múltiples productores</li>
+            </ul>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">ARQUETIPO 2</div>
+            <h4>Luis Cardona - Administrador/Mayordomo de Finca</h4>
+            <ul>
+                <li>Responsable operativo de 50+ hectáreas</li>
+                <li>Toma decisiones diarias críticas</li>
+                <li>Experiencia práctica pero limitada tecnológicamente</li>
+                <li>Necesita herramientas simples y efectivas</li>
+            </ul>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">ARQUETIPO 3</div>
+            <h4>Diana Mejía - Productora Independiente</h4>
+            <ul>
+                <li>Propietaria de finca mediana (20-50 ha)</li>
+                <li>Depende de consultores externos</li>
+                <li>Busca reducir costos y tiempo de respuesta</li>
+                <li>Necesita confianza en las recomendaciones</li>
+            </ul>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">ARQUETIPO 4</div>
+            <h4>Jhonatan Vargas - Técnico de Cooperativa</h4>
+            <ul>
+                <li>Asiste a múltiples pequeños productores</li>
+                <li>Limitaciones de recursos y tiempo</li>
+                <li>Requiere herramientas que funcionen offline</li>
+                <li>Influencia en adopción comunitaria</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>2. FASE 1: RESEARCH (Investigación)</h2>
+
+        <h3>2.2 Mapas del sistema actual (as-is)</h3>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido general completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/1_research/2_systemmaps-as-is_general.md">2_systemmaps-as-is_general.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>📋 Metodología</h4>
+            <p><strong>Contexto:</strong> Mapeo completo del ecosistema ACTUAL donde los usuarios diagnostican y tratan
+                problemas en cultivos, SIN tecnología de IA avanzada.</p>
+            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude</p>
+            <p><strong>Proceso metodológico:</strong></p>
+            <ol>
+                <li><strong>FASE 1: INVESTIGACIÓN DEL ECOSISTEMA ACTUAL</strong> - Mapeo de actores, herramientas y
+                    flujos de información</li>
+                <li><strong>FASE 2: MAPEO DETALLADO DEL SISTEMA AS-IS</strong> - Análisis de relaciones y dependencias
+                </li>
+                <li><strong>FASE 3: ANÁLISIS PROFUNDO Y VALIDACIÓN</strong> - Identificación de gaps y oportunidades
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>2. FASE 1: RESEARCH (Investigación)</h2>
+
+        <h4>Resultado - Hallazgos principales del ecosistema actual:</h4>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El resultado se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/1_research/2_systemmaps-as-is_resultado.md">2_systemmaps-as-is_resultado.md</a>
+            </p>
+        </div>
+
+        <p><strong>ACTORES CENTRALES:</strong></p>
+        <ul>
+            <li><strong>Agrónomo Asesor Independiente:</strong> ~2,500 profesionales con alto poder de decisión</li>
+            <li><strong>Administrador/Mayordomo:</strong> ~8,000 responsables operativos en fincas medianas-grandes</li>
+            <li><strong>Productor Independiente:</strong> Diferentes escalas con varying grado de dependencia externa
+            </li>
+            <li><strong>Técnico de Cooperativa:</strong> Recursos limitados pero alta influencia comunitaria</li>
+        </ul>
+
+        <p><strong>PAIN POINTS IDENTIFICADOS:</strong></p>
+        <ul>
+            <li>Dependencia excesiva de consultas presenciales</li>
+            <li>Tiempos de respuesta lentos (2-7 días típicos)</li>
+            <li>Costos elevados de diagnóstico ($200K-$500K COP por visita)</li>
+            <li>Limitaciones de conectividad en campo</li>
+            <li>Fragmentación del conocimiento</li>
+        </ul>
+
+        <div class="stats-section">
+            <h4>Métricas del sistema actual:</h4>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">2-7</div>
+                    <div class="stat-label">Días promedio de respuesta</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">$200-500K</div>
+                    <div class="stat-label">COP por visita técnica</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">25-30%</div>
+                    <div class="stat-label">Productores con acceso regular</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>2. FASE 1: RESEARCH (Investigación)</h2>
+
+        <h3>2.3 Mapas de viaje del usuario (journey maps)</h3>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido general completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/1_research/3_journeymaps-as-is_general.md">3_journeymaps-as-is_general.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>📋 Metodología</h4>
+            <p><strong>Contexto:</strong> Visualización completa del proceso que ACTUALMENTE sigue un usuario desde que
+                identifica un problema en el cultivo hasta que evalúa los resultados SIN nuestro sistema de IA.</p>
+            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude</p>
+            <p><strong>Proceso metodológico:</strong></p>
+            <ol>
+                <li><strong>FASE 1: INVESTIGACIÓN DE JOURNEYS ACTUALES</strong> - Mapeo de métodos actuales de
+                    diagnóstico</li>
+                <li><strong>FASE 2: PRIORIZACIÓN DE JOURNEYS AS-IS</strong> - Evaluación de frecuencia y nivel de
+                    frustración</li>
+                <li><strong>FASE 3: DESARROLLO DETALLADO</strong> - Journey maps específicos por arquetipo</li>
+            </ol>
+        </div>
+
+        <p><strong>8 Fases del Journey AS-IS:</strong></p>
+        <ol>
+            <li>Detección del problema</li>
+            <li>Investigación y diagnóstico inicial</li>
+            <li>Búsqueda de segunda opinión</li>
+            <li>Toma de decisión</li>
+            <li>Adquisición de tratamiento</li>
+            <li>Aplicación del tratamiento</li>
+            <li>Monitoreo de resultados</li>
+            <li>Evaluación final y aprendizaje</li>
+        </ol>
+
+    </div>
+
+    <div class="section page-break">
+        <h2>2. FASE 1: RESEARCH (Investigación)</h2>
+        <h4>Resultado - Journey Maps representativos:</h4>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El resultado se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/1_research/3_journeymaps-as-is_resultado.md">3_journeymaps-as-is_resultado.md</a>
+            </p>
+        </div>
+
+        <div class="highlight-box">
+            <p><strong>Journey Map representativo - Diana Mejía (Productora Independiente):</strong></p>
+            <p><strong>Situación disparadora:</strong> Durante una revisión de calidad pre-cosecha, Diana detecta
+                manchas negras sospechosas en varios frutos de aguacate, poniendo en riesgo un contrato de exportación.
+            </p>
+            <p><strong>Tiempo total del proceso actual:</strong> 4 a 8 días desde detección hasta aplicación del
+                tratamiento</p>
+            <p><strong>Costos principales:</strong> $200,000 - $500,000 COP por visita técnica + pérdidas del 15-30% por
+                retraso</p>
+        </div>
+
+        <div class="stats-section">
+            <h4>Análisis del Journey AS-IS:</h4>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">4-8</div>
+                    <div class="stat-label">Días hasta tratamiento</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">3-5</div>
+                    <div class="stat-label">Semanas proceso completo</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">15-30%</div>
+                    <div class="stat-label">Pérdidas por retraso</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>3. FASE 2: FUNCTIONAL DESIGN (Diseño Funcional)</h2>
+
+        <h3>3.1 Jobs to be Done (JTBD)</h3>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido general completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/2_functional_design/1_jtbd_general.md">1_jtbd_general.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>📋 Metodología</h4>
+            <p><strong>Contexto:</strong> Descubrir las verdaderas necesidades de los usuarios a través de la
+                metodología "Jobs to be Done" (JTBD).</p>
+            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude</p>
+            <p><strong>Estructura JTBD:</strong> "Cuando [situación], quiero [motivación], para poder [resultado
+                esperado]"</p>
+            <p><strong>Proceso metodológico:</strong></p>
+            <ol>
+                <li><strong>PASO 1: SIMULACIÓN DE ENTREVISTA INTERNA</strong> - Adoptar personalidad de cada arquetipo
+                </li>
+                <li><strong>PASO 2: EXTRACCIÓN Y FORMATEO</strong> - Identificar patrones y extraer JTBD principales
+                </li>
+            </ol>
+        </div>
+
+    </div>
+
+    <div class="section page-break">
+        <h2>3. FASE 2: FUNCTIONAL DESIGN (Diseño Funcional)</h2>
+        <h4>Resultado - JTBD principales por arquetipo:</h4>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El resultado se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/2_functional_design/1_jtbd_resultado.md">1_jtbd_resultado.md</a>
+            </p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">LAURA</div>
+            <h4>Agrónoma Consultora</h4>
+            <p><em>"Cuando detecto un síntoma en campo durante una visita programada, quiero obtener un diagnóstico
+                    preliminar confiable en tiempo real, para poder optimizar mi tiempo y ofrecer recomendaciones
+                    inmediatas al productor."</em></p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">LUIS</div>
+            <h4>Administrador/Mayordomo</h4>
+            <p><em>"Cuando encuentro algo sospechoso durante mis recorridos diarios, quiero saber inmediatamente si es
+                    crítico o puede esperar, para poder tomar acciones preventivas antes de que se propague."</em></p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">DIANA</div>
+            <h4>Productora Independiente</h4>
+            <p><em>"Cuando detecto un problema en mi cultivo, quiero obtener un diagnóstico confiable sin depender de la
+                    disponibilidad de un experto, para poder actuar rápidamente y proteger mi inversión."</em></p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">JHONATAN</div>
+            <h4>Técnico de Cooperativa</h4>
+            <p><em>"Cuando visito productores en zonas remotas, quiero poder diagnosticar problemas sin necesidad de
+                    conectividad, para poder brindar asistencia técnica inmediata y confiable."</em></p>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>3. FASE 2: FUNCTIONAL DESIGN (Diseño Funcional)</h2>
+
+        <h3>3.2 Definición y selección de funcionalidades</h3>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido general completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/2_functional_design/2_def_y_select_func_general.md">2_def_y_select_func_general.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>📋 Metodología</h4>
+            <p><strong>Contexto:</strong> Convertir los JTBD en funcionalidades específicas del producto, priorizando
+                para crear un MVP efectivo.</p>
+            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude</p>
+            <p><strong>Proceso metodológico:</strong></p>
+            <ol>
+                <li><strong>PASO 1: SESIÓN DE IDEACIÓN "HOW MIGHT WE"</strong> - Lluvia de ideas para cada JTBD</li>
+                <li><strong>PASO 2: DEFINICIÓN Y ESTRUCTURACIÓN</strong> - Convertir ideas en funcionalidades
+                    estructuradas</li>
+                <li><strong>PASO 3: PRIORIZACIÓN ESTRATÉGICA</strong> - Clasificar en Must Have, Should Have, Could Have
+                </li>
+            </ol>
+        </div>
+
+    </div>
+
+    <div class="section page-break">
+        <h2>3. FASE 2: FUNCTIONAL DESIGN (Diseño Funcional)</h2>
+        <h4>Resultado - Funcionalidades priorizadas:</h4>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El resultado se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/2_functional_design/2_def_y_select_func_resultado.md">2_def_y_select_func_resultado.md</a>
+            </p>
+        </div>
+
+        <div class="stats-section">
+            <h4>Funcionalidades MUST HAVE (MVP):</h4>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Funcionalidades Core</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">30s</div>
+                    <div class="stat-label">Tiempo de Diagnóstico</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Funcionalidad Offline</div>
+                </div>
+            </div>
+        </div>
+
+        <ol>
+            <li><strong>Diagnóstico por Imagen (DIAG-001)</strong> - Análisis de IA de fotografías de cultivos,
+                identificación de enfermedades, plagas y deficiencias, nivel de confianza del diagnóstico</li>
+            <li><strong>Semáforo por Lote (TABLERO-001)</strong> - Vista general del estado de todos los lotes, código
+                de colores: Rojo (crítico), Amarillo (atención), Verde (normal)</li>
+            <li><strong>Recomendaciones de Tratamiento (RECO-001)</strong> - Sugerencias específicas basadas en
+                diagnóstico, dosis, productos, timing de aplicación</li>
+            <li><strong>Modo Offline (OFFLINE-001)</strong> - Funcionalidad básica sin conectividad, sincronización
+                automática al recuperar señal</li>
+            <li><strong>Historial y Trazabilidad (HIST-001)</strong> - Registro de todos los diagnósticos y
+                tratamientos, seguimiento de evolución</li>
+        </ol>
+    </div>
+
+    <div class="section page-break">
+        <h2>3. FASE 2: FUNCTIONAL DESIGN (Diseño Funcional)</h2>
+
+        <h3>3.3 Definición de especificaciones</h3>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido general completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/2_functional_design/3_def_specs_general.md">3_def_specs_general.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>📋 Metodología</h4>
+            <p><strong>Contexto:</strong> Crear especificaciones funcionales detalladas para la funcionalidad más
+                importante: "Diagnóstico por Imagen".</p>
+            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude</p>
+            <p><strong>Proceso metodológico:</strong></p>
+            <ol>
+                <li><strong>FASE 1: CREACIÓN ASISTIDA DEL BORRADOR</strong> - Especificación funcional detallada</li>
+                <li><strong>FASE 2: EVALUACIÓN SINTÉTICA</strong> - Probar especificación desde perspectiva de usuarios
+                </li>
+            </ol>
+        </div>
+
+    </div>
+
+    <div class="section page-break">
+        <h2>3. FASE 2: FUNCTIONAL DESIGN (Diseño Funcional)</h2>
+        <h4>Resultado - Especificación detallada:</h4>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El resultado se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/2_functional_design/3_def_specs_resultado.md">3_def_specs_resultado.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>Especificación detallada de DIAG-001: Análisis de cultivo por imagen</h4>
+            <p><strong>ID de Funcionalidad:</strong> DIAG-001</p>
+            <p><strong>Nombre:</strong> Análisis de cultivo por imagen</p>
+            <p><strong>Prioridad:</strong> Must Have (MVP)</p>
+
+            <p><strong>User Story:</strong> Como [Mayordomo/Agrónoma/Productor], quiero tomar una foto de una planta con
+                síntomas y recibir un diagnóstico automatizado, para poder tomar decisiones informadas sobre
+                tratamientos sin esperar a un experto.</p>
+
+            <p><strong>Criterios de Aceptación:</strong></p>
+            <ul>
+                <li>Diagnóstico completado en menos de 30 segundos con conectividad</li>
+                <li>Funcionalidad básica disponible offline</li>
+                <li>Nivel de confianza mínimo del 70% para mostrar resultado</li>
+                <li>Soporte para imágenes en condiciones de campo (luz variable)</li>
+                <li>Integración con base de datos local de tratamientos</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>4. FASE 3: CONTENT DESIGN (Diseño de Contenido)</h2>
+
+        <h3>4.1 Arquitectura de la información</h3>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido general completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/3_content_design/1_arquitectura_informacion_general.md">1_arquitectura_informacion_general.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>📋 Metodología</h4>
+            <p><strong>Contexto:</strong> Organizar las funcionalidades para que formen una herramienta coherente y no
+                un laberinto confuso.</p>
+            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude</p>
+            <p><strong>Proceso metodológico:</strong></p>
+            <ol>
+                <li><strong>PASO 1: ANÁLISIS Y SÍNTESIS HOLÍSTICA</strong> - Comprensión de interconexión entre
+                    documentos</li>
+                <li><strong>PASO 2: EXTRACCIÓN DE ENTIDADES Y TAREAS CLAVE</strong> - Identificar sustantivos y verbos
+                    conceptuales</li>
+                <li><strong>PASO 3: SIMULACIÓN DE AGRUPACIÓN</strong> - Card sorting sintético por modelo mental</li>
+            </ol>
+        </div>
+
+        <div class="highlight-box">
+            <p><strong>Pregunta crítica:</strong> ¿Cómo organizamos las funcionalidades para que formen una herramienta
+                coherente y no un laberinto confuso?</p>
+        </div>
+
+    </div>
+
+    <div class="section page-break">
+        <h2>4. FASE 3: CONTENT DESIGN (Diseño de Contenido)</h2>
+        <h4>Resultado - Estructura Principal:</h4>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El resultado se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/3_content_design/1_arquitectura_informacion_resultado.md">1_arquitectura_informacion_resultado.md</a>
+            </p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">1.0</div>
+            <h4>Dashboard / Semáforo por Lote</h4>
+            <p>Vista principal con estado de todos los lotes, código de colores por riesgo, acceso rápido a "Nuevo
+                Análisis"</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">2.0</div>
+            <h4>Diagnóstico & Análisis</h4>
+            <p>Cámara de análisis, pre-análisis, resultados del diagnóstico, recomendaciones de tratamiento</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">3.0</div>
+            <h4>Historial & Seguimiento</h4>
+            <p>Línea de tiempo, comparador de análisis, exportación de reportes</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">4.0</div>
+            <h4>Plan de Trabajo</h4>
+            <p>Tareas programadas, recordatorios, calendario de actividades</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">5.0</div>
+            <h4>Configuración</h4>
+            <p>Reglas y umbrales, plantillas de reporte, preferencias offline</p>
+        </div>
+
+        <h4>Principios de Diseño Transversales:</h4>
+        <ul>
+            <li><strong>Evidencia primero:</strong> Toda acción crítica deja huella (foto/fecha/usuario/ubicación)</li>
+            <li><strong>Offline by design:</strong> Funcionalidad core sin conectividad, sincronización diferida</li>
+            <li><strong>2-3 toques máximo:</strong> Jerarquía plana para evitar menús profundos</li>
+            <li><strong>Lenguaje del usuario:</strong> Etiquetas simples, evitando jerga técnica</li>
+        </ul>
+    </div>
+
+    <div class="section page-break">
+        <h2>5. FASE 4: CX/UX DESIGN (Experiencia del Usuario)</h2>
+
+        <h3>5.1 Wireframing</h3>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido general completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/4_cx_ux_design/1_wireframing_general.md">1_wireframing_general.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>📋 Metodología</h4>
+            <p><strong>Contexto:</strong> Crear wireframes del flujo más importante: "Diagnóstico por Imagen" - El
+                camino de mayor valor y frecuencia en campo.</p>
+            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude</p>
+            <p><strong>Proceso metodológico:</strong></p>
+            <ol>
+                <li><strong>PASO 1: SÍNTESIS ESTRATÉGICA</strong> - Comprensión holística del producto</li>
+                <li><strong>PASO 2: PRIORIZACIÓN DE FLUJOS</strong> - Selección del flujo más crítico</li>
+                <li><strong>PASO 3: WIREFRAMING DETALLADO</strong> - Diseño pantalla por pantalla</li>
+            </ol>
+        </div>
+
+        <div class="highlight-box">
+            <p><strong>Flujo seleccionado:</strong> "Diagnóstico por Imagen" - El camino de mayor valor y frecuencia en
+                campo.</p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>Canvas de Wireflow: Diagnóstico por Imagen</h4>
+            <p><strong>Arquetipo Principal:</strong> Mayordomo de Finca</p>
+            <p><strong>Contexto de uso:</strong> En el cultivo, a pleno sol, una mano ocupada, conectividad intermitente
+            </p>
+            <p><strong>JTBD:</strong> "Cuando encuentro una hoja con aspecto enfermo, quiero obtener un diagnóstico
+                rápido y fiable, para poder tomar acciones antes de que se propague."</p>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>5. FASE 4: CX/UX DESIGN (Experiencia del Usuario)</h2>
+
+        <h4>Resultado - Flujo de Pantallas Principal:</h4>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El resultado se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/4_cx_ux_design/1_wireframing_resultado.md">1_wireframing_resultado.md</a>
+            </p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">P1</div>
+            <h4>Dashboard / Tablero</h4>
+            <p><strong>Propósito:</strong> Acceso inmediato a "Nuevo análisis" y priorización de lotes con riesgo</p>
+            <p><strong>Componentes UI:</strong> Header con sincronización, tarjetas de lote por color, FAB "Nuevo
+                análisis", filtro rápido</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">P2</div>
+            <h4>Cámara de Análisis</h4>
+            <p><strong>Propósito:</strong> Capturar imagen clara y ligera de hoja/síntoma</p>
+            <p><strong>Componentes UI:</strong> Vista cámara completa, guía de encuadre, botón capturar grande,
+                controles flash/cancelar</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">P3</div>
+            <h4>Confirmación de Imagen</h4>
+            <p><strong>Propósito:</strong> Verificar calidad antes de procesar</p>
+            <p><strong>Componentes UI:</strong> Preview de foto, botón "Analizar", botón "Tomar otra"</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">P4</div>
+            <h4>Pre-análisis & Estado</h4>
+            <p><strong>Propósito:</strong> Informar estado de procesamiento y aplicar reglas rápidas disponibles
+                localmente</p>
+            <p><strong>Componentes UI:</strong> Indicador de progreso, mensaje de estado, opción de cancelar</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="phase-badge">P5</div>
+            <h4>Resultados del Diagnóstico</h4>
+            <p><strong>Propósito:</strong> Mostrar diagnóstico principal con nivel de confianza</p>
+            <p><strong>Componentes UI:</strong> Diagnóstico principal, nivel de confianza, síntomas detectados, botones
+                de acción</p>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>5. FASE 4: CX/UX DESIGN (Experiencia del Usuario)</h2>
+
+        <h4>Resultado - Flujo de Pantallas Principal:</h4>
+
+        <div class="prototype-section">
+            <img src="4_cx_ux_design/1_appflow_resultado.png"
+                alt="Prototipos de Alta Fidelidad - AgroTechAI" class="prototype-image"
+                style="width: 100%; max-width: 800px; height: auto; margin: 20px auto; display: block; border-radius: 8px; border: 1px solid #dee2e6;" />
+            <p><strong>Pantallas principales:</strong> Dashboard, Cámara, Confirmación, Resultados,
+                Recomendaciones, Plan de Trabajo e Historial</p>
+        </div>
+
+    </div>
+
+    <div class="section page-break">
+        <h2>6. FASE 5: UI DESIGN (Interfaz de Usuario)</h2>
+
+        <h3>6.1 Prototipos de Alta Fidelidad</h3>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El contenido general completo se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/5_ui_design/1_prototipo_general.md">1_prototipo_general.md</a>
+            </p>
+        </div>
+
+        <div class="methodology-section">
+            <h4>📋 Metodología</h4>
+            <p><strong>Contexto:</strong> Para que un agricultor o agrónomo confíe en un diagnóstico de IA, la interfaz
+                debe sentirse tan profesional y precisa como la tecnología que la impulsa.</p>
+            <p><strong>Herramientas utilizadas:</strong> Stitch (generación de UI de alta fidelidad), Gemini (modelo de
+                lenguaje)</p>
+            <p><strong>Enfoque:</strong> Intuitividad y estética, credibilidad del producto, usabilidad para todos los
+                niveles técnicos</p>
+        </div>
+
+        <div class="highlight-box">
+            <p><strong>Objetivo:</strong> Para que un agricultor o agrónomo confíe en un diagnóstico de IA, la interfaz
+                debe sentirse tan profesional y precisa como la tecnología que la impulsa.</p>
+        </div>
+
+        <h4>Resultado - Prototipo Final Completado</h4>
+
+        <div class="reference-box">
+            <h4>📁 Referencia</h4>
+            <p>El resultado se encuentra en: <a
+                    href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/5_ui_design/1_prototipo_resultado.md">1_prototipo_resultado.md</a>
+            </p>
+        </div>
+
+        <div class="prototype-section">
+            <img src="https://raw.githubusercontent.com/edwaraco/AgroTechAI/UX-Research/docs/distillate-design-thinking/5_ui_design/1_prototipo_resultado.png"
+                alt="Prototipos de Alta Fidelidad - AgroTechAI" class="prototype-image"
+                style="width: 100%; max-width: 800px; height: auto; margin: 20px auto; display: block; border-radius: 8px; border: 1px solid #dee2e6;" />
+            <p><strong>Pantallas principales:</strong> Dashboard, Cámara, Confirmación, Resultados,
+                Recomendaciones, Plan de Trabajo e Historial</p>
+        </div>
+
+        <h4>Pantallas Principales Incluidas:</h4>
+        <ol>
+            <li><strong>Dashboard / Tablero Principal</strong> - Vista semáforo con lotes categorizados por colores</li>
+            <li><strong>Cámara de Análisis</strong> - Interfaz optimizada para campo con guías visuales</li>
+            <li><strong>Confirmación & Pre-análisis</strong> - Preview y opciones claras de acción</li>
+            <li><strong>Resultados del Diagnóstico</strong> - Diagnóstico destacado con nivel de confianza</li>
+            <li><strong>Recomendaciones</strong> - Tratamientos sugeridos con dosis específicas</li>
+            <li><strong>Plan de Trabajo</strong> - Lista de tareas y calendario de actividades</li>
+            <li><strong>Historial de Casos</strong> - Línea de tiempo y comparador de evolución</li>
+        </ol>
+
+        <h4>Características de Diseño Visual:</h4>
+        <div class="arquetype-grid">
+            <div class="arquetype-card">
+                <h4>Paleta de Colores</h4>
+                <ul>
+                    <li><strong>Verde primario:</strong> Agricultura</li>
+                    <li><strong>Rojos/Amarillos:</strong> Alertas</li>
+                    <li><strong>Grises neutros:</strong> Texto</li>
+                </ul>
+            </div>
+            <div class="arquetype-card">
+                <h4>Usabilidad</h4>
+                <ul>
+                    <li><strong>Tipografía:</strong> Sans-serif legible</li>
+                    <li><strong>Botones:</strong> Grandes (44px mínimo)</li>
+                    <li><strong>Espaciado:</strong> Generoso para uso con guantes</li>
+                    <li><strong>Responsive:</strong> Diferentes tamaños de smartphone</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>AgroTechAI - Design Thinking Process</strong></p>
+        <p>Documentación completa del proceso de diseño centrado en el usuario</p>
+        <p>Desde investigación hasta prototipos de alta fidelidad</p>
+        <p><em>Generado como parte del proceso de desarrollo de producto - 2025</em></p>
+    </div>
+
+</body>
+
+</html>
