@@ -47,7 +47,7 @@
             color: #333;
             background: white;
             font-size: 12pt;
-            max-width: 210mm;
+            min-width: 290mm;
             margin: 0 auto;
             padding: 20mm;
         }
@@ -323,11 +323,16 @@
             border: 1px solid #dee2e6;
         }
 
+        .font-10x {
+            font-size: 10px;
+        }
+
         @media print {
             body {
                 margin: 0;
                 padding: 15mm;
                 font-size: 11pt;
+                min-width: 290mm;
             }
 
             .page-break {
@@ -528,8 +533,153 @@
                 <li><strong>FASE 3: DESARROLLO DETALLADO DE ARQUETIPOS</strong> - Desarrollo de perfil completo para
                     cada arquetipo seleccionado</li>
             </ol>
-        </div>
 
+            <p><strong>PROMPT:</strong></p>
+            <div>
+                <pre class="font-10x">
+Actúa como un investigador UX senior especializado en agricultura y tecnología. 
+Tu tarea es realizar una investigación completa para identificar y desarrollar los arquetipos más relevantes 
+para un sistema de IA que analiza cultivos mediante imágenes.
+ 
+## FASE 1: INVESTIGACIÓN DE ROLES AGRÍCOLAS
+ 
+Primero, investiga y analiza todos los posibles roles/usuarios que podrían beneficiarse de un sistema de análisis 
+de cultivos con IA en el contexto de [REGIÓN/PAÍS ESPECÍFICO].
+ 
+Para cada rol identifica:
+- **Nombre del rol y variaciones regionales**
+- **Responsabilidades principales relacionadas con cultivos**
+- **Nivel de toma de decisiones** (estratégico/táctico/operativo)
+- **Frecuencia de interacción con cultivos** (diaria/semanal/estacional)
+- **Recursos tecnológicos típicos** disponibles
+- **Urgencia típica de sus decisiones** (crítica/moderada/flexible)
+- **Influencia en compra de tecnología** (decisor/influenciador/usuario final)
+ 
+Roles a considerar (pero no limitarte a):
+- Agricultores (pequeños, medianos, grandes)
+- Agrónomos (independientes, empleados, consultores)
+- Técnicos agrícolas
+- Administradores de finca/mayordomos
+- Ingenieros agrícolas
+- Supervisores de campo
+- Estudiantes de agronomía
+- Investigadores agrícolas
+- Extensionistas rurales
+ 
+## FASE 2: ANÁLISIS Y SELECCIÓN
+ 
+Después de investigar los roles, realiza un análisis de priorización considerando:
+ 
+**Criterios de Selección:**
+1. **Potencial de adopción** (1-10): Qué tan probable es que usen tecnología de IA
+2. **Frecuencia de uso potencial** (1-10): Qué tan seguido necesitarían el diagnóstico
+3. **Impacto en resultados** (1-10): Qué tan críticas son sus decisiones para el éxito del cultivo
+4. **Capacidad de pago** (1-10): Recursos para invertir en tecnología
+5. **Influencia en otros** (1-10): Capacidad de generar adopción viral
+ 
+Presenta tu análisis en una tabla y selecciona los **3-4 arquetipos más prometedores** justificando tu selección.
+
+
+## FASE 3: DESARROLLO DETALLADO DE ARQUETIPOS
+ 
+Para cada arquetipo seleccionado, desarrolla un perfil completo:
+ 
+### ARQUETIPO [NÚMERO]: [NOMBRE DEL ROL]
+ 
+**👤 PERFIL PERSONAL**
+- **Nombre ficticio:** [Nombre realista para la región]
+- **Edad:** [Rango específico]
+- **Ubicación:** [Zona rural/urbana específica]
+- **Educación:** [Nivel y tipo]
+- **Años de experiencia:** [En agricultura]
+- **Situación familiar:** [Relevante para decisiones laborales]
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>2. FASE 1: RESEARCH (Investigación)</h2>
+        <div class="methodology-section">
+            <pre class="font-10x">
+**🏢 CONTEXTO PROFESIONAL**
+- **Título/Rol exacto:**
+- **Responsabilidades principales:**
+- **Tamaño de operación:** [Hectáreas, número de empleados]
+- **Tipos de cultivos principales:** [Específicos para la región]
+- **Cultivos secundarios:**
+- **Estacionalidad:** [Cómo varía su trabajo por temporadas]
+- **Estructura organizacional:** [A quién reporta, quién le reporta]
+- **Presupuesto típico para tecnología:**
+ 
+**📱 RELACIÓN CON TECNOLOGÍA**
+- **Dispositivos principales:** [Smartphone, tablet, laptop]
+- **Apps agrícolas actuales:** [Específicas que usa]
+- **Nivel de confianza tecnológica:** [1-10 con explicación]
+- **Canales de información preferidos:** [WhatsApp, YouTube, etc.]
+- **Barreras tecnológicas principales:**
+- **Persona de soporte técnico:** [A quién acude cuando tiene problemas]
+ 
+**🎯 OBJETIVOS Y MOTIVACIONES**
+- **Objetivo principal en su rol:**
+- **Definición de éxito:**
+- **Métricas que sigue:**
+- **Motivadores para adoptar nueva tecnología:**
+- **Presiones externas que enfrenta:**
+ 
+**😤 FRUSTRACIONES Y DESAFÍOS**
+- **3 problemas principales actuales:**
+- **Limitaciones de recursos más críticas:**
+- **Temores específicos sobre IA/tecnología:**
+- **Experiencias negativas previas con tecnología:**
+ 
+**🔄 ESCENARIOS DE USO ESPECÍFICOS**
+ 
+**Escenario 1: [Nombre del escenario]**
+- **Situación:** [Descripción detallada]
+- **Frecuencia:** [Cuándo ocurre]
+- **Ubicación:** [Dónde estaría]
+- **Urgencia:** [Nivel de prisa]
+- **Información que necesita:**
+- **Decisiones que debe tomar:**
+- **Consecuencias de error:**
+ 
+**Escenario 2: [Nombre del escenario]**
+[Misma estructura]
+ 
+**Escenario 3: [Nombre del escenario]**
+[Misma estructura]
+ 
+**💬 CITAS REPRESENTATIVAS**
+Incluye 2-3 frases que este arquetipo diría sobre:
+- Su trabajo actual
+- Tecnología
+- El problema que resuelve nuestro producto
+ 
+**🎨 CONTEXTO VISUAL**
+- **Entorno de trabajo típico:**
+- **Vestimenta característica:**
+- **Herramientas que porta:**
+- **Vehículo que usa:**
+ 
+## ESPECIFICACIONES ADICIONALES:
+ 
+- Basa todo en investigación real del sector agrícola de [REGIÓN]
+- Incluye variaciones culturales y socioeconómicas relevantes
+- Considera factores climáticos y geográficos específicos
+- Usa terminología agrícola precisa y regional
+- Incluye desafíos reales como conectividad rural, estacionalidad, etc.
+- Considera diferentes escalas de operación (pequeña/mediana/grande)
+- Incluye aspectos generacionales (adopción tecnológica por edad)
+ 
+**Contexto del producto recordar:**
+- Sistema que analiza fotos de cultivos con IA
+- Proporciona diagnóstico del estado de la planta  
+- Ofrece recomendaciones específicas de mejora
+- Funciona mediante smartphone/tablet
+- Dirigido a mercado agrícola de [ESPECIFICAR REGIÓN]
+                </pre>
+        </div>
     </div>
 
     <div class="section page-break">
@@ -614,6 +764,190 @@
                 <li><strong>FASE 3: ANÁLISIS PROFUNDO Y VALIDACIÓN</strong> - Identificación de gaps y oportunidades
                 </li>
             </ol>
+
+            <p><strong>PROMPT</strong></p>
+            <pre class="font-10x">
+# UX AgroTech Research - System Maps As-Is
+
+Actúa como un investigador de sistemas y ecosistemas agrícolas. Tu tarea es mapear completamente el ecosistema ACTUAL donde los usuarios diagnostican y tratan problemas en cultivos, SIN tecnología de IA avanzada.
+
+## CONTEXTO DE LA INVESTIGACIÓN
+- Objetivo: Entender el ecosistema completo actual de diagnóstico agrícola
+- Enfoque: AS-IS (estado presente, sin nuestro sistema de IA)
+- Región objetivo: [ESPECIFICAR REGIÓN]
+- Arquetipos base: Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
+- Consulta información de páginas como https://mintic.gov.co/portal/inicio/Sala-de-prensa/Noticias/276923:Con-AgroTECH-el-MinTIC-potenciara-el-campo-con-Inteligencia-Artificial,
+  https://agroexpo.com/es para ayudar a determinar el estado actual del agro en Colombia.
+
+## FASE 1: INVESTIGACIÓN DEL ECOSISTEMA ACTUAL
+
+Investiga y mapea todos los componentes del sistema actual de diagnóstico agrícola:
+
+### ACTORES PRIMARIOS (Usuarios Directos):
+- **Productores**: Pequeños, medianos, grandes
+- **Técnicos de campo**: Agronomos, ingenieros, extensionistas
+- **Administradores**: Mayordomos, supervisores, gerentes de finca
+- **Estudiantes/Aprendices**: En formación agrícola
+- **Investigadores**: Centros de investigación, universidades
+
+### ACTORES SECUNDARIOS (Influenciadores):
+- **Expertos consultores**: Agrónomos independientes, consultores especializados
+- **Instituciones educativas**: Universidades, SENA, institutos técnicos
+- **Organismos gubernamentales**: ICA, ministerios, alcaldías
+- **Cooperativas y asociaciones**: Gremios, cooperativas de productores
+- **Proveedores de insumos**: Distribuidores, casas comerciales
+- **Laboratorios**: Centros de diagnóstico, laboratorios universitarios
+
+### ACTORES TERCIARIOS (Ecosistema Amplio):
+- **Financiadores**: Bancos, entidades de crédito
+- **Compradores**: Comercializadores, procesadores
+- **Medios especializados**: Revistas, canales de YouTube, influencers agrícolas
+- **Competencia indirecta**: Apps existentes, plataformas digitales
+
+### HERRAMIENTAS Y RECURSOS ACTUALES:
+- **Físicas**: Lupas, manuales, guías impresas, muestras de referencia
+- **Digitales**: Apps básicas, Google, WhatsApp, YouTube, páginas web
+- **Institucionales**: Centros de diagnóstico, laboratorios, bibliotecas técnicas
+- **Sociales**: Redes de productores, grupos de WhatsApp, ferias, encuentros
+
+### FLUJOS DE INFORMACIÓN ACTUALES:
+- **Diagnóstico**: Cómo fluye la información desde problema hasta solución
+- **Conocimiento**: Cómo se transmite expertise entre actores
+- **Comercial**: Cómo se conectan usuarios con proveedores de soluciones
+- **Regulatorio**: Cómo fluye información normativa y de compliance
+
+## FASE 2: MAPEO DETALLADO DEL SISTEMA AS-IS
+
+Crea un mapa completo del ecosistema actual:
+
+---
+
+# SYSTEM MAP AS-IS: ECOSISTEMA ACTUAL DE DIAGNÓSTICO AGRÍCOLA
+
+## 👥 MAPA DE ACTORES ACTUALES
+
+### NIVEL 1: USUARIOS CENTRALES
+**[Para cada actor principal identificado]**
+
+**ACTOR: [NOMBRE DEL ACTOR]**
+- **Descripción:** [Rol específico en el ecosistema]
+- **Población aproximada:** [Cuántos existen en la región]
+- **Poder de decisión:** [Alto/Medio/Bajo en diagnóstico]
+- **Recursos disponibles:** [Económicos, técnicos, tiempo]
+- **Motivaciones principales:** [Qué busca lograr]
+- **Frustraciones actuales:** [Problemas que enfrenta]
+
+**Relaciones actuales:**
+- **Busca ayuda de:** [A quién recurre para diagnóstico]
+- **Proporciona ayuda a:** [A quién ayuda con diagnósticos]
+- **Compite con:** [Otros actores con roles similares]
+- **Depende de:** [Actores críticos para su función]
+
+---
+<pre>
+</div>
+    </div>
+    <div class="section page-break">
+        <h2>2. FASE 1: RESEARCH (Investigación)</h2>
+        <div class="methodology-section">
+            <pre class="font-10x">
+### NIVEL 2: ECOSISTEMA DE SOPORTE
+
+**PROVEEDORES DE CONOCIMIENTO:**
+- **Agrónomos consultores independientes**
+  - Disponibilidad: [Limitada/Amplia por región]
+  - Costo típico: [Rango de honorarios]
+  - Especialidades: [Cultivos, problemas específicos]
+  - Métodos de contacto: [Teléfono, WhatsApp, visita]
+  - Pain points: [Sobrecarga, disponibilidad limitada]
+
+- **Extensionistas gubernamentales**
+  - Cobertura: [Municipios, número de técnicos]
+  - Recursos: [Limitaciones presupuestales]
+  - Efectividad: [Percepción de los usuarios]
+  - Métodos: [Visitas, capacitaciones grupales]
+  - Pain points: [Pocas personas, mucha demanda]
+
+- **Centros de investigación/universidades**
+  - Accesibilidad: [Qué tan fácil es contactarlos]
+  - Servicios: [Diagnósticos, capacitaciones, investigación]
+  - Costo: [Gratuito, subsidiado, comercial]
+  - Tiempo de respuesta: [Días/semanas típicas]
+  - Pain points: [Procesos burocráticos, lentitud]
+        
+**PROVEEDORES DE INSUMOS:**
+- **Distribuidores locales**
+- Cobertura geográfica: [Radio de acción]
+- Portafolio: [Tipos de productos disponibles]
+- Servicios adicionales: [Asesoría incluida o no]
+- Relación con usuarios: [Cercana, transaccional]
+- Pain points: [Stock limitado, precios altos]
+
+- **Casas comerciales grandes**
+- Presencia: [Sucursales, representantes]
+- Recursos técnicos: [Agrónomos propios]
+- Programas de soporte: [Capacitaciones, visitas]
+- Pain points: [Enfoque comercial vs técnico]
+
+**LABORATORIOS DE DIAGNÓSTICO:**
+- **Disponibilidad regional:** [Número y ubicación]
+- **Servicios ofrecidos:** [Tipos de análisis]
+- **Proceso típico:** [Toma de muestra, envío, espera, resultados]
+- **Costos:** [Rangos de precios por análisis]
+- **Tiempos:** [Días desde muestra hasta resultado]
+- **Pain points:** [Costo, tiempo, accesibilidad geográfica]
+
+---
+
+### NIVEL 3: CANALES DE INFORMACIÓN ACTUALES
+
+**CANALES DIGITALES:**
+- **WhatsApp (Grupos):**
+- Penetración: [% usuarios que participan]
+- Tipos de grupos: [Por cultivo, región, nivel técnico]
+- Calidad de información: [Variable, no validada]
+- Velocidad de respuesta: [Horas típicas]
+- Pain points: [Información contradictoria, spam]
+
+- **YouTube/Videos:**
+- Canales relevantes: [Nombres de influencers/instituciones]
+- Tipo de contenido: [Tutoriales, diagnósticos]
+- Calidad: [Variable según productor]
+- Pain points: [No específico para región/cultivo]
+
+- **Google/Búsquedas:**
+- Uso típico: [Términos que buscan]
+- Fuentes confiables encontradas: [Sitios web relevantes]
+- Pain points: [Información genérica, idioma, actualización]
+
+- **Apps existentes:**
+- Nombres: [Apps agrícolas disponibles]
+- Funcionalidades: [Qué ofrecen actualmente]
+- Adopción: [Nivel de uso real]
+- Pain points: [Limitaciones, costo, complejidad]
+
+**CANALES TRADICIONALES:**
+- **Ferias y eventos:**
+- Frecuencia: [Cuántas por año en región]
+- Asistencia típica: [Número de participantes]
+- Valor percibido: [Alto para networking y aprendizaje]
+- Pain points: [Costo, tiempo, frecuencia limitada]
+
+- **Publicaciones impresas:**
+- Revistas especializadas: [Nombres, circulación]
+- Manuales técnicos: [Disponibilidad, actualización]
+- Pain points: [Costo, desactualización, generalidad]
+
+- **Radio rural:**
+- Programas relevantes: [Horarios, cobertura]
+- Tipo de contenido: [Consejos, precios, clima]
+- Pain points: [No interactivo, horarios fijos]
+
+---
+
+## 🔄 FLUJOS ACTUALES DEL SISTEMA
+[Ver en el repositorio]
+            </pre>
         </div>
     </div>
 
@@ -669,7 +1003,7 @@
     <div class="section page-break">
         <h2>2. FASE 1: RESEARCH (Investigación)</h2>
 
-        <h3>2.3 Mapas de viaje del usuario (journey maps)</h3>
+        <h3>2.3 Journey maps</h3>
 
         <div class="reference-box">
             <h4>📁 Referencia</h4>
@@ -691,21 +1025,187 @@
                     frustración</li>
                 <li><strong>FASE 3: DESARROLLO DETALLADO</strong> - Journey maps específicos por arquetipo</li>
             </ol>
+
+            <p><strong>8 Fases del Journey AS-IS:</strong></p>
+            <ol>
+                <li>Detección del problema</li>
+                <li>Investigación y diagnóstico inicial</li>
+                <li>Búsqueda de segunda opinión</li>
+                <li>Toma de decisión</li>
+                <li>Adquisición de tratamiento</li>
+                <li>Aplicación del tratamiento</li>
+                <li>Monitoreo de resultados</li>
+                <li>Evaluación final y aprendizaje</li>
+            </ol>
+
+            <p><strong>PROMPT</strong></p>
+            <pre class="font-10x">
+# UX AgroTech Research - Journey Maps As-Is
+
+Actúa como un investigador UX senior especializado en agricultura. Tu tarea es investigar y mapear cómo los usuarios ACTUALMENTE diagnostican y manejan problemas en sus cultivos,
+SIN nuestro sistema de IA.
+
+## CONTEXTO DE LA INVESTIGACIÓN
+- Objetivo: Entender el proceso actual de diagnóstico de cultivos
+- Enfoque: AS-IS (estado actual, sin tecnología de IA)
+- Región objetivo: [ESPECIFICAR REGIÓN]
+- Arquetipos base: Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado,
+  especificamente en el archivo `1_arquetipos_resultados.md`
+- System Map AS-IS: Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
+- Consulta información de páginas como https://mintic.gov.co/portal/inicio/Sala-de-prensa/Noticias/276923:Con-AgroTECH-el-MinTIC-potenciara-el-campo-con-Inteligencia-Artificial, 
+  https://agroexpo.com/es para ayudar a determinar el estado actual del agro en Colombia.
+
+## FASE 1: INVESTIGACIÓN DE JOURNEYS ACTUALES
+
+Basándote en el System Map AS-IS y los arquetipos desarrollados, investiga cómo los usuarios actualmente manejan situaciones de diagnóstico de cultivos:
+
+### Journeys por Método Actual de Diagnóstico:
+- **Diagnóstico visual propio**: Usuario inspecciona y decide basado en experiencia
+- **Consulta con expertos**: Agrónomo, extensionista, colega experimentado
+- **Búsqueda en recursos**: Internet, libros, manuales, grupos de WhatsApp
+- **Toma de muestras**: Lleva muestra a laboratorio o centro de diagnóstico
+- **Prueba y error**: Aplica tratamientos basados en intuición/experiencia previa
+- **Consulta múltiple**: Combina varias fuentes antes de decidir
+- **Monitoreo y espera**: Observa evolución sin intervenir inmediatamente
+
+### Journeys por Urgencia/Contexto:
+- **Emergencia crítica**: Problema que requiere acción inmediata
+- **Monitoreo rutinario**: Revisión preventiva programada
+- **Validación de sospecha**: Confirmar hipótesis propia
+- **Segunda opinión**: Ya tiene diagnóstico pero busca confirmación
+- **Capacitación activa**: Aprovecha problema para aprender
+
+### Journeys por Recursos Disponibles:
+- **Con limitaciones económicas**: Opciones gratuitas/baratas solamente
+- **Con acceso a expertos**: Puede pagar consultoría
+- **Con red de apoyo**: Tiene comunidad de productores
+- **Aislado geográficamente**: Acceso limitado a expertos presenciales
+- **Con experiencia limitada**: Usuario novato que necesita mucha guía
+
+## FASE 2: PRIORIZACIÓN DE JOURNEYS AS-IS
+
+Evalúa cada journey actual usando estos criterios:
+
+**Criterios de Evaluación:**
+1. **Frecuencia actual** (1-10): Qué tan común es este journey
+2. **Nivel de frustración** (1-10): Qué tan problemático es el proceso actual
+3. **Impacto en resultados** (1-10): Qué tan crítico es para el éxito del cultivo
+4. **Oportunidad de mejora** (1-10): Qué tanto podría mejorar nuestro sistema este proceso
+5. **Representatividad** (1-10): Qué tan típico es entre nuestros arquetipos
+
+Selecciona los **3-4 journeys AS-IS más críticos** que representan las mayores oportunidades de mejora.
+
+## FASE 3: MAPEO DETALLADO DE JOURNEYS AS-IS
+
+Para cada journey actual seleccionado, mapea el proceso existente:
+            </pre>
         </div>
-
-        <p><strong>8 Fases del Journey AS-IS:</strong></p>
-        <ol>
-            <li>Detección del problema</li>
-            <li>Investigación y diagnóstico inicial</li>
-            <li>Búsqueda de segunda opinión</li>
-            <li>Toma de decisión</li>
-            <li>Adquisición de tratamiento</li>
-            <li>Aplicación del tratamiento</li>
-            <li>Monitoreo de resultados</li>
-            <li>Evaluación final y aprendizaje</li>
-        </ol>
-
     </div>
+
+    <div class="section page-break">
+        <h2>2. FASE 1: RESEARCH (Investigación)</h2>
+        <div class="methodology-section">
+            <pre class="font-10x">
+
+# JOURNEY AS-IS [NÚMERO]: [NOMBRE DEL JOURNEY ACTUAL]
+
+**📋 INFORMACIÓN GENERAL**
+- **Arquetipo principal:** [De los desarrollados previamente]
+- **Situación que dispara el journey:** [Qué problema/necesidad inicia el proceso]
+- **Método actual principal:** [Cómo resuelve actualmente]
+- **Frecuencia típica:** [Qué tan seguido ocurre este proceso]
+- **Duración total actual:** [Tiempo desde detección hasta resolución]
+- **Recursos/herramientas actuales:** [Qué usa para diagnosticar]
+
+---
+
+## 🗺️ PROCESO ACTUAL (AS-IS)
+
+### FASE 1: DETECCIÓN DEL PROBLEMA
+**Cómo actualmente identifica problemas en el cultivo**
+
+**🎬 SITUACIÓN ACTUAL:**
+- **Ubicación:** [Donde típicamente nota el problema]
+- **Momento:** [Cuándo en su rutina lo detecta]
+- **Método de detección:** [Visual, táctil, por síntomas generales]
+
+**👤 COMPORTAMIENTO ACTUAL:**
+- **Acciones:** [Qué hace específicamente para examinar]
+- **Pensamientos:** [Primera hipótesis, preocupaciones]
+- **Emociones:** [Cómo se siente al detectar el problema]
+- **Herramientas:** [Qué instrumentos usa para examinar mejor]
+
+**⏱️ TIEMPO INVERTIDO:** [Duración de esta fase]
+
+**😤 FRUSTRACIONES ACTUALES:**
+- [Problemas específicos con el método actual de detección]
+- [Limitaciones de su capacidad de diagnóstico]
+- [Incertidumbre sobre gravedad del problema]
+
+**💸 COSTOS ACTUALES:**
+- [Tiempo, recursos, dinero que invierte]
+
+---
+
+### FASE 2: INVESTIGACIÓN Y DIAGNÓSTICO INICIAL
+**Cómo actualmente intenta diagnosticar el problema**
+
+**🎬 SITUACIÓN ACTUAL:**
+- **Recursos consultados:** [A dónde va para buscar información]
+- **Personas contactadas:** [Expertos, colegas, familiares]
+- **Herramientas usadas:** [Internet, libros, apps existentes]
+
+**👤 COMPORTAMIENTO ACTUAL:**
+- **Acciones:** [Proceso específico de investigación]
+- **Pensamientos:** [Cómo evalúa diferentes fuentes]
+- **Emociones:** [Frustración, confianza, confusión]
+- **Criterios de decisión:** [Cómo decide en qué información confiar]
+
+**⏱️ TIEMPO INVERTIDO:** [Duración típica de investigación]
+
+**🔧 TOUCHPOINTS ACTUALES:**
+- [WhatsApp con colegas, Google, técnicos locales, etc.]
+
+**😤 FRUSTRACIONES ACTUALES:**
+- [Información contradictoria, falta de especificidad local]
+- [Dificultad para contactar expertos]
+- [Costo de consultas profesionales]
+
+**💸 COSTOS ACTUALES:**
+- [Tiempo de investigación, consultas pagadas]
+
+---
+
+### FASE 3: BÚSQUEDA DE SEGUNDA OPINIÓN
+**Cómo valida su diagnóstico inicial**
+
+**🎬 SITUACIÓN ACTUAL:**
+- **Fuentes de validación:** [A quién recurre para confirmar]
+- **Métodos de comunicación:** [Llamadas, visitas, fotos por WhatsApp]
+
+**👤 COMPORTAMIENTO ACTUAL:**
+- **Acciones:** [Cómo presenta el problema a otros]
+- **Pensamientos:** [Nivel de confianza en su diagnóstico]
+- **Emociones:** [Ansiedad por confirmación]
+
+**⏱️ TIEMPO INVERTIDO:** [Tiempo para obtener segunda opinión]
+
+**😤 FRUSTRACIONES ACTUALES:**
+- [Disponibilidad limitada de expertos]
+- [Costo de visitas técnicas]
+- [Tiempo perdido esperando confirmación]
+
+**💸 COSTOS ACTUALES:**
+- [Honorarios de agrónomos, tiempo de espera]
+
+---
+
+### FASE 4: TOMA DE DECISIÓN
+**Cómo decide qué tratamiento aplicar**
+[Ver el resto en el repositorio]</pre>
+        </div>
+    </div>
+
 
     <div class="section page-break">
         <h2>2. FASE 1: RESEARCH (Investigación)</h2>
@@ -774,12 +1274,121 @@
                 <li><strong>PASO 2: EXTRACCIÓN Y FORMATEO</strong> - Identificar patrones y extraer JTBD principales
                 </li>
             </ol>
-        </div>
 
+            <p><strong>PROMPT</strong></p>
+            <pre class="font-10x">
+### UX Engineer para Descubrir y Formatear Jobs to be Done (JTBD)
+
+**ROL Y OBJETIVO:**
+
+Actúa como un experto en investigación de experiencia de usuario y estrategia de producto, especializado en la metodología
+"Jobs to be Done" (JTBD). Tu objetivo principal es analizar en profundidad la información contextual que te proporcionaré
+(arquetipos, system maps, journey maps) para identificar las luchas, motivaciones y resultados deseados de los usuarios.
+
+Tu tarea final será destilar esta información en una serie de "Jobs to be Done" claros y accionables, presentados con un 
+formato profesional y fácil de entender para un equipo de diseño y producto. No debes inventar soluciones ni funcionalidades; 
+tu foco absoluto está en definir el problema desde la perspectiva del usuario.
+
+**CONTEXTO (INFORMACIÓN DE ENTRADA):**
+
+A continuación, te proporciono toda la información necesaria. Debes internalizarla por completo antes de proceder. Asume que todo lo descrito a continuación es un reflejo fiel de la realidad, 
+el contexto geográfico, cultural y tecnológico de la región a la que pertenecen los usuarios.
+
+-----
+
+#### 1. ARQUETIPOS DE USUARIO (Contenido del archivo Markdown de Arquetipos)
+
+Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
+
+-----
+
+#### 2. SYSTEM MAPS AS-IS (Contenido del archivo Markdown de System Maps)
+
+Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
+
+-----
+
+#### 3. JOURNEY MAPS AS-IS (Contenido del archivo Markdown de Journey Maps)
+
+Toma como referencia el journey maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `3_journeymaps-as-is_resultado.md`
+
+-----
+
+**INSTRUCCIONES Y TAREAS:**
+
+Ahora que has procesado toda la información contextual, sigue estos pasos de forma rigurosa:
+
+**Paso 1: Simulación de Entrevista Interna (Proceso Mental)**
+
+Para cada arquetipo que te he proporcionado, vas a realizar una simulación de entrevista interna. Adopta la personalidad, el lenguaje y las emociones (frustración, orgullo, preocupación, etc.) 
+de cada arquetipo y responde en primera persona a las siguientes preguntas. Este ejercicio te servirá para generar la "materia prima" de los JTBD.
+
+**Preguntas de la Entrevista:**
+
+1.  "Hola `[Nombre del Arquetipo]`, cuéntame sobre tu día a día. ¿Qué es lo primero que haces relacionado con el problema o proceso que estamos analizando?"
+2.  "Describe la última vez que te sentiste realmente frustrado o preocupado con esta situación. ¿Qué pasó exactamente? ¿Qué fue lo que desencadenó esa sensación?"
+3.  "En ese momento de frustración, ¿qué fue lo más difícil? ¿Hubo algún instante en el que te sentiste bloqueado, inseguro o sin saber qué hacer?"
+4.  "Siendo sincero, ¿qué intentabas lograr realmente en ese momento? ¿Cuál era tu objetivo final, el resultado que esperabas?"
+5.  "Si pudieras tener una varita mágica y eliminar todos los obstáculos, ¿cómo sería el proceso ideal para ti desde que surge la necesidad hasta que la resuelves?"
+6.  "Más allá de la tarea inmediata, ¿qué significa para ti tener éxito en esto? ¿Qué te permite lograr a un nivel más profundo, ya sea personal, financiero o de otro tipo?"
+7.  "¿Has intentado usar alguna herramienta, método o servicio diferente para resolver esto? Cuéntame qué te hizo probarlo y por qué sigues usándolo o por qué lo abandonaste."
+8.  "¿Sobre qué decisiones te sientes menos seguro durante todo este proceso?"
+
+**Paso 2: Extracción y Formateo de los Jobs to be Done**
+
+Una vez completada la simulación interna para todos los arquetipos, analiza las respuestas que tú mismo generaste. Identifica los patrones y extrae los "Jobs to be Done" principales.
+
+Por cada JTBD identificado, preséntalo utilizando la siguiente estructura estándar de UI/UX para comunicar hallazgos de investigación. Aplica este formato para cada arquetipo por separado.
+
+-----
+
+### **Resultados: Jobs to be Done (JTBD)**
+
+#### **Arquetipo: `[Nombre del Arquetipo]`**
+-----
+
+**JTBD \#1:**
+
+> **Cuando** `[SITUACIÓN / CONTEXTO]`
+> **quiero** `[MOTIVACIÓN / NECESIDAD]`
+> **para poder** `[RESULTADO ESPERADO / PROGRESO]`.</pre>
+        </div>
     </div>
 
     <div class="section page-break">
         <h2>3. FASE 2: FUNCTIONAL DESIGN (Diseño Funcional)</h2>
+        <div class="methodology-section">
+            <pre class="font-10x">
+  * **Luchas y Puntos de Dolor Asociados:**
+
+      * (Ej: "Incertidumbre al no tener un diagnóstico claro.")
+      * (Ej: "Pérdida de tiempo esperando una respuesta de un experto.")
+      * (Ej: "Miedo a tomar una decisión costosa y equivocada.")
+
+  * **Fuerzas que Impulsan el Progreso:**
+
+      * **Funcionales:** ¿Qué tarea específica se quiere lograr? (Ej: "Obtener un plan de acción rápido.")
+      * **Emocionales:** ¿Cómo se quiere sentir el usuario? (Ej: "Sentirme en control y seguro de mis decisiones.")
+      * **Sociales:** ¿Cómo quiere ser percibido por otros? (Ej: "Ser visto como un agricultor competente y moderno.")
+
+  * **Citas Clave (Extraídas de tu simulación):**
+
+    > *"Cita simulada que justifica y da color al JTBD."*
+    > *"Otra cita relevante que muestra la lucha o el resultado deseado."*
+
+-----
+
+**(Repetir la estructura para JTBD \#2, \#3, etc., para este arquetipo)**
+
+-----
+
+#### **Arquetipo: `[Nombre del Segundo Arquetipo]`**
+
+-----
+
+**(Repetir todo el bloque anterior para el siguiente arquetipo)**
+    </pre>
+        </div>
         <h4>Resultado - JTBD principales por arquetipo:</h4>
 
         <div class="reference-box">
@@ -844,6 +1453,122 @@
                 <li><strong>PASO 3: PRIORIZACIÓN ESTRATÉGICA</strong> - Clasificar en Must Have, Should Have, Could Have
                 </li>
             </ol>
+
+            <p><strong>PROMPTS</strong></p>
+            <pre class="font-10x">
+## Product Manager y UX Strategist para Definición y Priorización de Funcionalidades
+
+**ROL Y OBJETIVO:**
+
+Actúa como un experto en gestión de producto y estrategia de UX, con una especialización en la creación de software para la industria Agrotech. Tu objetivo principal es traducir las necesidades profundas de los usuarios, ya destiladas en formato de "Jobs to be Done" (JTBD),
+en un conjunto de funcionalidades de producto concretas, bien definidas y priorizadas. Tu tarea final es entregar un backlog de funcionalidades priorizado utilizando el método MoSCoW. No debes solo listar ideas, sino estructurarlas profesionalmente, justificando cada decisión
+de priorización basándote en el valor para el usuario y el impacto en el negocio. Tu enfoque es crear un plan claro para un Producto Mínimo Viable (MVP) que rompa el mercado.
+
+**CONTEXTO (INFORMACIÓN DE ENTRADA):**
+
+A continuación, te proporciono toda la información contextual y estratégica. Debes internalizarla por completo antes de proceder. Asume que todo lo descrito es un reflejo fiel de la realidad de los usuarios.
+
+-----
+
+#### 1. ARQUETIPOS DE USUARIO (Contenido del archivo Markdown de Arquetipos)
+
+Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
+
+-----
+
+#### 2. SYSTEM MAPS AS-IS (Contenido del archivo Markdown de System Maps)
+
+Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
+
+-----
+
+#### 3. JOURNEY MAPS AS-IS (Contenido del archivo Markdown de Journey Maps)
+
+Toma como referencia el journey maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `3_journeymaps-as-is_resultado.md`
+
+-----
+
+### 4. JOBS TO BE DONE (JTBD)
+
+Toma como referencia los Jobs to be done que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `1_jtbd_resultado.md`
+
+---
+
+**INSTRUCCIONES Y TAREAS:**
+
+Ahora que has procesado toda la información, sigue estos pasos de forma rigurosa para cada arquetipo y cada uno de sus JTBD.
+
+**Paso 1: Sesión de Ideación "How Might We..." (Proceso Mental)**
+
+Para cada JTBD individual, realiza una lluvia de ideas interna formulando preguntas del tipo "¿Cómo podríamos...?". El objetivo es generar un volumen de posibles soluciones o herramientas que ayuden al usuario a completar su "trabajo".
+
+* Ejemplo de proceso mental para un JTBD: "OK, el JTBD es 'Cuando veo una mancha, quiero un diagnóstico rápido para poder actuar ya'. ¿Cómo podríamos ayudarlo? Podríamos permitirle usar la cámara. Podríamos darle un porcentaje de certeza.
+Podríamos mostrarle fotos para comparar. Podríamos conectarlo con un experto si la IA no está segura..."
+
+**Paso 2: Definición y Estructuración de Funcionalidades**
+
+Convierte las ideas más prometedoras del paso anterior en funcionalidades estructuradas. Por cada funcionalidad, debes definir:
+
+1.  **Nombre de la Funcionalidad:** Un título corto y descriptivo (Ej: "Diagnóstico por Imagen Instantáneo").
+2.  **Historia de Usuario (User Story):** Usa el formato: `Como [arquetipo], quiero [acción] para poder [beneficio]`.
+3.  **Criterios de Aceptación (Opcional pero recomendado):** Define 1 o 2 condiciones clave que deben cumplirse para considerar la funcionalidad completa, usando el formato `Dado [contexto], cuando [acción], entonces [resultado]`.
+
+**Paso 3: Priorización MoSCoW y Justificación**
+
+Analiza cada funcionalidad estructurada y asígnale una categoría del método MoSCoW (Must-have, Should-have, Could-have, Won't-have). Lo más importante es que justifiques tu elección. La justificación debe basarse en:
+
+* **Impacto en el JTBD:** ¿Qué tan crítica es esta funcionalidad para resolver el "trabajo" del usuario?
+* **Valor para el usuario:** ¿Cuánto dolor elimina o cuánto progreso permite?
+* **Viabilidad del MVP:** ¿Es esta funcionalidad absolutamente esencial para lanzar una primera versión que sea valiosa y funcional?
+
+**FORMATO DE SALIDA:**
+
+Genera la respuesta final utilizando la siguiente estructura Markdown. Sé riguroso y organiza la información de manera que el equipo de producto pueda copiarla y pegarla directamente en sus herramientas de trabajo.
+
+-----
+
+## **Resultados: Backlog de Funcionalidades Priorizadas**
+
+### **Arquetipo: `[Nombre del Arquetipo]`**
+
+-----
+
+**Basado en el JTBD #1:** `[Pega aquí el JTBD completo: Cuando..., quiero..., para poder...]`
+
+* **Funcionalidades Propuestas:**
+
+    * **1. Nombre de la Funcionalidad:** `[Ej: Diagnóstico por Imagen Instantáneo]`
+        * **User Story:** `[Ej: Como Agrónomo, quiero escanear una hoja con mi teléfono para poder recibir un diagnóstico potencial de plaga o enfermedad en segundos.]`
+        * **Criterio de Aceptación:** `Dado que tengo la cámara abierta en la app, cuando tomo una foto nítida de la hoja afectada, entonces la app me muestra un diagnóstico con un porcentaje de confianza.`
+        * **Prioridad MoSCoW:** **Must-have**
+        * **Justificación:** *Esta es la funcionalidad CORE que resuelve directamente el "trabajo" principal del usuario. Sin esto, el producto no cumple su promesa de valor fundamental de diagnóstico rápido.*
+
+    * **2. Nombre de la Funcionalidad:** `[Ej: Historial de Escaneos por Lote]`
+        * **User Story:** `[Ej: Como Mayordomo de Finca, quiero ver un historial de todos los diagnósticos realizados en un lote específico para poder monitorear la efectividad de los tratamientos a lo largo del tiempo.]`
+        * **Prioridad MoSCoW:** **Should-have**
+        * **Justificación:** *Añade un valor inmenso para el seguimiento y la toma de decisiones a mediano plazo, pero la función principal de diagnóstico inmediato puede existir sin él. Es un candidato perfecto para la v1.1 o v2.*
+
+    * **3. Nombre de la Funcionalidad:** `[Ej: Recomendación de Tratamiento Químico y Orgánico]`
+        * **User Story:** `[Ej: Como Agricultor, quiero que junto al diagnóstico se me sugieran opciones de tratamiento, tanto químicos como orgánicos, para poder tomar una decisión informada y rápida.]`
+        * **Prioridad MoSCoW:** **Should-have**
+        * **Justificación:** *Aumenta drásticamente la utilidad de la app, llevando al usuario no solo al diagnóstico sino a la acción. Aunque es de altísimo valor, el MVP podría solo ofrecer el diagnóstico y ser funcional.*
+
+    * **4. Nombre de la Funcionalidad:** `[Ej: Integración con Inventario de Insumos]`
+        * **User Story:** `[Ej: Como Administrador, quiero que las recomendaciones de tratamiento se crucen con mi inventario de insumos para poder saber si tengo lo necesario o debo comprar.]`
+        * **Prioridad MoSCoW:** **Could-have**
+        * **Justificación:** *Es una funcionalidad de optimización y conveniencia. Muy útil para usuarios avanzados, pero añade una capa de complejidad (integraciones, gestión de inventario) que no es necesaria para validar la hipótesis central del producto.*
+
+-----
+
+**(Repetir la estructura para el JTBD #2, #3, etc., de este arquetipo)**
+
+-----
+
+### **Arquetipo: `[Nombre del Segundo Arquetipo]`**
+
+-----
+
+**(Repetir todo el bloque anterior para el siguiente arquetipo y sus JTBDs)**</pre>
         </div>
 
     </div>
@@ -878,7 +1603,8 @@
         </div>
 
         <ol>
-            <li><strong>Diagnóstico por Imagen (DIAG-001)</strong> - Análisis de IA de fotografías de cultivos,
+            <li><strong>Captura Guiada con Mejora de Imagen (AGR-CAM-002)</strong> - Análisis de IA de fotografías de
+                cultivos,
                 identificación de enfermedades, plagas y deficiencias, nivel de confianza del diagnóstico</li>
             <li><strong>Semáforo por Lote (TABLERO-001)</strong> - Vista general del estado de todos los lotes, código
                 de colores: Rojo (crítico), Amarillo (atención), Verde (normal)</li>
@@ -914,8 +1640,89 @@
                 <li><strong>FASE 2: EVALUACIÓN SINTÉTICA</strong> - Probar especificación desde perspectiva de usuarios
                 </li>
             </ol>
-        </div>
+            <p><strong>PROMPT</strong></p>
+            <pre class="font-10x">
+## Analista de Producto IA para Síntesis y Creación de Especificaciones
 
+**ROL Y OBJETIVO:**
+
+Actúa como un Analista de Producto Senior con alta capacidad de síntesis. Tu primer objetivo es analizar en profundidad los artefactos de investigación "As-Is" (Journey Maps, System Maps) para identificar los puntos de dolor,
+cuellos de botella y oportunidades más relevantes para una funcionalidad específica.
+Tu segundo objetivo es, basándote en tu análisis y respetando los "restricciones estratégicos" proporcionados, generar un borrador de "Especificación Funcional" detallado y accionable que apunte a resolver los problemas identificados.
+
+**CONTEXTO (INFORMACIÓN DE ENTRADA):**
+
+A continuación, te proporciono toda la información necesaria. Debes basar tu respuesta exclusivamente en estos datos.
+
+-----
+
+#### 1. ARQUETIPOS DE USUARIO (Contenido del archivo Markdown de Arquetipos)
+Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
+
+-----
+
+#### 2. SYSTEM MAPS AS-IS (Contenido del archivo Markdown de System Maps)
+Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
+
+-----
+
+#### 3. JOURNEY MAPS AS-IS (Contenido del archivo Markdown de Journey Maps)
+Toma como referencia el journey maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `3_journeymaps-as-is_resultado.md`
+
+-----
+
+### 4. JOBS TO BE DONE (JTBD)
+Toma como referencia los Jobs to be done que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `1_jtbd_resultado.md`
+
+-----
+
+### **4. FUNCIONALIDAD A DETALLAR Y RESTRICCIONES ESTRATÉGICAS (Aporte Humano)**
+Esta sección será recibida como entrada del usuario al momento de solicitar la generación de una especificación, porfa solicitala en caso de que no se te incluya.
+
+* **Nombre de la Funcionalidad a Enfocar:** `[Ej: Diagnóstico por Imagen]`
+* **Restricciones Estratégicas:**
+    * (Ej: "Enfoque principal: Reducir la incertidumbre y el tiempo de espera identificados en el Journey Map.")
+    * (Ej: "La solución debe ser 100% móvil y funcionar en condiciones de baja conectividad.")
+    * (Ej: "Presupuesto para esta funcionalidad: Bajo. Evitar soluciones que requieran hardware externo o integraciones complejas con terceros.")
+    * (Ej: "Priorizar la simplicidad para el arquetipo 'Carlos, el Mayordomo', incluso si eso significa menos funcionalidades avanzadas.")
+
+-----
+
+**INSTRUCCIONES Y TAREAS:**
+
+Realiza el siguiente proceso en dos pasos:
+
+**Paso 1: Análisis y Síntesis de Oportunidades**
+Analiza el Journey Map y el System Map. Identifica y lista en formato de viñetas los 3-5 principales puntos de dolor y oportunidades que la funcionalidad de `[Nombre de la Funcionalidad a Enfocar]` podría resolver, según el contexto proporcionado.
+
+**Paso 2: Generación de la Especificación**
+Basándote ESTRICTAMENTE en tu análisis del Paso 1 y respetando TODOS los `restricciones Estratégicos`, genera el borrador de la Especificación Funcional. Utiliza la plantilla proporcionada en el formato de salida. Sé proactivo al sugerir flujos y casos de borde que directamente aborden los problemas que identificaste.
+
+**FORMATO DE SALIDA:**
+
+-----
+
+## **1. Síntesis de Oportunidades (Extraído de los Mapas)**
+
+* **Punto de Dolor Identificado:** [Ej: Larga espera (hasta 48h) para recibir feedback del agrónomo después de enviar una foto por WhatsApp.]
+* **Oportunidad:** [Ej: Ofrecer un diagnóstico preliminar instantáneo para permitir una primera acción rápida.]
+* **Punto de Dolor Identificado:** [Ej: Incertidumbre al no saber si la foto enviada es de suficiente calidad para el diagnóstico.]
+* **Oportunidad:** [Ej: Crear una guía en la cámara para ayudar al usuario a tomar una foto de buena calidad.]
+* ... (y así sucesivamente)
+
+-----
+
+## **2. Borrador de Especificación Funcional**
+
+**ID de Funcionalidad:** [Genera un ID]
+**Nombre de la Funcionalidad:** [El nombre proporcionado]
+
+**Resumen (User Story):**
+[Constrúyela a partir del análisis]
+
+**(Y así sucesivamente, completando el resto de la plantilla: Trigger, Precondiciones, Flujo Principal, Flujos Alternativos, Reglas de Negocio, Criterios de Aceptación).**
+            </pre>
+        </div>
     </div>
 
     <div class="section page-break">
@@ -924,28 +1731,63 @@
 
         <div class="reference-box">
             <h4>📁 Referencia</h4>
-            <p>El resultado se encuentra en: <a
+            <p>El resultado completo se encuentra en: <a
                     href="https://github.com/edwaraco/AgroTechAI/tree/UX-Research/docs/distillate-design-thinking/2_functional_design/3_def_specs_resultado.md">3_def_specs_resultado.md</a>
             </p>
         </div>
 
         <div class="methodology-section">
-            <h4>Especificación detallada de DIAG-001: Análisis de cultivo por imagen</h4>
-            <p><strong>ID de Funcionalidad:</strong> DIAG-001</p>
-            <p><strong>Nombre:</strong> Análisis de cultivo por imagen</p>
-            <p><strong>Prioridad:</strong> Must Have (MVP)</p>
+            <h4>Especificación detallada de AGR-CAM-002: Captura Guiada con Mejora de Imagen</h4>
+            <p><strong>ID de Funcionalidad:</strong> AGR-CAM-002</p>
+            <p><strong>Nombre:</strong> Captura Guiada con Mejora de Imagen (baja luz)</p>
 
-            <p><strong>User Story:</strong> Como [Mayordomo/Agrónoma/Productor], quiero tomar una foto de una planta con
-                síntomas y recibir un diagnóstico automatizado, para poder tomar decisiones informadas sobre
-                tratamientos sin esperar a un experto.</p>
+            <p><strong>Síntesis de Oportunidades Identificadas:</strong></p>
+            <ul>
+                <li><strong>Dolor:</strong> Fotos poco útiles por baja iluminación/encuadre →
+                    <strong>Oportunidad:</strong> Guías de encuadre y mejora automática offline
+                </li>
+                <li><strong>Dolor:</strong> Frustración por diagnósticos inciertos por mala evidencia →
+                    <strong>Oportunidad:</strong> Check de calidad en tiempo real con feedback inmediato
+                </li>
+                <li><strong>Dolor:</strong> Pérdida de tiempo repitiendo capturas → <strong>Oportunidad:</strong>
+                    Guardado local y sugerencias contextuales (macro, distancia)</li>
+            </ul>
+
+            <p><strong>User Story:</strong> Como agrónomo/a, quiero ayuda para encuadrar y mejorar fotos en baja luz
+                para generar evidencia útil que permita diagnósticos precisos.</p>
+
+            <p><strong>Trigger:</strong> Se abre la cámara desde un lote/caso seleccionado</p>
+            <p><strong>Precondiciones:</strong> Lote seleccionado; almacenamiento suficiente disponible</p>
+
+            <p><strong>Flujo Principal:</strong></p>
+            <ol>
+                <li>Superposición de guías (distancia/ángulo/zona de enfoque)</li>
+                <li>Validación de nitidez/iluminación en tiempo real</li>
+                <li>Captura; mejora local (denoise, sharpen ligero) y guardado</li>
+                <li>Sugerencia de "foto macro de detalle" y "foto de contexto"</li>
+            </ol>
+
+            <p><strong>Flujos Alternativos:</strong></p>
+            <ul>
+                <li><strong>A1 (memoria baja):</strong> Modo "lite" con resolución reducida</li>
+                <li><strong>A2 (cámara fallida):</strong> Entrada manual de observaciones + posibilidad de añadir fotos
+                    posteriormente</li>
+            </ul>
+
+            <p><strong>Reglas de Negocio:</strong></p>
+            <ul>
+                <li>Umbral mínimo de nitidez; si no se alcanza, mostrar aviso y permitir continuar bajo responsabilidad
+                    del usuario</li>
+            </ul>
 
             <p><strong>Criterios de Aceptación:</strong></p>
             <ul>
-                <li>Diagnóstico completado en menos de 30 segundos con conectividad</li>
-                <li>Funcionalidad básica disponible offline</li>
-                <li>Nivel de confianza mínimo del 70% para mostrar resultado</li>
-                <li>Soporte para imágenes en condiciones de campo (luz variable)</li>
-                <li>Integración con base de datos local de tratamientos</li>
+                <li>Dado baja luz, cuando capturo, entonces la app mejora la imagen y advierte si la nitidez es
+                    insuficiente</li>
+                <li>Dado "modo lite", cuando guardo, entonces el tamaño promedio por foto ≤ 300 KB</li>
+                <li>Validación de nitidez/iluminación funciona en tiempo real sin afectar rendimiento</li>
+                <li>Guías de encuadre son visibles y útiles en diferentes condiciones de luz</li>
+                <li>Mejoras de imagen se procesan localmente sin requerir conectividad</li>
             </ul>
         </div>
     </div>
@@ -962,6 +1804,11 @@
             </p>
         </div>
 
+        <div class="highlight-box">
+            <p><strong>Pregunta crítica:</strong> ¿Cómo organizamos las funcionalidades para que formen una herramienta
+                coherente y no un laberinto confuso?</p>
+        </div>
+
         <div class="methodology-section">
             <h4>📋 Metodología</h4>
             <p><strong>Contexto:</strong> Organizar las funcionalidades para que formen una herramienta coherente y no
@@ -975,13 +1822,115 @@
                     conceptuales</li>
                 <li><strong>PASO 3: SIMULACIÓN DE AGRUPACIÓN</strong> - Card sorting sintético por modelo mental</li>
             </ol>
-        </div>
 
-        <div class="highlight-box">
-            <p><strong>Pregunta crítica:</strong> ¿Cómo organizamos las funcionalidades para que formen una herramienta
-                coherente y no un laberinto confuso?</p>
-        </div>
+            <p><strong>PROMPT</strong></p>
+            <pre class="font-10x">
+### ROL: Arquitecto de Información y Estratega UX Senior
+**OBJETIVO PRINCIPAL:**
+Actúa como un Arquitecto de Información y Estratega de Experiencia de Usuario (UX) de clase mundial, con especialización en productos complejos de software como servicio (SaaS) para industrias especializadas como la agricultura.
+Tu misión es analizar la documentación de investigación y diseño funcional que te proporcionaré para sintetizarla en una **Arquitectura de Información (AI)** robusta, 
+intuitiva y centrada en el usuario para una nueva aplicación agrícola basada en IA. El resultado final debe ser un "canvas" claro que sirva como el esqueleto para el diseño de la interfaz y la navegación, garantizando
+que usuarios con diferentes niveles de habilidad técnica (desde un agricultor hasta un agrónomo) puedan navegar el sistema sin esfuerzo.
 
+**CONTEXTO (INFORMACIÓN DE ENTRADA):**
+A continuación, te proporciono el corpus completo de conocimiento sobre el producto, sus usuarios y sus funcionalidades. Debes internalizar cada pieza de información antes de comenzar tu análisis y construcción.
+
+-----
+
+#### 1. ARQUETIPOS DE USUARIO (Contenido del archivo Markdown de Arquetipos)
+Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
+
+-----
+
+#### 2. SYSTEM MAPS AS-IS (Contenido del archivo Markdown de System Maps)
+Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
+
+-----
+
+#### 3. JOURNEY MAPS AS-IS (Contenido del archivo Markdown de Journey Maps)
+Toma como referencia el journey maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `3_journeymaps-as-is_resultado.md`
+
+-----
+
+### 4. JOBS TO BE DONE (JTBD)
+Toma como referencia los Jobs to be done que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `1_jtbd_resultado.md`
+
+-----
+
+#### **5. DEFINICIÓN Y SELECCIÓN DE FUNCIONALIDADES**
+Toma como referencia las funcionalidades que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_def_y_select_func_general.md`.
+
+-----
+
+#### **6. DEFINICIÓN DE ESPECIFICACIONES**
+Toma como referencia las especificaciones que te he suministrado en la base de tu conocimiento, especificamente en el archivo `3_def_specs_resultado.md`
+
+-----
+
+**INSTRUCCIONES Y TAREAS (EJECÚTALAS EN ORDEN):**
+**Paso 1: Análisis y Síntesis Holística**
+Primero, lee y comprende la interconexión entre todos los documentos. Identifica los dolores del usuario (`Journey Map`), sus metas fundamentales (`JTBD`) y cómo las funcionalidades propuestas (`Funcionalidades`) pretenden resolverlos. Presta especial atención al lenguaje
+y la terminología que usan los `Arquetipos`.
+
+**Paso 2: Extracción de Entidades y Tareas Clave**
+A partir de tu análisis, extrae todas las "entidades" (sustantivos conceptuales como: *Cultivo, Lote, Análisis, Diagnóstico, Plaga, Recomendación, Finca, Historial*) y las "tareas clave" (verbos o acciones que el usuario realiza como: *Analizar, Comparar, Registrar,
+Compartir, Notificar, Configurar*).
+
+**Paso 3: Simulación de Agrupación por Modelo Mental (Card Sorting Sintético)**
+Basándote en las prioridades, lenguaje y contexto de cada `Arquetipo`, agrupa las entidades y tareas del paso anterior en categorías lógicas. Piensa:
+* ¿Un "Mayordomo de Finca" agruparía las cosas por "Tareas del Día" o por "Lotes a mi Cargo"?
+* ¿Un "Ingeniero Agrónomo" preferiría ver todo agrupado por "Tipo de Análisis" o "Historial de Cliente"?
+* El objetivo es encontrar una estructura que funcione para la mayoría, priorizando al arquetipo principal. Nombra cada grupo con una etiqueta preliminar.
+
+**Paso 4: Diseño de la Jerarquía y Estructura Navegacional**
+Organiza los grupos del paso anterior en una jerarquía lógica. Define qué elementos pertenecen a la navegación principal (Nivel 1), qué elementos son subsecciones de estos (Nivel 2), y así sucesivamente. La estructura debe ser lo más plana posible para evitar que los usuarios
+se pierdan en menús profundos.
+
+**Paso 5: Creación del Canvas de Arquitectura de Información**
+Finalmente, presenta toda la estructura en un formato de "Canvas" claro y detallado usando Markdown. Para cada elemento de la arquitectura, proporciona:
+* **Nivel Jerárquico:** (ej: 1.0, 1.1, 2.0).
+* **Etiqueta Sugerida:** Un nombre claro, conciso y en español, utilizando el lenguaje del usuario. ¡Evita la jerga técnica!
+* **Descripción / Contenido:** Una breve explicación de qué información o funcionalidades contiene esta sección.
+* **Arquetipo Principal:** Indica qué arquetipo se beneficiaría más de esta sección.
+* **JTBD Asociado:** Menciona el/los JTBD principal(es) que esta sección ayuda a resolver.
+
+**FORMATO DE SALIDA (EL CANVAS):**
+Utiliza el siguiente formato para tu respuesta final.
+
+-----
+
+### **Canvas: Arquitectura de Información para [Nombre del Producto]**
+
+#### **1.0 [Etiqueta Sugerida para Navegación Principal 1]**
+* **Descripción:** [Ej: "Dashboard principal que muestra el estado general de todos los cultivos y alertas importantes."]
+* **Arquetipo Principal:** [Ej: Mayordomo de Finca]
+* **JTBD Asociado:** [Ej: "Cuando reviso la finca por la mañana, quiero tener una vista rápida del estado de salud general, para poder priorizar mis tareas del día."]
+* **1.1 [Etiqueta Sugerida para Sub-sección 1]**
+    * **Descripción:** [Contenido de la sub-sección]
+    * **Arquetipo Principal:** [...]
+    * **JTBD Asociado:** [...]
+* **1.2 [Etiqueta Sugerida para Sub-sección 2]**
+    * **Descripción:** [...]
+    * **Arquetipo Principal:** [...]
+    * **JTBD Asociado:** [...]
+
+#### **2.0 [Etiqueta Sugerida para Navegación Principal 2]**
+* **Descripción:** [Ej: "Sección para realizar nuevos análisis a partir de imágenes y ver los resultados detallados de la IA."]
+* **Arquetipo Principal:** [Ej: Todos]
+* **JTBD Asociado:** [Ej: "Cuando encuentro una hoja con aspecto enfermo, quiero obtener un diagnóstico rápido y fiable, para poder tomar acciones antes de que se propague."]
+* **2.1 [Etiqueta Sugerida para Sub-sección 1]**
+    * **Descripción:** [...]
+    * **Arquetipo Principal:** [...]
+    * **JTBD Asociado:** [...]
+
+#### **3.0 [Etiqueta Sugerida para Navegación Principal 3]**
+* **Descripción:** [Ej: "Repositorio histórico de todos los análisis realizados, con filtros por fecha, cultivo y diagnóstico."]
+* **Arquetipo Principal:** [Ej: Ingeniero Agrónomo]
+* **JTBD Asociado:** [Ej: "Cuando planifico la estrategia para la próxima cosecha, quiero analizar tendencias y patrones de enfermedades pasadas, para poder tomar medidas preventivas."]
+
+**Continúa con todas las secciones principales y sub-secciones necesarias para cubrir todas las funcionalidades y contenidos**
+            </pre>
+        </div>
     </div>
 
     <div class="section page-break">
@@ -1051,13 +2000,178 @@
             <h4>📋 Metodología</h4>
             <p><strong>Contexto:</strong> Crear wireframes del flujo más importante: "Diagnóstico por Imagen" - El
                 camino de mayor valor y frecuencia en campo.</p>
-            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude</p>
+            <p><strong>Herramientas utilizadas:</strong> ChatGPT, Gemini, Claude, Mermaid</p>
             <p><strong>Proceso metodológico:</strong></p>
             <ol>
                 <li><strong>PASO 1: SÍNTESIS ESTRATÉGICA</strong> - Comprensión holística del producto</li>
                 <li><strong>PASO 2: PRIORIZACIÓN DE FLUJOS</strong> - Selección del flujo más crítico</li>
                 <li><strong>PASO 3: WIREFRAMING DETALLADO</strong> - Diseño pantalla por pantalla</li>
             </ol>
+
+            <p><strong>PROMPT</strong></p>
+            <pre class="font-10x">
+### ROL: Diseñador de Experiencia de Usuario (UX) Senior y Especialista en Interacción
+**OBJETIVO PRINCIPAL:**
+Actúa como un Diseñador UX Senior de clase mundial, experto en crear flujos de aplicación intuitivos y eficientes para herramientas de software complejas, especialmente en el sector agrícola.
+Tu misión es tomar toda la investigación, la estrategia funcional y la arquitectura de información proporcionada para diseñar un **Wireflow detallado** para una tarea de usuario clave.
+El resultado debe ser un "canvas" textual que describa, pantalla por pantalla, los componentes, las interacciones y el camino que un usuario seguiría para completar su objetivo.
+Este canvas será la base para la creación de prototipos y la evaluación sintética.
+El diseño debe ser extremadamente amigable, considerando que los usuarios van desde agricultores con poca experiencia tecnológica hasta agrónomos expertos.
+
+**CONTEXTO (INFORMACIÓN DE ENTRADA):**
+A continuación, te proporciono el corpus completo de conocimiento sobre el producto, sus usuarios, sus funcionalidades y su estructura. Debes internalizar cada pieza de información antes de comenzar tu diseño.
+
+-----
+
+#### 1. ARQUETIPOS DE USUARIO (Contenido del archivo Markdown de Arquetipos)
+Toma como referencia los arquetipos seleccionados en las FASES 3 y 4 de la base de conocimiento que te he suministrado, especificamente en el archivo `1_arquetipos_resultados.md`
+
+-----
+
+#### 2. SYSTEM MAPS AS-IS (Contenido del archivo Markdown de System Maps)
+Toma como referencia el systema maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_systemmaps-as-is_resultado.md`
+
+-----
+
+#### 3. JOURNEY MAPS AS-IS (Contenido del archivo Markdown de Journey Maps)
+Toma como referencia el journey maps que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `3_journeymaps-as-is_resultado.md`
+
+-----
+
+### 4. JOBS TO BE DONE (JTBD)
+Toma como referencia los Jobs to be done que te he suministrado en la base de tu conocimiento, especificamente en el archivo  `1_jtbd_resultado.md`
+
+-----
+
+
+#### **5. DEFINICIÓN Y SELECCIÓN DE FUNCIONALIDADES**
+Toma como referencia las funcionalidades que te he suministrado en la base de tu conocimiento, especificamente en el archivo `2_def_y_select_func_general.md`.
+
+-----
+
+#### **6. DEFINICIÓN DE ESPECIFICACIONES**
+Toma como referencia las especificaciones que te he suministrado en la base de tu conocimiento, especificamente en el archivo `3_def_specs_resultado.md`
+
+-----
+
+#### **7. ARQUITECTURA DE LA INFORMACIÓN (AI)**
+Toma como referencia las especificaciones que te he suministrado en la base de tu conocimiento, especificamente en el archivo 
+`1_arquitectura_informacion_resultado.md`
+
+-----
+
+**INSTRUCCIONES Y TAREAS (EJECÚTALAS EN ORDEN):**
+**Paso 1: Selección del Flujo Crítico.**
+Analiza los `JTBD` y los puntos de dolor en el `Journey Map`. Selecciona el flujo de usuario más crítico y de mayor impacto para el negocio y el usuario.
+Comunica cuál flujo elegiste y por qué. Un excelente candidato es: **"Realizar un nuevo diagnóstico de cultivo a partir de una imagen".**
+
+**Paso 2: Identificación del Arquetipo y Contexto.**
+Identifica el `Arquetipo` principal para este flujo. Describe brevemente su contexto de uso (ej. "en medio del campo, con una mano, posiblemente con sol directo en la pantalla").
+
+**Paso 3: Desglose Secuencial de Pantallas.**
+Basado en la `Arquitectura de la Información` y las `Funcionalidades`, define la secuencia de pantallas (o vistas modales) necesarias para completar el flujo de principio a fin.
+Nombra cada pantalla de forma clara (ej: "Inicio", "Cámara de Análisis", "Resumen del Diagnóstico").
+
+**Paso 4: Construcción del Canvas de Wireflow.**
+Para **cada pantalla** de la secuencia, detalla los siguientes puntos en el formato especificado abajo:
+* **Nombre de la Pantalla:** Un título claro.
+* **Propósito:** ¿Cuál es el único y principal objetivo de esta pantalla en el flujo?
+* **Componentes UI Principales:** Lista los elementos esenciales. No te preocupes por el diseño, solo por la función. Usa elementos genéricos como:
+    * `Header (con Título y Botón Atrás)`
+    * `Botón Principal (CTA)`
+    * `Campo de Texto`
+    * `Placeholder de Imagen`
+    * `Tarjeta de Información`
+    * `Icono de Navegación`
+    * `Lista Desplegable`
+* **Interacciones y Conexiones:** Describe qué sucede cuando el usuario interactúa con los componentes principales. Especifica a qué pantalla lleva cada acción.
+  (Ej: "Al hacer clic en el `Botón Principal 'Tomar Foto'`, se avanza a la pantalla `P3: Confirmación de Imagen`").
+* **Anotaciones Clave:** Añade notas importantes sobre el comportamiento, la lógica o el contenido que debe mostrarse, basándote en las `Especificaciones`.
+
+**Paso 5: Generación de Diagrama Visual (Opcional pero Recomendado).**
+Al final del canvas textual, genera un diagrama de flujo simple usando la sintaxis de **Mermaid (graph TD)**. Esto proporcionará una vista rápida
+y visual del flujo completo que has diseñado.</pre>
+        </div>
+    </div>
+    <div class="section page-break">
+        <h2>5. FASE 4: CX/UX DESIGN (Experiencia del Usuario)</h2>
+        <div class="methodology-section">
+            <pre class="font-10x">
+**FORMATO DE SALIDA (EL CANVAS):**
+Utiliza estrictamente el siguiente formato Markdown para tu respuesta.
+
+-----
+
+### **Canvas de Wireflow: [Nombre del Flujo de Usuario Seleccionado]**
+**Arquetipo Principal:** [Ej: Mayordomo de Finca]
+**Job to be Done (JTBD):** [Ej: "Cuando encuentro una hoja con aspecto enfermo, quiero obtener un diagnóstico rápido y fiable, para poder tomar acciones antes de que se propague."]
+**Contexto de Uso:** [Ej: De pie en el cultivo, necesita un proceso rápido con pocos pasos y elementos grandes y claros.]
+
+---
+
+#### **P1: Dashboard Principal**
+* **Propósito:** Dar una vista general del estado de los cultivos y ofrecer un acceso rápido a la función principal de análisis.
+* **Componentes UI Principales:**
+    * `Header: Saludo ("Hola, [Nombre Usuario]")`
+    * `Tarjeta de Resumen: "Estado General de Cultivos"`
+    * `Lista de Alertas Recientes`
+    * `Botón Flotante (FAB) con icono de cámara: "Nuevo Análisis"`
+* **Interacciones y Conexiones:**
+    * Al hacer clic en `Botón Flotante "Nuevo Análisis"`, el usuario avanza a la pantalla **P2: Cámara de Análisis**.
+* **Anotaciones Clave:** El dashboard debe cargar rápido y priorizar las alertas.
+
+---
+
+#### **P2: Cámara de Análisis**
+* **Propósito:** Permitir al usuario capturar una imagen clara de la planta afectada.
+* **Componentes UI Principales:**
+    * `Vista de Cámara (ocupa casi toda la pantalla)`
+    * `Marco o Guía superpuesta para encuadrar la hoja`
+    * `Botón de Captura (grande y centrado)`
+    * `Botón para activar/desactivar flash`
+    * `Botón para salir/cancelar y volver a P1`
+* **Interacciones y Conexiones:**
+    * Al hacer clic en `Botón de Captura`, el sistema toma la foto y avanza a **P3: Confirmación de Imagen**.
+* **Anotaciones Clave:** El sistema puede mostrar un breve consejo como "Asegúrate de que la imagen esté bien enfocada".
+
+---
+
+#### **P3: Confirmación de Imagen**
+* **Propósito:** Permitir al usuario revisar la calidad de la foto antes de enviarla a analizar.
+* **Componentes UI Principales:**
+    * `Header: Título "¿Usar esta imagen?"`
+    * `Placeholder de Imagen: Muestra la foto recién tomada`
+    * `Botón Principal: "Analizar"`
+    * `Botón Secundario: "Tomar Otra"`
+* **Interacciones y Conexiones:**
+    * Al hacer clic en `"Analizar"`, se muestra un indicador de carga y se avanza a **P4: Resultados del Diagnóstico**.
+    * Al hacer clic en `"Tomar Otra"`, se regresa a **P2: Cámara de Análisis**.
+* **Anotaciones Clave:** La pantalla de carga debe indicar que la IA está procesando la imagen.
+
+---
+
+**Continúa con las demás pantallas del flujo, como "Resultados del Diagnóstico", "Detalle de Recomendaciones", etc.**
+
+---
+
+### **Diagrama de Flujo (Mermaid)**
+    ```mermaid
+    graph BT
+        subgraph "Flujo de Diagnóstico y Gestión"
+            A[P1: Dashboard Principal] -->|Click en 'Nuevo Análisis'| B[P2: Cámara de Análisis];
+            B -->|Click en 'Capturar'| C{P3: Confirmación de Imagen};
+            C -->|Click en 'Tomar Otra'| B;
+            C -->|Click en 'Analizar'| D[P4: Resultados del Diagnóstico];
+            
+            D -->|Click en 'Ver Recomendaciones'| E[P5: Detalle de Recomendaciones];
+            D -->|Click en 'Guardar Reporte'| G[P7: Historial de Reportes];
+
+            E -->|Click en 'Marcar Tareas'| F[P6: Plan de Trabajo];
+            
+            F -->|Navegación: Ir a Inicio| A;
+            G -->|Navegación: Volver| A;
+        end
+    ```</pre>
         </div>
 
         <div class="highlight-box">
@@ -1133,8 +2247,8 @@
         <h4>Resultado - Flujo de Pantallas Principal:</h4>
 
         <div class="prototype-section">
-            <img src="4_cx_ux_design/1_appflow_resultado.png"
-                alt="Prototipos de Alta Fidelidad - AgroTechAI" class="prototype-image"
+            <img src="4_cx_ux_design/1_appflow_resultado.png" alt="Prototipos de Alta Fidelidad - AgroTechAI"
+                class="prototype-image"
                 style="width: 100%; max-width: 800px; height: auto; margin: 20px auto; display: block; border-radius: 8px; border: 1px solid #dee2e6;" />
             <p><strong>Pantallas principales:</strong> Dashboard, Cámara, Confirmación, Resultados,
                 Recomendaciones, Plan de Trabajo e Historial</p>
@@ -1154,6 +2268,11 @@
             </p>
         </div>
 
+        <div class="highlight-box">
+            <p><strong>Objetivo:</strong> Para que un agricultor o agrónomo confíe en un diagnóstico de IA, la interfaz
+                debe sentirse tan profesional y precisa como la tecnología que la impulsa.</p>
+        </div>
+
         <div class="methodology-section">
             <h4>📋 Metodología</h4>
             <p><strong>Contexto:</strong> Para que un agricultor o agrónomo confíe en un diagnóstico de IA, la interfaz
@@ -1162,12 +2281,80 @@
                 lenguaje)</p>
             <p><strong>Enfoque:</strong> Intuitividad y estética, credibilidad del producto, usabilidad para todos los
                 niveles técnicos</p>
-        </div>
+            <p><strong>PROMPT</strong></p>
+            <pre class="font-10x">
+# ROL: Diseñador de Producto y Experto en UI Senior
 
-        <div class="highlight-box">
-            <p><strong>Objetivo:</strong> Para que un agricultor o agrónomo confíe en un diagnóstico de IA, la interfaz
-                debe sentirse tan profesional y precisa como la tecnología que la impulsa.</p>
+**OBJETIVO PRINCIPAL:**
+Actúa como un Diseñador de Producto y Experto en Interfaces de Usuario (UI) de clase mundial, con una especialización galardonada en la creación de aplicaciones B2B robustas,
+intuitivas y hermosas para industrias complejas como la Agrotecnología (AgriTech).
+Tu misión es **transformar** la documentación de investigación y un **flujo de aplicación descrito textualmente** en un **prototipo visual de alta fidelidad.**
+Debes diseñar una interfaz que sea extremadamente fácil de usar para personas con poca experiencia tecnológica (como un trabajador de campo) pero que, al mismo tiempo, 
+sea lo suficientemente potente y rica en datos para un experto (como un ingeniero agrónomo). El resultado final debe ser un conjunto de descripciones detalladas de pantallas
+listas para ser generadas, que sirvan como la visión definitiva del producto antes del desarrollo.
+
+**CONTEXTO (INFORMACIÓN DE ENTRADA):**
+A continuación, te proporciono el corpus completo de conocimiento sobre el producto, sus usuarios y, más importante, el flujo de pantallas y acciones. Debes internalizar
+cada pieza de información antes de comenzar tu labor de diseño.
+
+-----
+
+## **ARQUETIPOS DE USUARIO**
+[Puede ser visto en en el archivo 5_ui_design/1_prototipo_general.md]
+
+---
+
+## **Jobs to be Done (JTBD)**
+[Puede ser visto en en el archivo 5_ui_design/1_prototipo_general.md]
+
+---
+
+## **Funcionalidades**
+[Puede ser visto en en el archivo 5_ui_design/1_prototipo_general.md]
+
+*****
+
+## **2. FLUJO DE APLICACIÓN (DESCRIPCIÓN TEXTUAL)**
+[Puede ser visto en en el archivo 5_ui_design/1_prototipo_general.md]
+
+-----
+
+**INSTRUCCIONES Y TAREAS (EJECÚTALAS EN ORDEN):**
+
+**Paso 1: Síntesis Integral y Definición de Estilo Visual**
+Analiza todos los documentos de contexto y, fundamentalmente, el **Flujo de Aplicación Textual** para comprender la estructura y las transiciones. Luego, define un mini sistema de diseño (paleta de colores, tipografía, estilo de componentes) que sea apropiado para la industria agrícola: confiable, claro y moderno.
+
+**Paso 2: Diseño de Pantallas basado en el Flujo**
+Para cada punto del flujo textual (P1, P2, P3, etc.), diseña la pantalla correspondiente. Presta especial atención a las **"Acciones Principales"** descritas; estas deben traducirse en los botones y elementos interactivos más prominentes de cada pantalla. Asegúrate de que la transición entre pantallas se sienta lógica y fluida.
+
+**Paso 3: Creación del Canvas del Prototipo Visual (Pantalla por Pantalla)**
+Genera el diseño para cada pantalla principal. Para cada una, proporciona una descripción detallada que permita a otra IA generadora de imágenes (o a un diseñador) crearla visualmente. Usa el formato de salida especificado a continuación.
+
+**FORMATO DE SALIDA (EL CANVAS DEL PROTOTIPO):**
+
+Utiliza el siguiente formato Markdown para describir cada pantalla, asegurándote de que el diseño refleje el propósito y las acciones definidas en el flujo textual.
+
+-----
+
+# **Canvas: Prototipo Visual para [Nombre del Producto]**
+
+## **P1: Dashboard / Tablero**
+* **Propósito (del Flujo):** Pantalla de inicio. Muestra un resumen del estado de los cultivos y alertas.
+* **Arquetipo Principal:** Mayordomo de Finca.
+* **Descripción para GenAI:** "Interfaz de app móvil limpia y moderna para agricultura. Header con 'Bienvenido, [Nombre]'. Sección principal con tarjetas horizontales para 'Cultivos Monitoreados', cada una con nombre, foto y un indicador de salud visual (anillo verde/amarillo/rojo). Una sección de 'Alertas Recientes' en la parte superior. El elemento más prominente es un **botón de acción flotante (FAB) azul en la esquina inferior derecha con el texto 'Nuevo Análisis'** y un ícono de cámara, que inicia el flujo principal."
+
+## **P2: Cámara de Análisis**
+* **Propósito (del Flujo):** Interfaz de cámara para capturar una imagen del cultivo afectado.
+* **Arquetipo Principal:** Todos.
+* **Descripción para GenAI:** "La interfaz de la cámara nativa del móvil. Superpuesto, hay un marco guía translúcido y texto de ayuda como 'Enfoque la hoja o fruto afectado'. En la parte inferior, un gran botón de obturador circular para **'Capturar'** la imagen. Un icono de galería permite subir una foto existente."
+
+*(...y así sucesivamente para cada una de las pantallas P3, P4, P5, etc., hasta H1, siempre asegurando que la descripción visual incorpore los elementos de acción que conectan el flujo.)*
+            </pre>
         </div>
+    </div>
+
+    <div class="section page-break">
+        <h2>6. FASE 5: UI DESIGN (Interfaz de Usuario)</h2>
 
         <h4>Resultado - Prototipo Final Completado</h4>
 
