@@ -17,9 +17,10 @@ from .websocket_handler import websocket_handler
 
 # Configure logging
 def setup_logging():
+    """Configure logging with console and file handlers."""
     # Create logger
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
+    app_logger = logging.getLogger()
+    app_logger.setLevel(logging.DEBUG)
 
     # Create console handler with custom formatting
     console_handler = logging.StreamHandler(sys.stdout)
@@ -44,10 +45,10 @@ def setup_logging():
     file_handler.setFormatter(file_formatter)
 
     # Add handlers to logger
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
+    app_logger.addHandler(console_handler)
+    app_logger.addHandler(file_handler)
 
-    return logger
+    return app_logger
 
 
 # Setup logging
@@ -79,13 +80,13 @@ app.add_middleware(
 async def websocket_endpoint(websocket: WebSocket):
     """WebSocket endpoint for real-time agricultural monitoring"""
     client_host = websocket.client.host if websocket.client else "unknown"
-    logger.info(f"🔌 WebSocket connection from {client_host}")
+    logger.info("🔌 WebSocket connection from %s", client_host)
     try:
         await websocket_handler.handle_connection(websocket)
-    except Exception as e:
-        logger.error(f"❌ WebSocket error for {client_host}: {e}")
+    except Exception as error:
+        logger.error("❌ WebSocket error for %s: %s", client_host, error)
     finally:
-        logger.info(f"🔌 WebSocket disconnected for {client_host}")
+        logger.info("🔌 WebSocket disconnected for %s", client_host)
 
 
 @app.get("/")
@@ -118,17 +119,17 @@ async def health_check():
     status = "healthy" if ollama_status else "error"
     ollama_text = "running" if ollama_status else "not_running"
 
-    logger.info(f"💊 Health check result: {status} (Ollama: {ollama_text})")
+    logger.info("💊 Health check result: %s (Ollama: %s)", status, ollama_text)
 
     return {"status": status, "ollama": ollama_text, "model": MODEL_NAME}
 
 
 def main():
     """Main entry point for the application."""
-    import uvicorn
+    import uvicorn  # pylint: disable=import-outside-toplevel
 
     logger.info("🚀 Starting AgroTech AI Server...")
-    logger.info(f"🤖 Using model: {MODEL_NAME}")
+    logger.info("🤖 Using model: %s", MODEL_NAME)
     logger.info("📱 Server will be available at: http://localhost:8000")
     logger.info("📊 API docs available at: http://localhost:8000/docs")
 

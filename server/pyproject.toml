@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=64.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -31,6 +31,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "pylint>=2.15.0",
     "pytest>=7.4.4",
     "pytest-asyncio>=0.21.1",
     "pytest-mock>=3.12.0",
@@ -62,6 +63,9 @@ agrotech-server = "agrotech_ai.app:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["agrotech_ai*"]
+
+[tool.setuptools.package-dir]
+"" = "."
 
 [tool.pytest.ini_options]
 minversion = "7.0"

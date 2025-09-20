@@ -24,14 +24,14 @@ VISION_MODEL_NAME = "qwen2.5vl:3b"  # Modelo para análisis de imágenes
 logger = logging.getLogger(__name__)
 
 # Shared session pool for all agents
-_shared_session = None
+_SHARED_SESSION = None
 
 
 def get_shared_session():
     """Get or create shared session with connection pooling"""
-    global _shared_session
-    if _shared_session is None:
-        _shared_session = requests.Session()
+    global _SHARED_SESSION  # pylint: disable=global-statement
+    if _SHARED_SESSION is None:
+        _SHARED_SESSION = requests.Session()
 
         # Retry strategy
         retry_strategy = Retry(
@@ -44,31 +44,31 @@ def get_shared_session():
         adapter = HTTPAdapter(
             max_retries=retry_strategy, pool_connections=20, pool_maxsize=50
         )
-        _shared_session.mount("http://", adapter)
-        _shared_session.mount("https://", adapter)
+        _SHARED_SESSION.mount("http://", adapter)
+        _SHARED_SESSION.mount("https://", adapter)
 
-    return _shared_session
+    return _SHARED_SESSION
 
 
 def reset_shared_session():
     """Reset shared session in case of persistent connection issues"""
-    global _shared_session
-    if _shared_session:
-        _shared_session.close()
-        _shared_session = None
+    global _SHARED_SESSION  # pylint: disable=global-statement
+    if _SHARED_SESSION:
+        _SHARED_SESSION.close()
+        _SHARED_SESSION = None
 
 
 def check_ollama_connection() -> bool:
     """Check if Ollama is running and accessible"""
     try:
-        logger.info(f"✅ checking OLLAMA_HEALTH {OLLAMA_URL}/api/tags")
+        logger.info("✅ checking OLLAMA_HEALTH %s/api/tags", OLLAMA_URL)
         response = requests.get(f"{OLLAMA_URL}/api/tags", timeout=5)
         return response.status_code == 200
     except requests.exceptions.RequestException:
         return False
 
 
-class OllamaAgent:
+class OllamaAgent:  # pylint: disable=too-few-public-methods
     """Base class for all Ollama-powered AI agents"""
 
     def __init__(self, role: str, expertise: str):
@@ -79,8 +79,8 @@ class OllamaAgent:
     async def generate_response(self, prompt: str) -> Dict[str, Any]:
         """Generate response from Ollama model"""
         start_time = time.time()
-        logger.info(f"🤖 [{self.role}] Starting LLM call to {MODEL_NAME}")
-        logger.debug(f"🤖 [{self.role}] Prompt length: {len(prompt)} characters")
+        logger.info("🤖 [%s] Starting LLM call to %s", self.role, MODEL_NAME)
+        logger.debug("🤖 [%s] Prompt length: %s characters", self.role, len(prompt))
 
         payload = {
             "model": MODEL_NAME,
@@ -172,8 +172,8 @@ class OllamaAgent:
         )
 
         logger.info(
-            f"💡 Fragmento de JSON potencial encontrado para reparar: "
-            f"{potential_json[:100]}..."
+            "💡 Fragmento de JSON potencial encontrado para reparar: %s...",
+            potential_json[:100],
         )
 
         # Llama a la función reparadora con el fragmento aislado
@@ -219,33 +219,7 @@ class OllamaAgent:
             # Se confirma que la cadena está incompleta, se procede a reparar.
             pass
 
-        fixed_chars: List[str] = []
-        stack: List[str] = []
-        in_string = False
-        escaped = False
-
-        json_str = re.sub(r",\s*([}\]])", r"\1", json_str.strip())
-
-        for char in json_str:
-            fixed_chars.append(char)
-            if in_string:
-                if char == '"' and not escaped:
-                    in_string = False
-                elif char == "\\":
-                    escaped = not escaped
-                else:
-                    escaped = False
-            else:
-                if char == '"':
-                    in_string = True
-                    escaped = False
-                elif char == "{":
-                    stack.append("}")
-                elif char == "[":
-                    stack.append("]")
-                elif char in ("}", "]"):
-                    if stack and stack[-1] == char:
-                        stack.pop()
+        json_str, fixed_chars, stack, in_string = self._repair_json_string(json_str)
 
         # --- LÓGICA DE RECONSTRUCCIÓN ROBUSTA Y COMBINADA ---
         if in_string:
@@ -274,23 +248,54 @@ class OllamaAgent:
             fixed_chars.append(stack.pop())
 
         fixed_json_str = "".join(fixed_chars)
-        logger.info(f"🔧 Cadena JSON reparada: {fixed_json_str}")
+        logger.info("🔧 Cadena JSON reparada: %s", fixed_json_str)
 
         try:
             return json.loads(fixed_json_str)
         except json.JSONDecodeError as e:
             logger.error(
-                f"❌ Fallo al reparar el JSON después de todos los " f"intentos: {e}"
+                "❌ Fallo al reparar el JSON después de todos los intentos: %s", e
             )
             return {
                 "error": "Fallo al parsear el JSON",
                 "original_string": json_str,
             }
 
+    def _repair_json_string(self, json_str):
+        fixed_chars: List[str] = []
+        stack: List[str] = []
+        in_string = False
+        escaped = False
+
+        json_str = re.sub(r",\s*([}\]])", r"\1", json_str.strip())
+
+        for char in json_str:
+            fixed_chars.append(char)
+            if in_string:
+                if char == '"' and not escaped:
+                    in_string = False
+                elif char == "\\":
+                    escaped = not escaped
+                else:
+                    escaped = False
+            else:
+                if char == '"':
+                    in_string = True
+                    escaped = False
+                elif char == "{":
+                    stack.append("}")
+                elif char == "[":
+                    stack.append("]")
+                elif char in ("}", "]"):
+                    if stack and stack[-1] == char:
+                        stack.pop()
+
+        return json_str, fixed_chars, stack, in_string
+
     def _parse_json_response(self, response: str) -> Dict[str, Any]:
         """Enhanced JSON parsing with multiple fallback strategies"""
-        logger.debug(f"📝 [{self.role}] Raw response length: {len(response)}")
-        logger.debug(f"📝 [{self.role}] Raw response preview: {response[:200]}...")
+        logger.debug("📝 [%s] Raw response length: %s", self.role, len(response))
+        logger.debug("📝 [%s] Raw response preview: %s...", self.role, response[:200])
 
         try:
             # Strategy 1: Direct JSON parsing (best case)
@@ -305,27 +310,27 @@ class OllamaAgent:
 
             if start_idx != -1 and end_idx > start_idx:
                 json_str = response[start_idx:end_idx]
-                logger.debug(f"📝 [{self.role}] Extracted JSON: {json_str}")
+                logger.debug("📝 [%s] Extracted JSON: %s", self.role, json_str)
 
                 try:
                     return json.loads(json_str)
                 except json.JSONDecodeError as e:
-                    logger.warning(f"⚠️ [{self.role}] JSON parsing failed: {e}")
+                    logger.warning("⚠️ [%s] JSON parsing failed: %s", self.role, e)
 
                     # Strategy 3: Try to fix incomplete JSON
                     return self._find_and_fix_json(json_str)
 
             # Strategy 4: No JSON found, return fallback
-            logger.warning(f"⚠️ [{self.role}] No valid JSON structure found in response")
+            logger.warning("⚠️ [%s] No valid JSON structure found in response", self.role)
             return self._create_partial_response(json_str)
 
-        except Exception as e:
-            logger.error(f"❌ [{self.role}] JSON parsing exception: {e}")
+        except Exception as error:
+            logger.error("❌ [%s] JSON parsing exception: %s", self.role, error)
             return self._get_fallback_response()
 
     def _create_partial_response(self, partial_json: str) -> Dict[str, Any]:
         """Create a response from partial JSON data"""
-        logger.info(f"🔨 [{self.role}] Creating partial response from incomplete data")
+        logger.info("🔨 [%s] Creating partial response from incomplete data", self.role)
 
         # Extract what we can from the partial response
         result = {}
@@ -384,7 +389,7 @@ class OllamaAgent:
 
         result["parsing_status"] = "partial_recovery"
         logger.info(
-            f"🔨 [{self.role}] Partial response created with " f"{len(result)} fields"
+            "🔨 [%s] Partial response created with %s fields", self.role, len(result)
         )
         return result
 
