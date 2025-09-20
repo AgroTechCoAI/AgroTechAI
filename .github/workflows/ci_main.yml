@@ -1,0 +1,70 @@
+name: CI Pipeline main branch
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-python:
+    runs-on: ubuntu-22.04
+    name: Python Tests & Quality
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Python tests and quality checks
+        id: python-tests
+        uses: ./.github/actions/python-tests
+        with:
+          python-version: '3.12'
+
+      - name: Upload Python coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: python-coverage-reports
+          path: ${{ steps.python-tests.outputs.coverage-path }}
+
+  test-javascript:
+    runs-on: ubuntu-22.04
+    name: JavaScript Tests & Quality
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run JavaScript tests and quality checks
+        id: js-tests
+        uses: ./.github/actions/javascript-tests
+        with:
+          node-version: '20.18.3'
+
+      - name: Upload JavaScript coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: javascript-coverage-reports
+          path: ${{ steps.js-tests.outputs.coverage-path }}
+
+  docker-deploy:
+    runs-on: ubuntu-22.04
+    name: Docker Build and Push
+    needs: [test-python, test-javascript]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build and push Docker image
+        id: docker-push
+        uses: ./.github/actions/docker-push
+        with:
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          image-name: agrotech-ai
