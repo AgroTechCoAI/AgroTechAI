@@ -321,7 +321,9 @@ class OllamaAgent:  # pylint: disable=too-few-public-methods
                     return self._find_and_fix_json(json_str)
 
             # Strategy 4: No JSON found, return fallback
-            logger.warning("⚠️ [%s] No valid JSON structure found in response", self.role)
+            logger.warning(
+                "⚠️ [%s] No valid JSON structure found in response", self.role
+            )
             return self._create_partial_response(json_str)
 
         except Exception as error:

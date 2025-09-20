@@ -73,11 +73,12 @@ def main():
         commands = [
             ("black --check agrotech_ai/ tests/", "Code Formatting Check"),
             ("isort --check-only agrotech_ai/ tests/", "Import Sorting Check"),
-            ("flake8 agrotech_ai/ --output-file 'flake8-report.txt' ", "Code Linting"),
+            ("flake8 agrotech_ai/ --output-file 'flake8-report.txt'", "Code Linting"),
         ]
 
         for cmd, desc in commands:
             if not run_command(cmd, desc):
+                print(f'Fail run linter "{desc}"\n')
                 success = False
 
     elif test_type == "format":

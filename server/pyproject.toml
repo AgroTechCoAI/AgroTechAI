@@ -64,9 +64,6 @@ agrotech-server = "agrotech_ai.app:main"
 where = ["."]
 include = ["agrotech_ai*"]
 
-[tool.setuptools.package-dir]
-"" = "."
-
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = [

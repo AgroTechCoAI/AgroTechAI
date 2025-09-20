@@ -28,6 +28,10 @@ __pycache__/
 ehthumbs.db
 Thumbs.db
 
+## Py linter
+server/flake8-report.txt
+server/pylint-report.txt
+
 # Miscelanous folder to ignore
 misc
 
