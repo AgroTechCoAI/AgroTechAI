@@ -52,7 +52,7 @@ class WebSocketHandler:
                 await self.process_message(websocket, message)
 
         except Exception as e:
-            logger.error(f"❌ WebSocket error: {e}")
+            logger.error("❌ WebSocket error: %s", str(e), exc_info=True)
             try:
                 await websocket.send_json(
                     {
@@ -71,19 +71,16 @@ class WebSocketHandler:
     async def process_message(self, websocket: WebSocket, message: Dict[str, Any]):
         """Process incoming WebSocket messages"""
         message_type = message.get("type")
-        logger.info(f"📨 Received message type: {message_type}")
+        logger.info("📨 Received message type: %s", message_type)
 
         if message_type == "ping":
             logger.info("📸 Processing ping")
             await websocket.send_json({"type": "pong", "message": "connection success"})
-        elif message_type == "custom_scenario":
-            logger.info("🔍 Processing custom scenario")
-            await self.handle_custom_scenario(websocket, message)
         elif message_type == "image_analysis":
             logger.info("📸 Processing image analysis")
             await self.handle_image_analysis(websocket, message)
         else:
-            logger.warning(f"❓ Unknown message type: {message_type}")
+            logger.warning("❓ Unknown message type: %s", message_type)
             await websocket.send_json(
                 {
                     "type": "error",

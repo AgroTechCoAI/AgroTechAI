@@ -20,8 +20,12 @@ vi.mock('@components/ScenarioForm.jsx', () => ({
 
 describe('App Component', () => {
   let mockWebSocket
+  const defaultWsUrl = 'ws://localhost:8000/ws'
 
   beforeEach(() => {
+    // Set up environment variable for tests
+    import.meta.env.VITE_WEBSOCKET_URL = defaultWsUrl
+
     // Reset WebSocket mock
     mockWebSocket = {
       send: vi.fn(),
@@ -64,8 +68,22 @@ describe('App Component', () => {
     render(<App />)
 
     await waitFor(() => {
-      expect(global.WebSocket).toHaveBeenCalledWith('ws://localhost:8000/ws')
+      expect(global.WebSocket).toHaveBeenCalledWith(defaultWsUrl)
     })
+  })
+
+  it('uses environment variable for WebSocket URL', async () => {
+    const customUrl = 'ws://custom-server:9000/ws'
+    import.meta.env.VITE_WEBSOCKET_URL = customUrl
+
+    render(<App />)
+
+    await waitFor(() => {
+      expect(global.WebSocket).toHaveBeenCalledWith(customUrl)
+    })
+
+    // Reset for other tests
+    import.meta.env.VITE_WEBSOCKET_URL = defaultWsUrl
   })
 
   it('handles successful WebSocket connection', async () => {
@@ -221,7 +239,7 @@ describe('App Component', () => {
       expect(mockWebSocket.onclose).toBeDefined()
     })
 
-    // Simulate connection close (not normal closure)
+    // Simulate connection close (not normal closure - should trigger reconnection)
     act(() => {
       mockWebSocket.onclose({ code: 1006, reason: 'Connection lost' })
     })
@@ -230,6 +248,42 @@ describe('App Component', () => {
     await waitFor(() => {
       expect(screen.getByText('Connected: No')).toBeInTheDocument()
     })
+  })
+
+  it('maintains stable connection without unnecessary closes', async () => {
+    render(<App />)
+
+    // Establish initial connection
+    await waitFor(() => {
+      expect(mockWebSocket.onopen).toBeDefined()
+    })
+
+    act(() => {
+      mockWebSocket.onopen()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Connected: Yes')).toBeInTheDocument()
+    })
+
+    // Verify connection was created
+    expect(global.WebSocket).toHaveBeenCalledTimes(1)
+
+    // Simulate some normal app activity (message handling)
+    const testMessage = {
+      data: JSON.stringify({
+        type: 'status',
+        message: 'Processing...'
+      })
+    }
+
+    act(() => {
+      mockWebSocket.onmessage(testMessage)
+    })
+
+    // Connection should remain stable - no close() calls during normal operation
+    expect(mockWebSocket.close).not.toHaveBeenCalled()
+    expect(screen.getByText('Connected: Yes')).toBeInTheDocument()
   })
 
   it('prevents submission when WebSocket is not connected', async () => {
@@ -252,7 +306,29 @@ describe('App Component', () => {
     expect(mockWebSocket.close).toHaveBeenCalledWith(1000, 'Component unmounting')
   })
 
+  it('does not close WebSocket connection during normal operation', async () => {
+    render(<App />)
+
+    // Establish connection
+    await waitFor(() => {
+      expect(mockWebSocket.onopen).toBeDefined()
+    })
+
+    act(() => {
+      mockWebSocket.onopen()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Connected: Yes')).toBeInTheDocument()
+    })
+
+    // During normal operation, close should not be called
+    expect(mockWebSocket.close).not.toHaveBeenCalled()
+  })
+
   it('sets up heartbeat mechanism on connection', async () => {
+    // Mock setInterval to verify heartbeat setup
+    const setIntervalSpy = vi.spyOn(global, 'setInterval')
     render(<App />)
 
     await waitFor(() => {
@@ -269,8 +345,10 @@ describe('App Component', () => {
       expect(screen.getByText('Connected: Yes')).toBeInTheDocument()
     })
 
-    // The heartbeat mechanism setup is verified by successful connection
-    expect(screen.getByText('Connected: Yes')).toBeInTheDocument()
+    // Verify setInterval was called for heartbeat (should be called for 4000ms)
+    expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 4000)
+
+    setIntervalSpy.mockRestore()
   })
 
   it('renders DecisionPanel when CropMaster data is available', async () => {

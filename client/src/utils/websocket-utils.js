@@ -3,6 +3,9 @@
 export const createWebSocketConnection = (url, callbacks = {}) => {
   const ws = new WebSocket(url)
 
+  // Set binary type for consistent cross-browser behavior
+  ws.binaryType = 'arraybuffer'
+
   ws.onopen = callbacks.onOpen || (() => {})
   ws.onmessage = callbacks.onMessage || (() => {})
   ws.onerror = callbacks.onError || (() => {})

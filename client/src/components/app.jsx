@@ -1,9 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // App.jsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ScenarioForm from './ScenarioForm.jsx';
+import {
+    createWebSocketConnection,
+    sendAnalysisRequest,
+    sendHeartbeat,
+    calculateReconnectDelay,
+    parseWebSocketMessage,
+    isWebSocketReady
+} from '../utils/websocket-utils.js';
 import '~/styles.css';
 
 function App() {
+    // WebSocket URL configuration from environment variables
+    const wsUrl = import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:8000/ws';
+
     const [agentData, setAgentData] = useState({
         ImageVision: null,
         AgriVision: null,
@@ -30,10 +42,11 @@ function App() {
     const heartbeatIntervalRef = useRef(null);
 
     // Enhanced WebSocket connection function with reconnection logic
-    const connectWebSocket = useCallback(() => {
-        // Clear any existing connections
-        if (wsRef.current) {
-            wsRef.current.close();
+    const connectWebSocket = useCallback((wsUrl) => {
+        // Skip if already connected
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            console.log('🔌 WebSocket already connected, skipping');
+            return;
         }
 
         // Clear any pending reconnection attempts
@@ -41,7 +54,7 @@ function App() {
             clearTimeout(reconnectTimeoutRef.current);
         }
 
-        console.log(`🔌 Attempting WebSocket connection (attempt ${connectionState.attempts + 1})`);
+        console.log(`🔌 Attempting WebSocket connection to ${wsUrl} (attempt ${connectionState.attempts + 1})`);
 
         setConnectionState(prev => ({
             ...prev,
@@ -49,27 +62,32 @@ function App() {
             isReconnecting: prev.attempts > 0
         }));
 
-        const websocket = new WebSocket('ws://localhost:8000/ws');
-        wsRef.current = websocket;
+        const websocket = createWebSocketConnection(wsUrl, {
+            onOpen: () => {
+                console.log('✅ WebSocket connected successfully');
+                setConnectionState({
+                    isConnected: true,
+                    isReconnecting: false,
+                    attempts: 0,
+                    lastError: null,
+                    status: 'connected'
+                });
+                setWs(websocket);
 
-        websocket.onopen = () => {
-            console.log('✅ WebSocket connected successfully');
-            setConnectionState({
-                isConnected: true,
-                isReconnecting: false,
-                attempts: 0,
-                lastError: null,
-                status: 'connected'
-            });
-            setWs(websocket);
+                // Start heartbeat
+                startHeartbeat(websocket);
+            },
 
-            // Start heartbeat
-            startHeartbeat(websocket);
-        };
+            onMessage: (event) => {
+                const message = parseWebSocketMessage(event.data);
+                if (!message) {
+                    setConnectionState(prev => ({
+                        ...prev,
+                        lastError: 'Failed to parse server message'
+                    }));
+                    return;
+                }
 
-        websocket.onmessage = (event) => {
-            try {
-                const message = JSON.parse(event.data);
                 console.log('📨 Received message:', message);
 
                 // Handle different message types
@@ -103,70 +121,65 @@ function App() {
                     default:
                         console.log('❓ Unknown message type:', message.type);
                 }
-            } catch (error) {
-                console.error('❌ Failed to parse WebSocket message:', error);
+            },
+
+            onError: (error) => {
+                console.error('❌ WebSocket error:', error);
                 setConnectionState(prev => ({
                     ...prev,
-                    lastError: 'Failed to parse server message'
-                }));
-            }
-        };
-
-        websocket.onerror = (error) => {
-            console.error('❌ WebSocket error:', error);
-            setConnectionState(prev => ({
-                ...prev,
-                lastError: 'Connection error occurred',
-                status: 'disconnected'
-            }));
-        };
-
-        websocket.onclose = (event) => {
-            console.log(`🔌 WebSocket connection closed (code: ${event.code}, reason: ${event.reason})`);
-
-            // Stop heartbeat
-            stopHeartbeat();
-
-            setConnectionState(prev => {
-                const newState = {
-                    ...prev,
-                    isConnected: false,
+                    lastError: 'Connection error occurred',
                     status: 'disconnected'
-                };
+                }));
+            },
 
-                // Attempt reconnection if not manually closed and under attempt limit
-                if (event.code !== 1000 && prev.attempts < maxReconnectAttempts) {
-                    const delay = Math.min(1000 * Math.pow(2, prev.attempts), 30000); // Max 30s delay
-                    console.log(`🔄 Reconnecting in ${delay}ms (attempt ${prev.attempts + 1}/${maxReconnectAttempts})`);
+            onClose: (event) => {
+                console.log(`🔌 WebSocket connection closed (code: ${event.code}, reason: ${event.reason})`);
 
-                    reconnectTimeoutRef.current = setTimeout(() => {
-                        setConnectionState(currentState => ({
-                            ...currentState,
-                            attempts: currentState.attempts + 1
-                        }));
-                    }, delay);
+                // Stop heartbeat
+                stopHeartbeat();
 
-                    newState.status = 'reconnecting';
-                    newState.isReconnecting = true;
-                } else if (prev.attempts >= maxReconnectAttempts) {
-                    console.error('❌ Max reconnection attempts reached');
-                    newState.status = 'failed';
-                    newState.lastError = 'Maximum reconnection attempts exceeded';
-                }
+                setConnectionState(prev => {
+                    const newState = {
+                        ...prev,
+                        isConnected: false,
+                        status: 'disconnected'
+                    };
 
-                return newState;
-            });
+                    // Attempt reconnection if not manually closed and under attempt limit
+                    if (event.code !== 1000 && prev.attempts < maxReconnectAttempts) {
+                        const delay = calculateReconnectDelay(prev.attempts);
+                        console.log(`🔄 Reconnecting in ${delay}ms (attempt ${prev.attempts + 1}/${maxReconnectAttempts})`);
 
-            setWs(null);
-        };
+                        reconnectTimeoutRef.current = setTimeout(() => {
+                            setConnectionState(currentState => ({
+                                ...currentState,
+                                attempts: currentState.attempts + 1
+                            }));
+                        }, delay);
 
-    }, [connectionState.attempts, maxReconnectAttempts]);
+                        newState.status = 'reconnecting';
+                        newState.isReconnecting = true;
+                    } else if (prev.attempts >= maxReconnectAttempts) {
+                        console.error('❌ Max reconnection attempts reached');
+                        newState.status = 'failed';
+                        newState.lastError = 'Maximum reconnection attempts exceeded';
+                    }
+
+                    return newState;
+                });
+
+                setWs(null);
+            }
+        });
+
+        wsRef.current = websocket;
+
+    }, [connectionState.attempts]);
 
     // Heartbeat mechanism to keep connection alive
     const startHeartbeat = (websocket) => {
         heartbeatIntervalRef.current = setInterval(() => {
-            if (websocket.readyState === WebSocket.OPEN) {
-                websocket.send(JSON.stringify({ type: 'ping' }));
+            if (sendHeartbeat(websocket)) {
                 console.log('💓 Heartbeat sent');
             }
         }, 4000); // Send ping every 4 seconds
@@ -181,7 +194,7 @@ function App() {
 
     // Initialize connection on component mount
     useEffect(() => {
-        connectWebSocket();
+        connectWebSocket(wsUrl);
 
         // Cleanup on unmount
         return () => {
@@ -194,17 +207,17 @@ function App() {
                 wsRef.current.close(1000, 'Component unmounting');
             }
         };
-    }, [connectWebSocket]);
+    }, [wsUrl]);
 
     // Trigger reconnection when attempts change
     useEffect(() => {
         if (connectionState.attempts > 0 && connectionState.attempts <= maxReconnectAttempts) {
-            connectWebSocket();
+            connectWebSocket(wsUrl);
         }
-    }, [connectionState.attempts, connectWebSocket, maxReconnectAttempts]);
+    }, [wsUrl, connectionState.attempts]);
 
     const handleCustomScenario = (imageBase64, environmentDescription) => {
-        if (ws && ws.readyState === WebSocket.OPEN) {
+        if (isWebSocketReady(ws)) {
             setIsAnalyzing(true);
             setAgentData({
                 ImageVision: null,
@@ -213,11 +226,14 @@ function App() {
                 CropMaster: null
             });
 
-            ws.send(JSON.stringify({
-                type: 'image_analysis',
-                image_data: imageBase64,
-                environment_description: environmentDescription
-            }));
+            const success = sendAnalysisRequest(ws, imageBase64, environmentDescription);
+            if (!success) {
+                console.warn('⚠️ Failed to send analysis request');
+                setConnectionState(prev => ({
+                    ...prev,
+                    lastError: 'Failed to send analysis request'
+                }));
+            }
         } else {
             console.warn('⚠️ Cannot send message: WebSocket not connected');
             setConnectionState(prev => ({
@@ -236,7 +252,7 @@ function App() {
             lastError: null,
             status: 'connecting'
         }));
-        connectWebSocket();
+        connectWebSocket(wsUrl);
     };
 
     return (
