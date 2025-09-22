@@ -13,8 +13,8 @@ import {
 import '~/styles.css';
 
 function App() {
-    // WebSocket URL configuration from environment variables
-    const wsUrl = import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:8000/ws';
+    // WebSocket URL configuration - use relative URL for same-origin
+    const wsUrl = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`;
 
     const [agentData, setAgentData] = useState({
         ImageVision: null,

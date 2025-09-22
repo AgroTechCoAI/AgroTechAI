@@ -72,7 +72,7 @@ jobs:
           javascript-coverage-artifact: javascript-coverage-reports
           debug-enabled: 'false'
 
-  docker-deploy-api:
+  build-agrotech-app-image:
     runs-on: ubuntu-22.04
     name: Docker Build and Push API
     needs: [check-code-statically]
@@ -88,28 +88,7 @@ jobs:
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          image-name: agrotech-ai-api
-          context-path: './server'
-          dockerfile-path: './server/Dockerfile'
-          push-as-latest: 'false'
-
-  docker-deploy-fe:
-    runs-on: ubuntu-22.04
-    name: Docker Build and Push FE
-    needs: [check-code-statically]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build and push Docker image
-        id: docker-push
-        uses: ./.github/actions/docker-push
-        with:
-          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          image-name: agrotech-ai-fe
-          context-path: './client'
-          dockerfile-path: './client/Dockerfile'
+          image-name: agrotech-ai-app
+          context-path: './env-deployment'
+          dockerfile-path: './env-deployment/Dockerfile'
           push-as-latest: 'false'

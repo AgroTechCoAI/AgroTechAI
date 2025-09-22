@@ -2,7 +2,7 @@ services:
   ollama:
     image: ollama/ollama:rocm
     restart: unless-stopped
-    
+
     # Memory and CPU limits
     deploy:
       resources:
@@ -12,20 +12,20 @@ services:
         reservations:
           memory: 16G
           cpus: '4.0'
-    
+
     # AMD ROCm GPU devices
     devices:
       - /dev/kfd:/dev/kfd
       - /dev/dri:/dev/dri
-    
+
     # Ports
     ports:
       - "11434:11434"
-    
+
     # Volumes
     volumes:
       - ollama_data:/root/.ollama
-    
+
     # Environment variables for performance optimization
     environment:
       - OLLAMA_NUM_PARALLEL=6
@@ -37,7 +37,7 @@ services:
       - ROCM_VISIBLE_DEVICES=all
       - HIP_VISIBLE_DEVICES=all
       - GOMAXPROCS=6
-    
+
     # Health check
     healthcheck:
       test: ["CMD", "ollama", "list"]
@@ -46,76 +46,42 @@ services:
       retries: 3
       start_period: 30s
 
-  # Python FastAPI Server
-  api-server:
+  # Combined AgroTech Application (Frontend + Backend)
+  agrotech-app:
     build:
-      context: ./server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: env-deployment/Dockerfile
     restart: unless-stopped
-    
+
     # CPU and memory limits
     deploy:
       resources:
         limits:
-          memory: 2G
-          cpus: '1.5'
+          memory: 3G
+          cpus: '2.0'
         reservations:
-          memory: 512M
-          cpus: '0.5'
-    
+          memory: 768M
+          cpus: '1.0'
+
     # Ports
     ports:
-      - "8000:8000"
-    
+      - "3000:80"
+
     # Environment variables
     environment:
       - OLLAMA_URL=http://ollama:11434
-    
+
     # Dependencies
     depends_on:
       ollama:
         condition: service_healthy
-    
-    # Volumes (optional: for development)
-    volumes:
-      - ./server:/app
-    
+
     # Health check
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-  # React Frontend (optional)
-  frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    
-    # CPU and memory limits
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '1.5'
-        reservations:
-          memory: 256M
-          cpus: '0.5'
-    
-    # Ports
-    ports:
-      - "3000:3000"
-    
-    # Environment variables
-    environment:
-      - REACT_APP_API_URL=http://localhost:8000
-      - REACT_APP_WS_URL=ws://localhost:8000/ws
-    
-    # Dependencies
-    depends_on:
-      - api-server
 
 # Named volumes
 volumes:
