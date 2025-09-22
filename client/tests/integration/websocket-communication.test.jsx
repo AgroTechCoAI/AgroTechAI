@@ -1,12 +1,16 @@
 import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from '@components/app.jsx'
+import * as websocketConfig from '@utils/websocket-config.js'
 
 describe('WebSocket Communication Integration', () => {
   let mockWebSocket
   let mockWebSocketInstance
 
   beforeEach(() => {
+    // Mock the WebSocket URL helper to return consistent URL for tests
+    vi.spyOn(websocketConfig, 'getWebSocketUrl').mockReturnValue('ws://localhost:8000/ws')
+
     // Create a more sophisticated WebSocket mock
     mockWebSocketInstance = {
       send: vi.fn(),
@@ -25,6 +29,10 @@ describe('WebSocket Communication Integration', () => {
 
   afterEach(() => {
     vi.clearAllMocks()
+    // Restore the mock
+    if (websocketConfig.getWebSocketUrl.mockRestore) {
+      websocketConfig.getWebSocketUrl.mockRestore()
+    }
   })
 
   it('completes full image analysis workflow', async () => {

@@ -1,6 +1,7 @@
 import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from '@components/app.jsx'
+import * as websocketConfig from '@utils/websocket-config.js'
 
 // Mock the ScenarioForm component
 vi.mock('@components/ScenarioForm.jsx', () => ({
@@ -23,8 +24,14 @@ describe('App Component', () => {
   const defaultWsUrl = 'ws://localhost:8000/ws'
 
   beforeEach(() => {
-    // Set up environment variable for tests
-    import.meta.env.VITE_WEBSOCKET_URL = defaultWsUrl
+    // Mock window.location for relative URL tests
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: {
+        protocol: 'http:',
+        host: 'localhost:3000'
+      }
+    })
 
     // Reset WebSocket mock
     mockWebSocket = {
@@ -65,16 +72,24 @@ describe('App Component', () => {
   })
 
   it('establishes WebSocket connection on mount', async () => {
+    // Mock the helper to return the expected URL
+    vi.spyOn(websocketConfig, 'getWebSocketUrl').mockReturnValue(defaultWsUrl)
+
     render(<App />)
 
     await waitFor(() => {
       expect(global.WebSocket).toHaveBeenCalledWith(defaultWsUrl)
     })
+
+    // Clean up mock
+    websocketConfig.getWebSocketUrl.mockRestore()
   })
 
-  it('uses environment variable for WebSocket URL', async () => {
+  it('uses environment variable for WebSocket URL when available', async () => {
     const customUrl = 'ws://custom-server:9000/ws'
-    import.meta.env.VITE_WEBSOCKET_URL = customUrl
+
+    // Mock environment variable
+    vi.spyOn(websocketConfig, 'getWebSocketUrl').mockReturnValue(customUrl)
 
     render(<App />)
 
@@ -82,8 +97,21 @@ describe('App Component', () => {
       expect(global.WebSocket).toHaveBeenCalledWith(customUrl)
     })
 
-    // Reset for other tests
-    import.meta.env.VITE_WEBSOCKET_URL = defaultWsUrl
+    // Restore mock
+    websocketConfig.getWebSocketUrl.mockRestore()
+  })
+
+  it('uses relative URL when no environment variable is set', async () => {
+    // Mock the helper to return relative URL
+    vi.spyOn(websocketConfig, 'getWebSocketUrl').mockReturnValue('ws://localhost:3000/ws')
+
+    render(<App />)
+
+    await waitFor(() => {
+      expect(global.WebSocket).toHaveBeenCalledWith('ws://localhost:3000/ws')
+    })
+
+    websocketConfig.getWebSocketUrl.mockRestore()
   })
 
   it('handles successful WebSocket connection', async () => {

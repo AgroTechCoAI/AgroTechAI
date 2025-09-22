@@ -10,11 +10,12 @@ import {
     parseWebSocketMessage,
     isWebSocketReady
 } from '../utils/websocket-utils.js';
+import { getWebSocketUrl } from '../utils/websocket-config.js';
 import '~/styles.css';
 
 function App() {
-    // WebSocket URL configuration - use relative URL for same-origin
-    const wsUrl = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`;
+    // WebSocket URL configuration - supports both local dev and Docker deployment
+    const wsUrl = getWebSocketUrl();
 
     const [agentData, setAgentData] = useState({
         ImageVision: null,
