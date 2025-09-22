@@ -49,9 +49,13 @@ AgroTech AI/
 │   │   │   ├── ScenarioForm.jsx # Image upload and environment form
 │   │   │   └── ImageUpload.jsx  # Drag-and-drop upload component
 │   │   └── utils/       # Utility functions
-│   │       └── websocket-utils.js # WebSocket helper functions
+│   │       ├── websocket-utils.js # WebSocket helper functions
+│   │       └── websocket-config.js # Flexible URL configuration
 │   ├── tests/           # Test suite
 │   │   ├── unit/        # Unit tests for components
+│   │   │   ├── App.test.jsx
+│   │   │   ├── websocket-config.test.js
+│   │   │   └── ...
 │   │   ├── integration/ # Integration tests
 │   │   ├── test-setup.js # Test configuration
 │   │   └── test-styles.css # Mock styles
@@ -67,10 +71,13 @@ AgroTech AI/
 │   ├── tests/           # Python test suite
 │   │   ├── unit/        # Unit tests
 │   │   └── integration/ # Integration tests
-│   ├── pyproject.toml   # Python project configuration
-│   └── Dockerfile       # Docker container configuration
+│   └── pyproject.toml   # Python project configuration
+├── env-deployment/      # Unified deployment configuration
+│   ├── Dockerfile       # Combined frontend + backend image with PyInstaller
+│   ├── nginx.conf       # Nginx configuration for reverse proxy
+│   └── supervisord.conf # Process manager for nginx + FastAPI
 ├── Makefile             # Development commands for both client/server
-└── docker-compose.yml   # Multi-service Docker orchestration
+└── docker-compose.yml   # Unified deployment orchestration
 ```
 
 ### 🔄 Client-WebSocket-Agent Workflow
@@ -141,7 +148,6 @@ sequenceDiagram
 **Client → Server Events:**
 - `ping` - Heartbeat to maintain connection
 - `image_analysis` - Trigger AI analysis with image data
-- `custom_scenario` - Analyze text-based scenarios
 
 **Server → Client Events:**
 - `pong` - Heartbeat response
@@ -159,35 +165,70 @@ sequenceDiagram
 ### Prerequisites
 
 - **Node.js** v20.18.3 or higher
-- **Python** 3.8 or higher
+- **Python** 3.12 or higher
 - **Ollama** (AI model server)
 - **Docker** and **Docker Compose** (for containerized deployment)
 
 ## 🐳 Quick Start with Docker (Recommended)
 
-The easiest way to run the entire system is using Docker Compose:
+Single Docker image combining frontend + backend with PyInstaller binary compilation:
 
-1. **Clone the repository**:
+```bash
+docker-compose up --build
+```
+
+**Benefits:**
+- ✅ **Single unified image** with nginx reverse proxy
+- ✅ **PyInstaller binary** for faster startup and smaller footprint
+- ✅ **Environment-agnostic** (no build arguments required)
+- ✅ **Production-ready** for AWS ECS, Kubernetes, etc.
+- ✅ **Automatic HTTPS/WSS** detection
+
+**Access:** http://localhost:3000 (all services behind nginx)
+
+### **Local Development Setup** 💻
+
+For local development with hot reload and debugging:
+
+1. **Environment Variables** (create `.env` in client directory):
    ```bash
-   git clone <repository-url>
-   cd reto2
+   VITE_WEBSOCKET_URL=ws://localhost:8000/ws
+   VITE_API_URL=http://localhost:8000
    ```
 
-2. **Start all services**:
+2. **Start services separately**:
    ```bash
-   docker-compose up
+   # Terminal 1: Start Ollama
+   ollama serve
+
+   # Terminal 2: Start backend
+   cd server && uvicorn main:app --reload
+
+   # Terminal 3: Start frontend
+   cd client && npm run dev
    ```
 
-   This will automatically:
-   - Build and start the FastAPI server
-   - Start the React client with hot reload
-   - Download and run Ollama with the required model
-   - Set up networking between all services
+## 🔧 WebSocket Configuration
 
-3. **Access the application**:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - Ollama API: http://localhost:11434
+The system now supports **flexible WebSocket configuration** for different environments:
+
+### **Development Mode** (with environment variables):
+```javascript
+// Automatically uses VITE_WEBSOCKET_URL if set
+const wsUrl = getWebSocketUrl(); // ws://localhost:8000/ws
+```
+
+### **Production Mode** (Docker/relative URLs):
+```javascript
+// Automatically generates relative URLs
+const wsUrl = getWebSocketUrl(); // ws://yourdomain.com/ws or wss://yourdomain.com/ws
+```
+
+### **Configuration Priority:**
+1. **Environment variable** (`VITE_WEBSOCKET_URL`) - for local development
+2. **Relative URL** (`ws://host/ws`) - for Docker/production deployment
+
+This allows seamless switching between development and production without code changes!
 
 ## 🔧 Manual Installation
 
@@ -230,7 +271,7 @@ Ollama is a local AI model server that runs large language models on your machin
 2. **Install server dependencies**:
    ```bash
    cd server
-   pip install -r requirements.txt
+   pip install -e .
    ```
 
 3. **Install client dependencies**:
@@ -431,7 +472,7 @@ make clean            # Clean all generated files (Python + JavaScript)
 ```bash
 cd server
 # Install dependencies
-pip install -r requirements.txt
+pip install -e .
 
 # Run with auto-reload
 uvicorn main:app --reload
@@ -516,7 +557,8 @@ client/tests/
 │   ├── App.test.jsx          # Main app component
 │   ├── ImageUpload.test.jsx  # File upload component
 │   ├── ScenarioForm.test.jsx # Form component
-│   └── websocket-utils.test.js # Utility functions
+│   ├── websocket-utils.test.js # Utility functions
+│   └── websocket-config.test.js # WebSocket configuration helper
 ├── integration/              # Integration tests
 │   └── websocket-communication.test.jsx # Full workflow
 ├── test-setup.js            # Test configuration
@@ -525,11 +567,12 @@ client/tests/
 
 **Test Features:**
 - ✅ **Component Testing**: All React components with user interactions
-- ✅ **WebSocket Testing**: Real-time communication workflows
+- ✅ **WebSocket Testing**: Real-time communication workflows with flexible URL mocking
+- ✅ **Configuration Testing**: WebSocket URL resolution for dev/production modes
 - ✅ **File Upload Testing**: Drag-and-drop and validation
 - ✅ **Form Testing**: Input validation and submission
 - ✅ **Error Handling**: Edge cases and error scenarios
-- ✅ **Mocking**: WebSocket, File API, and external dependencies
+- ✅ **Mocking**: WebSocket, File API, configuration helpers, and external dependencies
 
 ### Test Configuration
 
@@ -595,6 +638,37 @@ This section covers end-to-end testing of the full AgroTech AI system with real 
    - AgriVision evaluates crop health
    - SoilSense assesses environmental factors
    - CropMaster provides final recommendations
+
+## 🚀 CI/CD Integration
+
+The project includes GitHub Actions workflows for automated testing and deployment:
+
+### **Workflow Structure:**
+- **Feature branches** (`feature/*`, `fix/*`): Run tests and quality checks
+- **Main branch**: Run tests + build and push Docker images to registry
+
+### **Unified Docker Image Build:**
+```yaml
+# .github/workflows/ci_main.yml
+- name: Build and push Docker image
+  uses: ./.github/actions/docker-push
+  with:
+    image-name: agrotech-ai-app
+    context-path: './env-deployment'
+    dockerfile-path: './env-deployment/Dockerfile'
+```
+
+### **Environment Variables for Production:**
+Add these secrets in GitHub repository settings:
+- `DOCKERHUB_USERNAME` - Docker registry username
+- `DOCKERHUB_TOKEN` - Docker registry access token
+
+### **AWS ECS Deployment Ready:**
+The unified Docker image is optimized for cloud deployment:
+- **Single image** reduces deployment complexity
+- **Environment variables** handled via ECS task definition
+- **Health checks** included for container orchestration
+- **No build arguments** required for deployment
 
 ## 📝 Configuration
 
