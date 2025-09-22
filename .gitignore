@@ -50,3 +50,4 @@ agrotech_ai.egg-info/
 
 ## Javascript
 client/dist/
+client/.env
