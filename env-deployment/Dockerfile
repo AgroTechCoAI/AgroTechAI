@@ -1,5 +1,5 @@
 # Multi-stage build for React frontend
-FROM node:20-alpine AS frontend-builder
+FROM node:22-alpine AS frontend-builder
 
 # Set working directory for frontend build
 WORKDIR /app/client
