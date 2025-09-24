@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import ImageUpload from './ImageUpload';
 
 function ScenarioForm({ onSubmit, isConnected, isAnalyzing }) {
@@ -51,9 +52,9 @@ function ScenarioForm({ onSubmit, isConnected, isAnalyzing }) {
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-3">Condiciones Ambientales Predefinidas:</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-          {predefinedEnvironments.map((scenario, index) => (
+          {predefinedEnvironments.map((scenario) => (
             <button
-              key={index}
+              key={scenario.name}
               onClick={() => loadPredefinedEnvironment(scenario)}
               className="p-2 text-sm bg-green-100 hover:bg-green-200 rounded-lg transition-colors"
               disabled={isAnalyzing}
@@ -78,10 +79,11 @@ function ScenarioForm({ onSubmit, isConnected, isAnalyzing }) {
 
           {/* Environment Description - 50% width */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="environment-description" className="block text-sm font-medium text-gray-700 mb-2">
               🌍 Condiciones Ambientales
             </label>
             <textarea
+              id="environment-description"
               value={environmentDescription}
               onChange={(e) => setEnvironmentDescription(e.target.value)}
               placeholder="Describe las condiciones del entorno: humedad del suelo, temperatura, pH, clima, etc."
@@ -127,5 +129,11 @@ function ScenarioForm({ onSubmit, isConnected, isAnalyzing }) {
     </div>
   );
 }
+
+ScenarioForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  isConnected: PropTypes.bool.isRequired,
+  isAnalyzing: PropTypes.bool.isRequired
+};
 
 export default ScenarioForm;

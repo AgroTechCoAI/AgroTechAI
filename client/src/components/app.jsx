@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // App.jsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import PropTypes from 'prop-types';
 import ScenarioForm from './ScenarioForm.jsx';
 import {
     createWebSocketConnection,
@@ -57,6 +58,15 @@ function App() {
 
         console.log(`🔌 Attempting WebSocket connection to ${wsUrl} (attempt ${connectionState.attempts + 1})`);
 
+        // Helper function to handle reconnection attempts
+        const scheduleReconnection = (delay) => {
+            reconnectTimeoutRef.current = setTimeout(() => {
+                setConnectionState(currentState => ({
+                    ...currentState,
+                    attempts: currentState.attempts + 1
+                }));
+            }, delay);
+        };
         setConnectionState(prev => ({
             ...prev,
             status: prev.attempts === 0 ? 'connecting' : 'reconnecting',
@@ -151,12 +161,7 @@ function App() {
                         const delay = calculateReconnectDelay(prev.attempts);
                         console.log(`🔄 Reconnecting in ${delay}ms (attempt ${prev.attempts + 1}/${maxReconnectAttempts})`);
 
-                        reconnectTimeoutRef.current = setTimeout(() => {
-                            setConnectionState(currentState => ({
-                                ...currentState,
-                                attempts: currentState.attempts + 1
-                            }));
-                        }, delay);
+                        scheduleReconnection(delay);
 
                         newState.status = 'reconnecting';
                         newState.isReconnecting = true;
@@ -408,6 +413,16 @@ function ConnectionStatusBanner({ connectionState, onReconnect }) {
     );
 }
 
+ConnectionStatusBanner.propTypes = {
+    connectionState: PropTypes.shape({
+        status: PropTypes.string.isRequired,
+        isReconnecting: PropTypes.bool.isRequired,
+        attempts: PropTypes.number.isRequired,
+        lastError: PropTypes.string
+    }).isRequired,
+    onReconnect: PropTypes.func.isRequired
+};
+
 // A helper function to render values more intelligently
 const renderValue = (value) => {
     if (typeof value === 'boolean') {
@@ -474,6 +489,16 @@ function AgentCard({ title, data, color = 'blue' }) {
     );
 }
 
+AgentCard.propTypes = {
+    title: PropTypes.string.isRequired,
+    data: PropTypes.object,
+    color: PropTypes.oneOf(['blue', 'green', 'red', 'yellow', 'purple'])
+};
+
+AgentCard.defaultProps = {
+    color: 'blue'
+};
+
 
 function DecisionPanel({ data }) {
     if (!data) return null;
@@ -500,8 +525,8 @@ function DecisionPanel({ data }) {
                 <div>
                     <h3 className="text-lg font-semibold mb-3">Acciones Prioritarias</h3>
                     <ul className="list-disc list-inside space-y-1">
-                        {data.priority_actions?.map((action, index) => (
-                            <li key={index} className="text-gray-700">{action}</li>
+                        {data.priority_actions?.map((action) => (
+                            <li key={action} className="text-gray-700">{action}</li>
                         ))}
                     </ul>
                 </div>
@@ -509,5 +534,12 @@ function DecisionPanel({ data }) {
         </div>
     );
 }
+
+DecisionPanel.propTypes = {
+    data: PropTypes.shape({
+        overall_status: PropTypes.string,
+        priority_actions: PropTypes.arrayOf(PropTypes.string)
+    })
+};
 
 export default App;

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 function ImageUpload({ onImageSelect, selectedImage, disabled }) {
   const [dragActive, setDragActive] = useState(false);
@@ -19,20 +20,20 @@ function ImageUpload({ onImageSelect, selectedImage, disabled }) {
     e.stopPropagation();
     setDragActive(false);
     
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    if (e.dataTransfer.files?.[0]) {
       handleFile(e.dataTransfer.files[0]);
     }
   };
 
   const handleChange = (e) => {
     e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       handleFile(e.target.files[0]);
     }
   };
 
   const handleFile = (file) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file?.type?.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const imageData = e.target.result;
@@ -54,7 +55,7 @@ function ImageUpload({ onImageSelect, selectedImage, disabled }) {
 
   return (
     <div className="w-full">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label htmlFor="image-upload-input" className="block text-sm font-medium text-gray-700 mb-2">
         📸 Imagen del Cultivo
       </label>
       
@@ -77,8 +78,9 @@ function ImageUpload({ onImageSelect, selectedImage, disabled }) {
           </button>
         </div>
       ) : (
-        <div
-          className={`relative border-2 border-dashed rounded-lg p-6 transition-colors ${
+        <button
+          type="button"
+          className={`relative w-full border-2 border-dashed rounded-lg p-6 transition-colors ${
             dragActive 
               ? 'border-green-400 bg-green-50' 
               : 'border-gray-300 hover:border-gray-400'
@@ -88,9 +90,11 @@ function ImageUpload({ onImageSelect, selectedImage, disabled }) {
           onDragOver={handleDrag}
           onDrop={handleDrop}
           onClick={onButtonClick}
+          disabled={disabled}
         >
           <input
             ref={inputRef}
+            id="image-upload-input"
             type="file"
             className="hidden"
             accept="image/*"
@@ -124,10 +128,16 @@ function ImageUpload({ onImageSelect, selectedImage, disabled }) {
               </p>
             </div>
           </div>
-        </div>
+        </button>
       )}
     </div>
   );
 }
+
+ImageUpload.propTypes = {
+  onImageSelect: PropTypes.func.isRequired,
+  selectedImage: PropTypes.string,
+  disabled: PropTypes.bool
+};
 
 export default ImageUpload;
