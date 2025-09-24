@@ -1,0 +1,45 @@
+services:
+  # Combined AgroTech Application (Frontend + Backend + ollama)
+  agrotech-app:
+    build:
+      context: .
+      dockerfile: env-deployment/Dockerfile
+    restart: unless-stopped
+
+    # CPU and memory limits
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: '2.0'
+        reservations:
+          memory: 768M
+          cpus: '1.0'
+
+    # Ports
+    ports:
+      - "3000:80"
+
+    # Environment variables
+    environment:
+      - OLLAMA_URL=http://localhost:11434
+      - OLLAMA_MODELS=gemma3:270m
+      - OLLAMA_TEXT_MODEL=gemma3:270m
+      - OLLAMA_VISION_MODEL=gemma3:270m
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# Named volumes
+volumes:
+  ollama_data:
+    driver: local
+
+# Networks
+networks:
+  default:
+    driver: bridge

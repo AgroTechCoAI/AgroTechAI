@@ -46,42 +46,78 @@ services:
       retries: 3
       start_period: 30s
 
-  # Combined AgroTech Application (Frontend + Backend)
-  agrotech-app:
+  # Python FastAPI Server
+  api-server:
     build:
-      context: .
-      dockerfile: env-deployment/Dockerfile
+      context: ./server
+      dockerfile: Dockerfile
     restart: unless-stopped
 
     # CPU and memory limits
     deploy:
       resources:
         limits:
-          memory: 3G
-          cpus: '2.0'
+          memory: 2G
+          cpus: '1.5'
         reservations:
-          memory: 768M
-          cpus: '1.0'
+          memory: 512M
+          cpus: '0.5'
 
     # Ports
     ports:
-      - "3000:80"
+      - "8000:8000"
 
     # Environment variables
     environment:
       - OLLAMA_URL=http://ollama:11434
+      - OLLAMA_TEXT_MODEL=gemma3:4b
+      - OLLAMA_VISION_MODEL=qwen2.5vl:3b
 
     # Dependencies
     depends_on:
       ollama:
         condition: service_healthy
 
+    # Volumes (optional: for development)
+    volumes:
+      - ./server:/app
+
     # Health check
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+
+  # React Frontend (optional)
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    restart: unless-stopped
+
+    # CPU and memory limits
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.5'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+
+    # Ports
+    ports:
+      - "3000:3000"
+
+    # Environment variables
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_WS_URL=ws://localhost:8000/ws
+
+    # Dependencies
+    depends_on:
+      - api-server
 
 # Named volumes
 volumes:

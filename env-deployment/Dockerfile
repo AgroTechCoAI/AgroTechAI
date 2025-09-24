@@ -16,55 +16,43 @@ COPY client/ ./
 # Build the frontend application (no environment variables needed)
 RUN npm run build
 
-# Python backend stage - Build binary with PyInstaller (Alpine-based)
-FROM python:3.12-alpine AS backend-builder
+# Skip building binary - we'll install Python directly in final stage
 
-# Install system dependencies needed for PyInstaller on Alpine
+# Final production stage - Start with Ollama base image
+FROM alpine/ollama:latest
+
+# Install nginx, supervisor, curl, and Python for Wolfi
 RUN apk add --no-cache \
-    binutils \
-    gcc \
-    musl-dev \
-    libffi-dev \
-    openssl-dev
-
-# Set working directory for backend
-WORKDIR /app/server
-
-# Copy backend source code
-COPY server/ ./
-
-# Install dependencies and PyInstaller
-RUN pip install --no-cache-dir -e . && \
-    pip install --no-cache-dir pyinstaller
-
-# Create binary executable
-RUN pyinstaller --onefile --name agrotech-server \
-    --hidden-import uvicorn \
-    --hidden-import uvicorn.lifespan.on \
-    --hidden-import uvicorn.lifespan.off \
-    --hidden-import uvicorn.protocols.websockets.auto \
-    --hidden-import uvicorn.protocols.http.auto \
-    --hidden-import fastapi \
-    --collect-all uvicorn \
-    main.py
-
-# Final production stage - Alpine with Nginx (no Python needed!)
-FROM nginx:alpine
-
-# Install only supervisor and curl (much smaller!)
-RUN apk add --no-cache \
+    nginx \
     supervisor \
-    curl
+    curl \
+    python3 \
+    py3-pip \
+    && adduser -D -s /bin/false -H -h /var/cache/nginx nginx
 
 # Create necessary directories
 RUN mkdir -p /var/log/supervisor \
-    && mkdir -p /app/server
+    && mkdir -p /app/server \
+    && mkdir -p /var/run \
+    && mkdir -p /var/log/nginx \
+    && mkdir -p /usr/share/nginx/html \
+    && mkdir -p /usr/local/bin/
 
-# Copy the compiled binary from backend builder
-COPY --from=backend-builder /app/server/dist/agrotech-server /usr/local/bin/agrotech-server
+# Models will be pulled dynamically at runtime via environment variables
 
-# Make binary executable
-RUN chmod +x /usr/local/bin/agrotech-server
+# Copy backend source code
+COPY server/ /app/server/
+
+# Install Python dependencies directly (avoiding pyproject.toml setup issues)
+WORKDIR /app/server
+RUN pip install --no-cache-dir \
+    fastapi==0.116.1 \
+    uvicorn[standard]==0.35.0 \
+    requests==2.31.0 \
+    websockets==12.0 \
+    urllib3==2.1.0 \
+    && pip install --no-cache-dir --only-binary=all Pillow==10.1.0 || \
+    pip install --no-cache-dir Pillow
 
 # Copy frontend build to nginx html directory
 COPY --from=frontend-builder /app/client/dist /usr/share/nginx/html
@@ -73,19 +61,24 @@ COPY --from=frontend-builder /app/client/dist /usr/share/nginx/html
 COPY env-deployment/nginx.conf /etc/nginx/nginx.conf
 COPY env-deployment/supervisord.conf /etc/supervisor/supervisord.conf
 
+# Copy and make executable the model pulling script
+COPY env-deployment/pull-models.sh /usr/local/bin/pull-models.sh
+RUN chmod +x /usr/local/bin/pull-models.sh
+
 # Set working directory for the application
 WORKDIR /app/server
 
-# Create a health check script
-RUN echo '#!/bin/sh\ncurl -f http://localhost/health || exit 1' > /usr/local/bin/healthcheck.sh \
+# Create a health check script that checks nginx, backend, and ollama
+RUN echo '#!/bin/sh\ncurl -f http://localhost/health && curl -f http://localhost:11434/api/tags || exit 1' > /usr/local/bin/healthcheck.sh \
     && chmod +x /usr/local/bin/healthcheck.sh
 
-# Expose port 80 (nginx)
-EXPOSE 80
+# Expose ports (nginx and ollama)
+EXPOSE 80 11434
 
-# Add health check
+# Add health check that checks both nginx and ollama
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD /usr/local/bin/healthcheck.sh
 
-# Start supervisor to manage both nginx and FastAPI
+# Override the ollama entrypoint and start supervisor to manage nginx, FastAPI, and Ollama
+ENTRYPOINT []
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]

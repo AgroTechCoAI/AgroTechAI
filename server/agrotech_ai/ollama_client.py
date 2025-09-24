@@ -17,8 +17,10 @@ from urllib3.util.retry import Retry
 
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_GENERATE_API = f"{OLLAMA_URL}/api/generate"
-MODEL_NAME = "gemma3:4b"
-VISION_MODEL_NAME = "qwen2.5vl:3b"  # Modelo para análisis de imágenes
+
+# Models from environment variables with fallback defaults
+MODEL_NAME = os.getenv("OLLAMA_TEXT_MODEL", "gemma3:270m")
+VISION_MODEL_NAME = os.getenv("OLLAMA_VISION_MODEL", "gemma3:270m")
 
 # Configure logging
 logger = logging.getLogger(__name__)
