@@ -50,3 +50,24 @@ jobs:
         with:
           name: javascript-coverage-reports
           path: ${{ steps.js-tests.outputs.coverage-path }}
+
+  check-code-statically:
+    runs-on: ubuntu-22.04
+    name: SonarCloud Analysis
+    needs: [test-python, test-javascript]
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run static code analysis
+        uses: ./.github/actions/static-analysis
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          python-coverage-artifact: python-coverage-reports
+          javascript-coverage-artifact: javascript-coverage-reports
+          debug-enabled: 'false'

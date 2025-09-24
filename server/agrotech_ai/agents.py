@@ -22,7 +22,7 @@ MODEL_NAME = "gemma3:4b"
 VISION_MODEL_NAME = "qwen2.5vl:3b"  # Modelo para análisis de imágenes
 
 # Constants
-NOT_AVAILABLE = "No disponible"
+UNAVAILABLE_VALUE = "No disponible"
 ANALYSIS_ERROR = "Error en análisis"
 
 # Configure logging
@@ -248,9 +248,9 @@ JSON:"""
     def _get_fallback_response(self) -> Dict[str, Any]:
         return {
             "image_description": "Error en análisis de imagen",
-            "soil_visual_indicators": NOT_AVAILABLE,
-            "environmental_context": NOT_AVAILABLE,
-            "plant_health_indicators": NOT_AVAILABLE,
+            "soil_visual_indicators": UNAVAILABLE_VALUE,
+            "environmental_context": UNAVAILABLE_VALUE,
+            "plant_health_indicators": UNAVAILABLE_VALUE,
             "recommended_focus_areas": [ANALYSIS_ERROR],
             "confidence": 0.0,
         }

@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -73,7 +70,7 @@ jobs:
           sonar-token: ${{ secrets.SONAR_TOKEN }}
           python-coverage-artifact: python-coverage-reports
           javascript-coverage-artifact: javascript-coverage-reports
-          debug-enabled: 'true'
+          debug-enabled: 'false'
 
   build-agrotech-app-image:
     runs-on: ubuntu-22.04

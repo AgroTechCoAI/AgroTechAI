@@ -43,6 +43,16 @@ function App() {
     const reconnectTimeoutRef = useRef(null);
     const heartbeatIntervalRef = useRef(null);
 
+    // Helper function to handle reconnection attempts (moved outside to reduce nesting)
+    const scheduleReconnection = useCallback((delay) => {
+        reconnectTimeoutRef.current = setTimeout(() => {
+            setConnectionState(currentState => ({
+                ...currentState,
+                attempts: currentState.attempts + 1
+            }));
+        }, delay);
+    }, []);
+
     // Enhanced WebSocket connection function with reconnection logic
     const connectWebSocket = useCallback((wsUrl) => {
         // Skip if already connected
@@ -57,16 +67,6 @@ function App() {
         }
 
         console.log(`🔌 Attempting WebSocket connection to ${wsUrl} (attempt ${connectionState.attempts + 1})`);
-
-        // Helper function to handle reconnection attempts
-        const scheduleReconnection = (delay) => {
-            reconnectTimeoutRef.current = setTimeout(() => {
-                setConnectionState(currentState => ({
-                    ...currentState,
-                    attempts: currentState.attempts + 1
-                }));
-            }, delay);
-        };
         setConnectionState(prev => ({
             ...prev,
             status: prev.attempts === 0 ? 'connecting' : 'reconnecting',
@@ -180,7 +180,7 @@ function App() {
 
         wsRef.current = websocket;
 
-    }, [connectionState.attempts]);
+    }, [connectionState.attempts, scheduleReconnection]);
 
     // Heartbeat mechanism to keep connection alive
     const startHeartbeat = (websocket) => {
@@ -469,7 +469,7 @@ function AgentCard({ title, data, color = 'blue' }) {
                         // Use a React Fragment for each row to avoid adding extra divs to the DOM
                         <React.Fragment key={key}>
                             <span className="text-gray-500 font-medium text-right capitalize">
-                                {key.replace(/_/g, ' ')}:
+                                {key.replaceAll('_', ' ')}:
                             </span>
                             <span className="text-gray-900 font-medium break-words">
                                 {renderValue(value)}
