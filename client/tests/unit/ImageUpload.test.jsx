@@ -70,7 +70,7 @@ describe('ImageUpload Component', () => {
       />
     )
 
-    const dropZone = document.querySelector('div[class*="border-dashed"]')
+    const dropZone = screen.getByText('Haz clic para subir').closest('button')
     const file = new File(['test'], 'test.png', { type: 'image/png' })
 
     // Test drag enter
@@ -167,7 +167,7 @@ describe('ImageUpload Component', () => {
       />
     )
 
-    const dropZone = document.querySelector('div[class*="border-dashed"]')
+    const dropZone = screen.getByText('Haz clic para subir').closest('button')
 
     // Test initial state
     expect(dropZone).toHaveClass('border-gray-300')
