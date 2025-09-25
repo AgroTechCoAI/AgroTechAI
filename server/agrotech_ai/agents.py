@@ -218,7 +218,7 @@ JSON:"""
             logger.info(
                 "✅ [%s] Vision analysis completed in %.2fs", self.role, elapsed_time
             )
-            logger.debug("🌐 [%s] Response status: %s", self.role, response.status_code)
+            logger.debug("🌐 [%s] Response status: %s, Raw Response: %s", self.role, response.status_code, response.text)
 
             result = response.json()
             resp = result.get("response", "{}")

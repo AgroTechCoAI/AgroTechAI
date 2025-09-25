@@ -2,8 +2,8 @@ services:
   # Combined AgroTech Application (Frontend + Backend + ollama)
   agrotech-app:
     build:
-      context: .
-      dockerfile: env-deployment/Dockerfile
+      context: ..
+      dockerfile: ./env-deployment/Dockerfile
     restart: unless-stopped
 
     # CPU and memory limits

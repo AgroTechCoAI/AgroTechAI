@@ -13,6 +13,9 @@ RUN npm ci --silent
 # Copy frontend source code
 COPY client/ ./
 
+## Remove env for vite
+RUN rm .env
+
 # Build the frontend application (no environment variables needed)
 RUN npm run build
 
