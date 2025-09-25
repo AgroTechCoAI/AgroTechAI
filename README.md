@@ -38,47 +38,110 @@ This proof of concept serves as:
 
 ## 🏗️ Architecture
 
-This project follows a client-server architecture with multi-agent AI coordination:
+This project follows a **layered client-server architecture** with **multi-agent AI coordination**, designed for both development flexibility and production efficiency:
 
 ```
 AgroTech AI/
-├── client/              # React frontend application
-│   ├── src/             # Source code
-│   │   ├── components/  # React components
-│   │   │   ├── app.jsx          # Main app with agent coordination
-│   │   │   ├── ScenarioForm.jsx # Image upload and environment form
-│   │   │   └── ImageUpload.jsx  # Drag-and-drop upload component
-│   │   └── utils/       # Utility functions
-│   │       ├── websocket-utils.js # WebSocket helper functions
-│   │       └── websocket-config.js # Flexible URL configuration
-│   ├── tests/           # Test suite
-│   │   ├── unit/        # Unit tests for components
-│   │   │   ├── App.test.jsx
-│   │   │   ├── websocket-config.test.js
-│   │   │   └── ...
-│   │   ├── integration/ # Integration tests
-│   │   ├── test-setup.js # Test configuration
-│   │   └── test-styles.css # Mock styles
-│   ├── main.jsx         # React entry point
-│   ├── index.html       # HTML template
-│   ├── styles.css       # Tailwind CSS styles
-│   ├── package.json     # Frontend dependencies
-│   └── vite.config.js   # Build and test configuration
-├── server/              # FastAPI backend application
-│   ├── main.py          # FastAPI server with WebSocket support
-│   ├── agents.py        # AI agents implementation
-│   ├── websocket_handler.py # WebSocket communication handler
-│   ├── tests/           # Python test suite
-│   │   ├── unit/        # Unit tests
-│   │   └── integration/ # Integration tests
-│   └── pyproject.toml   # Python project configuration
-├── env-deployment/      # Unified deployment configuration
-│   ├── Dockerfile       # Combined frontend + backend image with PyInstaller
-│   ├── nginx.conf       # Nginx configuration for reverse proxy
-│   └── supervisord.conf # Process manager for nginx + FastAPI
-├── Makefile             # Development commands for both client/server
-└── docker-compose.yml   # Unified deployment orchestration
+├── 🌐 client/                    # FRONTEND LAYER - React Application
+│   ├── src/                      # Application source code
+│   │   ├── components/           # Reusable UI components
+│   │   │   ├── app.jsx          # 🏠 Main application with agent coordination
+│   │   │   ├── ScenarioForm.jsx # 📝 Image upload and environment form
+│   │   │   └── ImageUpload.jsx  # 📎 Drag-and-drop upload component
+│   │   └── utils/               # Utility functions and helpers
+│   │       ├── websocket-utils.js   # 🔌 WebSocket connection management
+│   │       └── websocket-config.js  # ⚙️ Environment-aware URL configuration
+│   ├── tests/                    # Frontend testing suite
+│   │   ├── unit/                # Component and utility tests
+│   │   ├── integration/         # Cross-component workflow tests
+│   │   ├── test-setup.js        # Jest/Vitest configuration
+│   │   └── test-styles.css      # Mock styles for testing
+│   ├── Dockerfile               # 🐳 Development container configuration
+│   ├── package.json             # Node.js dependencies and scripts
+│   ├── vite.config.js          # Build tool configuration
+│   ├── tailwind.config.js      # Tailwind CSS configuration
+│   └── .eslintrc.json          # Code quality rules
+│
+├── 🚀 server/                    # BACKEND LAYER - FastAPI Application
+│   ├── agrotech_ai/             # Main Python package
+│   │   ├── __init__.py         # Package initialization
+│   │   ├── app.py              # 🏃 FastAPI application and routing
+│   │   ├── agents.py           # 🤖 Multi-agent AI system implementation
+│   │   ├── ollama_client.py    # 🧠 Ollama LLM client and session management
+│   │   └── websocket_handler.py # 🔌 Real-time communication handler
+│   ├── tests/                   # Backend testing suite
+│   │   ├── unit/               # Service and component tests
+│   │   └── integration/        # End-to-end workflow tests
+│   ├── Dockerfile              # 🐳 Development container configuration
+│   ├── main.py                 # 🚪 Application entry point
+│   └── pyproject.toml          # Python project configuration and dependencies
+│
+├── 🏭 env-deployment/           # PRODUCTION LAYER - Unified Deployment
+│   ├── Dockerfile              # 🐳 Production container (Alpine + supervisord)
+│   ├── docker-compose.yml      # 📦 Single-container production orchestration
+│   ├── supervisord.conf        # 👷 Process manager configuration
+│   ├── nginx.conf              # 🌐 Reverse proxy and static file serving
+│   └── pull-models.sh          # 📥 AI model initialization script
+│
+├── 🔧 .github/                  # CI/CD LAYER - Automation
+│   ├── workflows/               # GitHub Actions workflows
+│   │   ├── pr_features.yml     # Pull request validation pipeline
+│   │   └── ci_main.yml         # Main branch deployment pipeline
+│   └── actions/                # Reusable action definitions
+│       ├── python-tests/       # Python testing and quality checks
+│       ├── javascript-tests/   # JavaScript testing and linting
+│       ├── static-analysis/    # SonarCloud code analysis
+│       └── docker-push/        # Docker image build and registry push
+│
+├── 📋 Configuration Files       # PROJECT CONFIGURATION LAYER
+│   ├── docker-compose.yml      # 🔄 Development environment orchestration
+│   ├── CLAUDE.md               # 🤖 Claude Code instructions and guidelines
+│   ├── README.md               # 📚 Project documentation
+│   └── Makefile                # 🛠️ Development automation scripts
+│
+└── 📊 docs/                     # DOCUMENTATION LAYER (optional)
+    └── distillate-design-thinking/ # Design thinking process documentation
 ```
+
+### 🎯 **Layer Responsibilities**
+
+#### 🌐 **Frontend Layer** (`client/`)
+**Purpose**: User interface and experience management
+- **Components**: Reusable React components with PropTypes validation
+- **State Management**: Local state with hooks for real-time agent data
+- **Communication**: WebSocket client for real-time AI agent interaction
+- **Testing**: Unit and integration tests with 70%+ coverage
+- **Build**: Vite for development and production builds with Tailwind CSS
+
+#### 🚀 **Backend Layer** (`server/`)
+**Purpose**: Business logic and AI agent orchestration
+- **API**: FastAPI with WebSocket support for real-time communication
+- **AI Agents**: Four specialized agents (ImageVision, AgriVision, SoilSense, CropMaster)
+- **Integration**: Ollama LLM client with connection pooling and error handling
+- **Processing**: Image optimization, base64 encoding, and multi-agent coordination
+- **Testing**: Comprehensive test suite with pytest and async support
+
+#### 🏭 **Production Layer** (`env-deployment/`)
+**Purpose**: Production-ready deployment and process management
+- **Containerization**: Single Alpine container with all services
+- **Process Management**: Supervisord managing Ollama, FastAPI, and Nginx
+- **Reverse Proxy**: Nginx handling static files and API routing
+- **Model Management**: Automated AI model downloading and initialization
+- **Health Checks**: Container health monitoring and restart policies
+
+#### 🔧 **CI/CD Layer** (`.github/`)
+**Purpose**: Automated testing, quality assurance, and deployment
+- **Pull Request Validation**: Automated testing and SonarCloud analysis
+- **Main Branch Deployment**: Docker image building and registry push
+- **Quality Gates**: Code coverage, linting, and security scanning
+- **Reusable Actions**: Shared testing and analysis workflows
+
+#### 📋 **Configuration Layer**
+**Purpose**: Project setup, development workflows, and documentation
+- **Development Environment**: Multi-service Docker Compose for isolated development
+- **Documentation**: Comprehensive README and Claude Code integration guide
+- **Automation**: Makefile for common development tasks
+- **Guidelines**: Project standards and AI-assisted development patterns
 
 ### 🔄 Client-WebSocket-Agent Workflow
 
@@ -169,22 +232,59 @@ sequenceDiagram
 - **Ollama** (AI model server)
 - **Docker** and **Docker Compose** (for containerized deployment)
 
-## 🐳 Quick Start with Docker (Recommended)
+## 🐳 Docker Deployment Options
 
-Single Docker image combining frontend + backend with PyInstaller binary compilation:
+AgroTechAI provides two distinct Docker deployment approaches optimized for different use cases:
+
+### 🚀 **Production Environment** (`env-deployment/`)
+
+**Single unified container for production deployment:**
 
 ```bash
-docker-compose up --build
+docker compose -f env-deployment/docker-compose.yml up --build
 ```
 
-**Benefits:**
-- ✅ **Single unified image** with nginx reverse proxy
-- ✅ **PyInstaller binary** for faster startup and smaller footprint
-- ✅ **Environment-agnostic** (no build arguments required)
-- ✅ **Production-ready** for AWS ECS, Kubernetes, etc.
-- ✅ **Automatic HTTPS/WSS** detection
-
 **Access:** http://localhost:3000 (all services behind nginx)
+
+**Architecture:**
+- **Single Alpine-based container** combining Ollama + FastAPI + React + Nginx
+- **Supervisord process manager** orchestrating multiple services
+- **Nginx reverse proxy** handling routing and static file serving
+- **Model initialization script** automatically downloading AI models
+- **Production-ready** for cloud deployment (AWS ECS, Kubernetes, etc.)
+
+**Why this approach for production?**
+1. **Simplified Deployment**: Single image reduces orchestration complexity
+2. **Resource Efficiency**: Shared container resources and optimized for minimal overhead
+3. **Startup Automation**: Models are pulled automatically via initialization scripts
+4. **Process Management**: Supervisord ensures service reliability and restart capabilities
+5. **Cloud Compatibility**: Single container works seamlessly with container orchestration platforms
+
+### 💻 **Development Environment** (root `docker-compose.yml`)
+
+**Isolated services for development workflow:**
+
+```bash
+docker compose up --build
+```
+
+**Access:**
+- Frontend: http://localhost:3000
+- Backend: http://localhost:8000
+- Ollama: http://localhost:11434
+
+**Architecture:**
+- **Separate containers**: `frontend`, `api-server`, and `ollama` services
+- **Volume mounting** for hot-reload development
+- **Independent scaling** and resource allocation
+- **Service isolation** for easier debugging and testing
+
+**Why this approach for development?**
+1. **Development Velocity**: Hot-reload for both React and FastAPI
+2. **Service Isolation**: Debug individual components independently
+3. **Resource Control**: Allocate specific CPU/memory per service
+4. **Testing Flexibility**: Mock or replace services during testing
+5. **Log Separation**: Clear service-specific logging and monitoring
 
 ### **Local Development Setup** 💻
 
