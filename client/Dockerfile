@@ -1,5 +1,5 @@
-# Multi-stage build for React frontend
-FROM node:20-alpine AS builder
+# Development build for Vite dev server
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
@@ -7,40 +7,14 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies (including dev dependencies needed for build)
+# Install dependencies (including dev dependencies)
 RUN npm ci --silent
 
 # Copy source code
 COPY . .
 
-# Build the application
-RUN npm run build
+# Expose port 5173 (default Vite dev server port)
+EXPOSE 5173 3000
 
-# Production stage
-FROM nginx:alpine
-
-# Copy built assets from builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy custom nginx configuration (optional)
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-# Expose port 3000 to match docker-compose
-EXPOSE 3000
-
-# Create custom nginx config for port 3000
-RUN echo 'server { \
-    listen 3000; \
-    server_name localhost; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-    # Enable gzip compression \
-    gzip on; \
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript; \
-}' > /etc/nginx/conf.d/default.conf
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start Vite dev server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]

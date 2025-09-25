@@ -89,7 +89,7 @@ services:
       timeout: 10s
       retries: 3
 
-  # React Frontend (optional)
+  # React Frontend (Vite dev server)
   frontend:
     build:
       context: ./client
@@ -110,10 +110,15 @@ services:
     ports:
       - "3000:3000"
 
-    # Environment variables
+    # Environment variables for Vite
     environment:
-      - REACT_APP_API_URL=http://localhost:8000
-      - REACT_APP_WS_URL=ws://localhost:8000/ws
+      - VITE_API_URL=http://api-server:8000
+      - VITE_WS_URL=ws://api-server:8000/ws
+
+    # Volumes for hot reloading in development
+    volumes:
+      - ./client:/app
+      - /app/node_modules
 
     # Dependencies
     depends_on:
