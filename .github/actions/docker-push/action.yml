@@ -70,3 +70,12 @@ runs:
           ${{ inputs.dockerhub-username }}/${{ inputs.image-name }}:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    # 13. Establecer las salidas del job usadas para el despliegue
+    - name: Set Job Outputs
+      id: set_outputs
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      shell: bash
+      run: |
+        echo "image-name=${{ inputs.image-name }}" >> $GITHUB_OUTPUT
+        echo "image-tag=${{ inputs.tag-version }}" >> $GITHUB_OUTPUT

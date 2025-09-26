@@ -1,0 +1,153 @@
+name: 'AWS ECS Deployment'
+description: 'Deploy application to AWS ECS using CloudFormation'
+author: 'AgroTechAI Team'
+
+inputs:
+  docker-image-uri:
+    description: 'Docker image URI to deploy'
+    required: true
+  environment-name:
+    description: 'Environment to deploy to (staging/production)'
+    required: true
+  stack-name:
+    description: 'CloudFormation stack name'
+    required: true
+  cluster-name:
+    description: 'ECS cluster name'
+    required: true
+  service-name:
+    description: 'ECS service name'
+    required: true
+  aws-access-key-id:
+    description: 'AWS Access Key ID'
+    required: true
+  aws-secret-access-key:
+    description: 'AWS Secret Access Key'
+    required: true
+  aws-session-token:
+    description: 'AWS Session Token'
+    required: true
+  lab-role-arn:
+    description: 'Lab Role ARN'
+    required: true
+  vpc-id:
+    description: 'VPC ID'
+    required: true
+  subnet-ids:
+    description: 'Subnet IDs (comma-separated)'
+    required: true
+  aws-region:
+    description: 'AWS Region'
+    required: false
+    default: 'us-east-1'
+
+outputs:
+  alb-url:
+    description: 'Application Load Balancer URL'
+    value: ${{ steps.get-stack-outputs.outputs.alb_url }}
+  deployment-status:
+    description: 'Deployment status'
+    value: ${{ steps.update-service.outputs.status }}
+
+runs:
+  using: 'composite'
+  steps:
+    # 1. Configure AWS Credentials
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-session-token: ${{ inputs.aws-session-token }}
+        aws-region: ${{ inputs.aws-region }}
+
+    # 2. Deploy CloudFormation Stack
+    - name: Deploy CloudFormation Stack
+      shell: bash
+      run: |
+        echo "🚀 Deploying to ${{ inputs.environment-name }} environment"
+        echo "📦 Image URI: ${{ inputs.docker-image-uri }}"
+        echo "📋 Stack: ${{ inputs.stack-name }}"
+
+        aws cloudformation deploy \
+          --template-file template.yaml \
+          --stack-name ${{ inputs.stack-name }} \
+          --parameter-overrides \
+            EnvironmentName=${{ inputs.environment-name }} \
+            DockerImageUri=${{ inputs.docker-image-uri }} \
+            LabRoleArn=${{ inputs.lab-role-arn }} \
+            VpcId=${{ inputs.vpc-id }} \
+            SubnetIds="${{ inputs.subnet-ids }}" \
+          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+          --no-fail-on-empty-changes
+
+    # 3. Get Stack Outputs
+    - name: Get Stack Outputs
+      id: get-stack-outputs
+      shell: bash
+      run: |
+        echo "📊 Getting stack outputs for ${{ inputs.stack-name }}"
+
+        # Install jq if not present
+        if ! command -v jq &> /dev/null; then
+           sudo apt-get update && sudo apt-get install -y jq
+        fi
+
+        STACK_OUTPUTS=$(aws cloudformation describe-stacks \
+          --stack-name ${{ inputs.stack-name }} \
+          --query "Stacks[0].Outputs" \
+          --region ${{ inputs.aws-region }} \
+          --output json)
+
+        echo "Raw Stack Outputs: $STACK_OUTPUTS"
+
+        # Extract ALB URL
+        ALB_URL=$(echo $STACK_OUTPUTS | jq -r '.[] | select(.OutputKey=="ALBDnsName") | .OutputValue')
+
+        if [ -z "$ALB_URL" ] || [ "$ALB_URL" == "null" ]; then
+          echo "❌ Error: Could not get ALBDnsName from stack ${{ inputs.stack-name }}"
+          exit 1
+        fi
+
+        # Add http:// prefix
+        ALB_URL_HTTP="http://${ALB_URL}/"
+        echo "🌐 ALB URL: $ALB_URL_HTTP"
+        echo "alb_url=${ALB_URL_HTTP}" >> $GITHUB_OUTPUT
+
+    # 4. Update ECS Service
+    - name: Update ECS Service
+      id: update-service
+      shell: bash
+      run: |
+        echo "🔄 Forcing new deployment for ${{ inputs.environment-name }} service"
+        echo "🎯 Cluster: ${{ inputs.cluster-name }}"
+        echo "🔧 Service: ${{ inputs.service-name }}"
+
+        aws ecs update-service \
+          --cluster ${{ inputs.cluster-name }} \
+          --service ${{ inputs.service-name }} \
+          --force-new-deployment \
+          --region ${{ inputs.aws-region }}
+
+        echo "⏳ Waiting for service deployment to stabilize..."
+        aws ecs wait services-stable \
+          --cluster ${{ inputs.cluster-name }} \
+          --services ${{ inputs.service-name }} \
+          --region ${{ inputs.aws-region }}
+
+        echo "✅ ${{ inputs.environment-name }} service deployment completed successfully"
+        echo "status=success" >> $GITHUB_OUTPUT
+
+    # 5. Display deployment summary
+    - name: Deployment Summary
+      shell: bash
+      run: |
+        echo "🎉 Deployment Summary"
+        echo "================================"
+        echo "Environment: ${{ inputs.environment-name }}"
+        echo "Stack: ${{ inputs.stack-name }}"
+        echo "Cluster: ${{ inputs.cluster-name }}"
+        echo "Service: ${{ inputs.service-name }}"
+        echo "Image: ${{ inputs.docker-image-uri }}"
+        echo "ALB URL: ${{ steps.get-stack-outputs.outputs.alb_url }}"
+        echo "Status: ✅ SUCCESS"

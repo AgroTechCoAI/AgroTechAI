@@ -93,3 +93,31 @@ jobs:
           context-path: '.'
           dockerfile-path: 'env-deployment/Dockerfile'
           push-as-latest: 'false'
+
+  # -------------------------------------
+  # Job de Despliegue CloudFormation Staging
+  # -------------------------------------
+  deploy-cfn-staging:
+    needs: build-agrotech-app-image # Depende del job anterior (necesita image_uri)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Solo en push a main
+    steps:
+      # 1. Checkout del código (para acceder a template.yaml)
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      ## 2. Llamar action para desplegar en AWS
+      - name: Deploy to Staging
+        uses: ./.github/actions/aws-deploy
+        with:
+          docker-image-uri: "${{ secrets.DOCKERHUB_USERNAME }}/${{ needs.build-agrotech-app-image.outputs.image-name }}:${{ needs.build-agrotech-app-image.outputs.image-tag }}"
+          environment-name: staging
+          stack-name: AgroTechAI-staging-stack
+          cluster-name: AgroTechAI-staging-cluster
+          service-name: AgroTechAI-staging-service
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          lab-role-arn: ${{ secrets.LAB_ROLE_ARN }}
+          vpc-id: ${{ secrets.VPC_ID }}
+          subnet-ids: ${{ secrets.SUBNET_IDS }}
