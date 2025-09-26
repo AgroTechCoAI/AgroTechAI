@@ -115,9 +115,9 @@ jobs:
         with:
           docker-image-uri: "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_APP_NAME }}:${{ github.sha }}"
           environment-name: staging
-          stack-name: AgroTechAI-staging-stack
-          cluster-name: AgroTechAI-staging-cluster
-          service-name: AgroTechAI-staging-service
+          stack-name: agrotech-staging-stack
+          cluster-name: agrotech-staging-cluster
+          service-name: agrotech-staging-service
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
