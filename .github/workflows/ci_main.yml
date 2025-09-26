@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  DOCKER_APP_NAME: agrotech-ai-app
+
 jobs:
   test-python:
     runs-on: ubuntu-22.04
@@ -88,7 +91,7 @@ jobs:
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          image-name: agrotech-ai-app
+          image-name: ${{ env.DOCKER_APP_NAME }}
           tag-version: ${{ github.sha }}
           context-path: '.'
           dockerfile-path: 'env-deployment/Dockerfile'
@@ -110,7 +113,7 @@ jobs:
       - name: Deploy to Staging
         uses: ./.github/actions/aws-deploy
         with:
-          docker-image-uri: "${{ secrets.DOCKERHUB_USERNAME }}/${{ needs.build-agrotech-app-image.outputs.image-name }}:${{ needs.build-agrotech-app-image.outputs.image-tag }}"
+          docker-image-uri: "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_APP_NAME }}:${{ github.sha }}"
           environment-name: staging
           stack-name: AgroTechAI-staging-stack
           cluster-name: AgroTechAI-staging-cluster
