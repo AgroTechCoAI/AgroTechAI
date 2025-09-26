@@ -124,3 +124,28 @@ jobs:
           lab-role-arn: ${{ secrets.LAB_ROLE_ARN }}
           vpc-id: ${{ secrets.VPC_ID }}
           subnet-ids: ${{ secrets.SUBNET_IDS }}
+  
+  deploy-cfn-prod:
+    needs: deploy-cfn-staging # Depende del job anterior (necesita image_uri)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Solo en push a main
+    steps:
+      # 1. Checkout del código (para acceder a template.yaml)
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      ## 2. Llamar action para desplegar en AWS
+      - name: Deploy to Prod
+        uses: ./.github/actions/aws-deploy
+        with:
+          docker-image-uri: "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_APP_NAME }}:${{ github.sha }}"
+          environment-name: produccion
+          stack-name: agrotech-produccion-stack
+          cluster-name: agrotech-produccion-cluster
+          service-name: agrotech-produccion-service
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          lab-role-arn: ${{ secrets.LAB_ROLE_ARN }}
+          vpc-id: ${{ secrets.VPC_ID }}
+          subnet-ids: ${{ secrets.SUBNET_IDS }}
