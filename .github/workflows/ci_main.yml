@@ -139,10 +139,10 @@ jobs:
         uses: ./.github/actions/aws-deploy
         with:
           docker-image-uri: "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_APP_NAME }}:${{ github.sha }}"
-          environment-name: produccion
-          stack-name: agrotech-produccion-stack
-          cluster-name: agrotech-produccion-cluster
-          service-name: agrotech-produccion-service
+          environment-name: production
+          stack-name: agrotech-production-stack
+          cluster-name: agrotech-production-cluster
+          service-name: agrotech-production-service
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
