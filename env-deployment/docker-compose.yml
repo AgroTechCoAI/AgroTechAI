@@ -10,10 +10,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 3G
+          memory: 4G
           cpus: '2.0'
         reservations:
-          memory: 768M
+          memory: 1G
           cpus: '1.0'
 
     # Ports

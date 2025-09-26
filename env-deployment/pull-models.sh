@@ -10,10 +10,8 @@ MODELS="${OLLAMA_MODELS:-$DEFAULT_MODELS}"
 echo "🤖 Starting Ollama model management..."
 echo "📋 Models to pull: $MODELS"
 
-# Start Ollama server in background
-echo "🚀 Starting Ollama server..."
-/usr/bin/ollama serve &
-OLLAMA_PID=$!
+# Use existing Ollama server managed by supervisor
+echo "🚀 Connecting to existing Ollama server..."
 
 # Wait for Ollama to be ready
 echo "⏳ Waiting for Ollama server to be ready..."
@@ -28,8 +26,7 @@ done
 
 # Check if Ollama is ready
 if ! curl -s http://localhost:11434/api/tags >/dev/null 2>&1; then
-    echo "❌ Ollama server failed to start properly"
-    kill $OLLAMA_PID 2>/dev/null
+    echo "❌ Ollama server is not available"
     exit 1
 fi
 
@@ -46,10 +43,5 @@ for model in $(echo $MODELS | tr ',' ' '); do
         fi
     fi
 done
-
-# Stop the background Ollama server
-echo "🛑 Stopping temporary Ollama server..."
-kill $OLLAMA_PID
-wait $OLLAMA_PID 2>/dev/null
 
 echo "🎉 Model pulling complete!"
