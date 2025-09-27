@@ -214,7 +214,6 @@ jobs:
 
       - name: Run smoke tests against production
         id: smoke-tests
-        continue-on-error: true
         uses: ./.github/actions/smoke-tests
         with:
           app-base-url: ${{ needs.deploy-cfn-prod.outputs.alb_url }}
@@ -241,3 +240,80 @@ jobs:
         with:
           name: smoke-test-results
           path: ${{ steps.smoke-tests.outputs.coverage-path }}
+
+  # -------------------------------------
+  # Automatic Rollback on Smoke Test Failure
+  # -------------------------------------
+  automatic-rollback:
+    needs: smoke-tests
+    runs-on: ubuntu-latest
+    name: Automatic Rollback on Smoke Test Failure
+    if: failure() && needs.smoke-tests.result == 'failure' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Display rollback information
+        run: |
+          echo "🚨 AUTOMATIC ROLLBACK INITIATED"
+          echo "=================================="
+          echo "Reason: Smoke tests failed for commit ${{ github.sha }}"
+          echo "Environment: production"
+          echo "Rolling back to: latest stable version"
+          echo "Triggered by: Smoke test failure"
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "=================================="
+
+      - name: Execute automatic rollback
+        id: auto-rollback
+        uses: ./.github/actions/rollback-deploy
+        with:
+          docker-image-tag: 'latest'
+          environment-name: 'production'
+          stack-name: 'agrotech-production-stack'
+          cluster-name: 'agrotech-production-cluster'
+          service-name: 'agrotech-production-service'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          lab-role-arn: ${{ secrets.LAB_ROLE_ARN }}
+          vpc-id: ${{ secrets.VPC_ID }}
+          subnet-ids: ${{ secrets.SUBNET_IDS }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          rollback-reason: 'Automatic rollback due to smoke test failure for commit ${{ github.sha }}'
+
+      - name: Post-rollback summary
+        run: |
+          echo "🔄 AUTOMATIC ROLLBACK COMPLETED"
+          echo "================================="
+          echo "Status: ${{ steps.auto-rollback.outputs.rollback-status }}"
+          echo "Summary: ${{ steps.auto-rollback.outputs.rollback-summary }}"
+
+          if [ -n "${{ steps.auto-rollback.outputs.alb_url }}" ]; then
+            echo "Application URL: ${{ steps.auto-rollback.outputs.alb_url }}"
+          fi
+
+          echo "Previous failed commit: ${{ github.sha }}"
+          echo "Rolled back to: latest"
+          echo "================================="
+
+          # Create summary for the GitHub Actions summary page
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🚨 Automatic Rollback Summary
+
+          **Trigger:** Smoke tests failed for commit \`${{ github.sha }}\`
+          **Environment:** production
+          **Rollback Target:** \`latest\`
+          **Status:** ${{ steps.auto-rollback.outputs.rollback-status }}
+
+          ### Rollback Details
+          ${{ steps.auto-rollback.outputs.rollback-summary }}
+
+          $(if [ -n "${{ steps.auto-rollback.outputs.alb_url }}" ]; then echo "**Application URL:** ${{ steps.auto-rollback.outputs.alb_url }}"; fi)
+
+          ### Next Steps
+          - Review the failed smoke tests in the previous job
+          - Investigate the issues in commit \`${{ github.sha }}\`
+          - Fix the issues and redeploy when ready
+          EOF

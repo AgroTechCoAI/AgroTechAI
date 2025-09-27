@@ -772,7 +772,8 @@ Execution Flow:
 5. **deploy-cfn-staging** – Creates/updates AWS CloudFormation stack + ECS service (staging)
 6. **acceptance-tests** – End-to-end validation on staging environment
 7. **deploy-cfn-prod** – Promotes same image tag to production (sequential after acceptance tests)
-8. **smoke-tests** – Critical path validation on production (non-failing)
+8. **smoke-tests** – Critical path validation on production (now failing on test failure)
+9. **automatic-rollback** – Triggers automatic rollback to latest stable version when smoke tests fail
 
 ✅ Staging and production both deploy the **exact same immutable image**: `DOCKERHUB_USERNAME/agrotech-ai-app:<git-sha>` ensuring parity.
 
@@ -788,6 +789,7 @@ flowchart TB
         F --> G[acceptance-tests]
         G --> H[deploy-cfn-prod]
         H --> I[smoke-tests]
+        I -.->|on failure| I1[automatic-rollback]
     end
 
     subgraph "Pull Request Pipeline (pr_features.yml)"
@@ -835,6 +837,7 @@ flowchart TB
     P1 -.-> U
     P -.-> Y
     Q -.-> X
+    I1-.->Y
 
     %% Styling
     classDef mainTrigger fill:#ff9999,stroke:#ff6666,stroke-width:2px
@@ -900,7 +903,26 @@ Promotion Model:
 
 Artifacts are short‑lived but provide auditable evidence of test execution and deployment validation.
 
-### 🔄 Rollback Deployment (`rollback.yml`)
+### 🔄 Automatic Rollback (`ci_main.yml`)
+Automatic rollback capability integrated into the main CI/CD pipeline that triggers when smoke tests fail in production:
+
+**Trigger Conditions:**
+- Smoke tests fail after production deployment
+- Only triggers on push to main branch
+- Uses `failure()` function to catch smoke test failures
+
+**Execution:**
+- Automatically rolls back to `latest` Docker image tag (last known good version)
+- Provides comprehensive logging and GitHub Actions summary
+- No manual intervention required for immediate recovery
+
+**Safety Features:**
+- Only triggers on actual smoke test failures
+- Detailed rollback summary with failure context
+- Preserves original deployment commit SHA for investigation
+- GitHub Actions summary with next steps for developers
+
+### 🔄 Manual Rollback Deployment (`rollback.yml`)
 Manual workflow for emergency rollbacks with safety validations:
 
 **Trigger Inputs:**
