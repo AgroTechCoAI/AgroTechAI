@@ -103,6 +103,8 @@ jobs:
     needs: build-agrotech-app-image # Depende del job anterior (necesita image_uri)
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Solo en push a main
+    outputs:
+      alb_url: ${{ steps.save_outputs.outputs.alb_url }}
     steps:
       # 1. Checkout del código (para acceder a template.yaml)
       - name: Checkout code
@@ -111,6 +113,7 @@ jobs:
       ## 2. Llamar action para desplegar en AWS
       - name: Deploy to Staging
         uses: ./.github/actions/aws-deploy
+        id: deploy_staging
         with:
           docker-image-uri: "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_APP_NAME }}:${{ github.sha }}"
           environment-name: staging
@@ -123,6 +126,14 @@ jobs:
           lab-role-arn: ${{ secrets.LAB_ROLE_ARN }}
           vpc-id: ${{ secrets.VPC_ID }}
           subnet-ids: ${{ secrets.SUBNET_IDS }}
+
+      ## Save outputs
+      - name: Save outputs
+        id: save_outputs
+        shell: bash
+        run: |
+          # Set outputs
+          echo "alb_url=${{ steps.deploy_staging.outputs.alb-url }}" >> $GITHUB_OUTPUT
 
   # -------------------------------------
   # Acceptance Tests on Staging Environment
@@ -144,7 +155,7 @@ jobs:
           app-base-url: ${{ needs.deploy-cfn-staging.outputs.alb_url }}
           python-version: '3.12'
           test-debug-mode: 'false'
-          wait-time: '30'
+          wait-time: '15'
 
       - name: Upload acceptance test results
         uses: actions/upload-artifact@v4
@@ -156,6 +167,8 @@ jobs:
   deploy-cfn-prod:
     needs: acceptance-tests # Depende de los acceptance tests (solo despliega si pasan)
     runs-on: ubuntu-latest
+    outputs:
+      alb_url: ${{ steps.save_outputs.outputs.alb_url }}
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Solo en push a main
     steps:
       # 1. Checkout del código (para acceder a template.yaml)
@@ -179,6 +192,14 @@ jobs:
           vpc-id: ${{ secrets.VPC_ID }}
           subnet-ids: ${{ secrets.SUBNET_IDS }}
 
+      ## Save outputs
+      - name: Save outputs
+        id: save_outputs
+        shell: bash
+        run: |
+          # Set outputs
+          echo "alb_url=${{ steps.deploy_staging.outputs.alb-url }}" >> $GITHUB_OUTPUT
+
   # -------------------------------------
   # Smoke Tests on Production Environment
   # -------------------------------------
@@ -187,7 +208,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Production Smoke Tests
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
