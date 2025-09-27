@@ -7,12 +7,18 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+import logging
 
+DEBUG_MODE = os.environ.get("TEST_DEBUG_MODE", "false")
 BASE_URL = os.environ.get("APP_BASE_URL", "http://localhost:3000")
 
 @pytest.fixture
 def browser():
     """Configure Chrome browser for testing"""
+    if not DEBUG_MODE == "true":
+        logging.getLogger('selenium').setLevel(logging.WARNING)
+        logging.getLogger('urllib3').setLevel(logging.WARNING)
+
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
@@ -251,6 +257,9 @@ def test_text_based_agents_workflow(browser, test_image, working_agents):
 
     # Get test image path
     test_image_path = os.path.join(os.path.dirname(__file__), "..", "test_images", test_image)
+
+    # Convert to absolute path for better debugging
+    test_image_path = os.path.abspath(test_image_path)
 
     # Skip if test image doesn't exist
     if not os.path.exists(test_image_path):
