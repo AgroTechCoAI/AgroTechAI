@@ -71,7 +71,11 @@ AgroTech AI/
 │   │   └── websocket_handler.py # 🔌 Real-time communication handler
 │   ├── tests/                   # Backend testing suite
 │   │   ├── unit/               # Service and component tests
-│   │   └── integration/        # End-to-end workflow tests
+│   │   ├── integration/        # End-to-end workflow tests
+│   │   ├── acceptance/         # E2E acceptance tests (Selenium-based)
+│   │   ├── smoke/              # Production smoke tests
+│   │   ├── test_images/        # Shared test images for all test types
+│   │   └── test_runner.py      # Test execution orchestrator
 │   ├── Dockerfile              # 🐳 Development container configuration
 │   ├── main.py                 # 🚪 Application entry point
 │   └── pyproject.toml          # Python project configuration and dependencies
@@ -86,12 +90,18 @@ AgroTech AI/
 ├── 🔧 .github/                  # CI/CD LAYER - Automation
 │   ├── workflows/               # GitHub Actions workflows
 │   │   ├── pr_features.yml     # Pull request validation pipeline
-│   │   └── ci_main.yml         # Main branch deployment pipeline
+│   │   ├── ci_main.yml         # Main branch deployment pipeline
+│   │   ├── production-release.yml # Manual versioned release workflow
+│   │   └── rollback.yml        # Emergency rollback workflow
 │   └── actions/                # Reusable action definitions
 │       ├── python-tests/       # Python testing and quality checks
 │       ├── javascript-tests/   # JavaScript testing and linting
 │       ├── static-analysis/    # SonarCloud code analysis
-│       └── docker-push/        # Docker image build and registry push
+│       ├── docker-push/        # Docker image build and registry push
+│       ├── aws-deploy/         # AWS CloudFormation and ECS deployment
+│       ├── acceptance-tests/   # End-to-end acceptance testing
+│       ├── smoke-tests/        # Production smoke testing
+│       └── rollback-deploy/    # Emergency rollback deployment
 │
 ├── 📋 Configuration Files       # PROJECT CONFIGURATION LAYER
 │   ├── docker-compose.yml      # 🔄 Development environment orchestration
@@ -131,10 +141,13 @@ AgroTech AI/
 
 #### 🔧 **CI/CD Layer** (`.github/`)
 **Purpose**: Automated testing, quality assurance, and deployment
-- **Pull Request Validation**: Automated testing and SonarCloud analysis
-- **Main Branch Deployment**: Docker image building and registry push
-- **Quality Gates**: Code coverage, linting, and security scanning
-- **Reusable Actions**: Shared testing and analysis workflows
+- **Pull Request Validation**: Automated testing and SonarCloud analysis (`pr_features.yml`)
+- **Main Branch Deployment**: Full pipeline with staging → production promotion (`ci_main.yml`)
+- **Production Release**: Manual versioned releases with semantic tagging (`production-release.yml`)
+- **Emergency Rollback**: Manual rollback workflow with safety validations (`rollback.yml`)
+- **Quality Gates**: Code coverage, linting, acceptance tests, and security scanning
+- **Reusable Actions**: 8 specialized actions for testing, deployment, and rollback
+- **Testing Infrastructure**: Acceptance tests (staging gate) and smoke tests (production validation)
 
 #### 📋 **Configuration Layer**
 **Purpose**: Project setup, development workflows, and documentation
@@ -757,19 +770,88 @@ Execution Flow:
 3. **check-code-statically** – SonarCloud analysis (waits for both test jobs)
 4. **build-agrotech-app-image** – Builds & pushes Docker image (tag: commit SHA)
 5. **deploy-cfn-staging** – Creates/updates AWS CloudFormation stack + ECS service (staging)
-6. **deploy-cfn-prod** – Promotes same image tag to production (sequential after staging)
+6. **acceptance-tests** – End-to-end validation on staging environment
+7. **deploy-cfn-prod** – Promotes same image tag to production (sequential after acceptance tests)
+8. **smoke-tests** – Critical path validation on production (non-failing)
 
 ✅ Staging and production both deploy the **exact same immutable image**: `DOCKERHUB_USERNAME/agrotech-ai-app:<git-sha>` ensuring parity.
 
 ```mermaid
-flowchart LR
-    A[Push to main] --> B[test-python]
-    A --> C[test-javascript]
-    B --> D[check-code-statically]
-    C --> D
-    D --> E[build-agrotech-app-image]
-    E --> F[deploy-cfn-staging]
-    F --> G[deploy-cfn-prod]
+flowchart TB
+    subgraph "Main CI/CD Pipeline (ci_main.yml)"
+        A[Push to main] --> B[test-python]
+        A --> C[test-javascript]
+        B --> D[check-code-statically]
+        C --> D
+        D --> E[build-agrotech-app-image]
+        E --> F[deploy-cfn-staging]
+        F --> G[acceptance-tests]
+        G --> H[deploy-cfn-prod]
+        H --> I[smoke-tests]
+    end
+
+    subgraph "Pull Request Pipeline (pr_features.yml)"
+        J[Pull Request] --> K[test-python-pr]
+        J --> L[test-javascript-pr]
+        K --> M[check-code-statically-pr]
+        L --> M
+    end
+
+    subgraph "Production Release (production-release.yml)"
+        N1[Manual Release Trigger] --> O1[rebuild-production-image]
+        O1 --> P1[tag-and-push-release]
+    end
+
+    subgraph "Rollback Workflow (rollback.yml)"
+        N[Manual Rollback Trigger] --> O[validate-rollback]
+        O --> P[rollback-deployment]
+        P --> Q[post-rollback-smoke-test]
+    end
+
+    subgraph "Reusable GitHub Actions"
+        R[python-tests]
+        S[javascript-tests]
+        T[static-analysis]
+        U[docker-push]
+        V[aws-deploy]
+        W[acceptance-tests]
+        X[smoke-tests]
+        Y[rollback-deploy]
+    end
+
+    %% Dependencies between workflows and actions
+    B -.-> R
+    C -.-> S
+    D -.-> T
+    E -.-> U
+    F -.-> V
+    G -.-> W
+    H -.-> V
+    I -.-> X
+    K -.-> R
+    L -.-> S
+    M -.-> T
+    O1 -.-> U
+    P1 -.-> U
+    P -.-> Y
+    Q -.-> X
+
+    %% Styling
+    classDef mainTrigger fill:#ff9999,stroke:#ff6666,stroke-width:2px
+    classDef prTrigger fill:#ffcc99,stroke:#ff9900,stroke-width:2px
+    classDef releaseTrigger fill:#99ff99,stroke:#00cc00,stroke-width:2px
+    classDef rollbackTrigger fill:#cc99ff,stroke:#9966cc,stroke-width:2px
+    classDef testStep fill:#99ccff,stroke:#0066cc,stroke-width:2px
+    classDef deployStep fill:#99ff99,stroke:#00cc00,stroke-width:2px
+    classDef action fill:#f0f0f0,stroke:#666666,stroke-width:1px
+
+    class A mainTrigger
+    class J prTrigger
+    class N1 releaseTrigger
+    class N rollbackTrigger
+    class B,C,D,G,I,K,L,M,Q testStep
+    class E,F,H,O,P,O1,P1 deployStep
+    class R,S,T,U,V,W,X,Y action
 ```
 
 ### 🧪 Quality Gates
@@ -794,23 +876,50 @@ Promotion Model:
 - Same image digest ensures zero “worked-in-staging-but-not-prod” drift
 
 ### 🔐 Required GitHub Secrets
-| Secret | Purpose |
-|--------|---------|
-| `DOCKERHUB_USERNAME` | Auth for Docker Hub push |
-| `DOCKERHUB_TOKEN` | Docker Hub access token |
-| `AWS_ACCESS_KEY_ID` | AWS programmatic credentials |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret key |
-| `AWS_SESSION_TOKEN` | (If using temporary credentials) |
-| `LAB_ROLE_ARN` | Execution / task role reference |
-| `VPC_ID` | Target VPC ID for ECS services |
-| `SUBNET_IDS` | Comma-separated subnet IDs |
-| `SONAR_TOKEN` | SonarCloud authentication |
+| Secret | Purpose | Used In |
+|--------|---------|---------|
+| `DOCKERHUB_USERNAME` | Auth for Docker Hub push | CI/CD, Rollback |
+| `DOCKERHUB_TOKEN` | Docker Hub access token | CI/CD |
+| `AWS_ACCESS_KEY_ID` | AWS programmatic credentials | CI/CD, Rollback |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret key | CI/CD, Rollback |
+| `AWS_SESSION_TOKEN` | (If using temporary credentials) | CI/CD, Rollback |
+| `LAB_ROLE_ARN` | Execution / task role reference | CI/CD, Rollback |
+| `VPC_ID` | Target VPC ID for ECS services | CI/CD, Rollback |
+| `SUBNET_IDS` | Comma-separated subnet IDs | CI/CD, Rollback |
+| `SONAR_TOKEN` | SonarCloud authentication | CI/CD |
 
 ### 📦 Artifacts Produced
+**CI/CD Pipeline:**
 - `python-coverage-reports/` (lcov / XML used by SonarCloud)
 - `javascript-coverage-reports/`
+- `acceptance-test-results/` (E2E test results and coverage)
+- `smoke-test-results/` (production validation results)
 
-Artifacts are short‑lived but provide auditable evidence of test execution.
+**Rollback Workflow:**
+- `post-rollback-smoke-test-results/` (validation of rollback success)
+
+Artifacts are short‑lived but provide auditable evidence of test execution and deployment validation.
+
+### 🔄 Rollback Deployment (`rollback.yml`)
+Manual workflow for emergency rollbacks with safety validations:
+
+**Trigger Inputs:**
+- `environment` - Production or staging environment selection
+- `docker_tag` - Docker image tag to rollback to (defaults to `latest`)
+- `rollback_reason` - Documentation of rollback reason
+- `confirm_rollback` - Safety confirmation (must type "yes")
+
+**Execution Flow:**
+1. **validate-rollback** – Validates inputs and maps environment resources
+2. **rollback-deployment** – Executes rollback using existing aws-deploy action
+3. **post-rollback-smoke-test** – Validates production rollback with smoke tests
+
+**Safety Features:**
+- Confirmation requirement prevents accidental rollbacks
+- Current deployment info displayed before rollback
+- Health checks verify rollback success
+- Post-rollback testing ensures system stability
+- Detailed logging and GitHub Actions summary
 
 ### 🚀 Manual Versioned Release (`production-release.yml`)
 Triggered manually with inputs:
@@ -818,31 +927,36 @@ Triggered manually with inputs:
 - `release_notes` (optional)
 
 Steps:
-1. Rebuilds production image from source (ensures reproducibility) 
+1. Rebuilds production image from source (ensures reproducibility)
 2. Pushes tags: `:<version>` and `:latest`
 3. (Future) Could publish a GitHub Release + changelog
 
 Use this when you want a human-readable tag for external deployments or rollback anchors.
 
 ### 🛡️ Reliability Techniques Implemented
-- Immutable image tagging (commit SHA)
-- Single build context for all runtime components (no mismatch risk)
-- Sequential environment promotion (staging before prod)
-- Centralized Docker build logic via composite action
-- Explicit parameterization of infra via CloudFormation template
+- **Immutable image tagging** (commit SHA)
+- **Single build context** for all runtime components (no mismatch risk)
+- **Sequential environment promotion** (staging before prod)
+- **Centralized Docker build logic** via composite action
+- **Explicit parameterization** of infra via CloudFormation template
+- **Quality gates** with acceptance tests blocking production deployment
+- **Non-failing smoke tests** for production validation
+- **Emergency rollback capability** with safety validations
+- **Reusable GitHub Actions** for consistent deployment and rollback
 
 ### 🔭 Planned / Recommended Enhancements
-| Category | Improvement | Benefit |
-|----------|------------|---------|
-| Build | Merge dual tagging into single multi-tag build | Shorter pipeline time |
-| Quality Gates | Add acceptance test job after staging deploy (blocking prod) | Prevent bad promotion |
-| Security | Sign images (cosign) & verify in deploy | Supply chain integrity |
-| Deployment | Pin ECS task to image digest (sha256:...) | Stronger immutability |
-| Release | Auto-generate GitHub Release notes | Consistent changelogs |
-| Governance | Manual approval / environment protection for prod | Change control |
-| Reliability | Capture previous task definition for rollback | Fast recovery |
-| Observability | Publish deployment metadata (image, commit, time) to a status page | Traceability |
-| Testing | Add smoke test hitting `/health` post-deploy | Early failure detection |
+| Category | Improvement | Status | Benefit |
+|----------|------------|--------|---------|
+| Build | Merge dual tagging into single multi-tag build | 📋 Planned | Shorter pipeline time |
+| Quality Gates | ~~Add acceptance test job after staging deploy (blocking prod)~~ | ✅ Implemented | Prevent bad promotion |
+| Security | Sign images (cosign) & verify in deploy | 📋 Planned | Supply chain integrity |
+| Deployment | Pin ECS task to image digest (sha256:...) | 📋 Planned | Stronger immutability |
+| Release | Auto-generate GitHub Release notes | 📋 Planned | Consistent changelogs |
+| Governance | Manual approval / environment protection for prod | 📋 Planned | Change control |
+| Reliability | ~~Capture previous task definition for rollback~~ | ✅ Implemented | Fast recovery |
+| Observability | Publish deployment metadata (image, commit, time) to a status page | 📋 Planned | Traceability |
+| Testing | ~~Add smoke test hitting `/health` post-deploy~~ | ✅ Implemented | Early failure detection |
+| Emergency Response | ~~Add rollback workflow with safety validations~~ | ✅ Implemented | Fast incident recovery |
 
 ### 🧵 Example Image References
 ```
@@ -858,11 +972,22 @@ docker pull <dockerhub-user>/agrotech-ai-app:latest    # Floating convenience ta
 | Staging succeeds, prod fails | Infra drift or capacity | Inspect CloudFormation events & ECS service events |
 | Sonar step skipped | Prior test job failed | Open test job logs; fix test or lint errors |
 | Coverage missing in Sonar | Artifact name mismatch | Verify upload step & static-analysis inputs |
+| Acceptance tests block production | Test failures on staging | Check acceptance test logs; fix issues before retry |
+| Rollback fails validation | Missing confirmation or invalid environment | Ensure "yes" confirmation and valid environment selection |
+| Post-rollback smoke tests fail | Rollback didn't complete properly | Check ECS service status and application health |
 
-### 🧪 (Future) Acceptance & Smoke Tests (Not Yet Active)
-Planned placement:
-1. Deploy Staging → run acceptance tests (client ↔ server full flow)
-2. On success → deploy Production → run lightweight smoke (health + simple analysis)
+### 🧪 Testing Infrastructure (Active)
+**Acceptance Tests** - Full E2E validation on staging:
+1. WebSocket connectivity and agent coordination
+2. Image upload and analysis workflow
+3. Multi-agent AI system validation (ImageVision, AgriVision, SoilSense, CropMaster)
+4. **Blocks production deployment** if tests fail
+
+**Smoke Tests** - Critical path validation on production:
+1. Application health and accessibility checks
+2. Basic image analysis workflow
+3. **Non-failing** - reports success/failure but never blocks pipeline
+4. Runs after production deployment and rollbacks
 
 ---
 This pipeline balances **speed (parallel tests)** with **confidence (sequential promotion)** while keeping the optimization surface clear for future governance and release maturity improvements.
