@@ -75,7 +75,7 @@ def main():
 
     elif test_type == "coverage":
         success = run_command(
-            "pytest tests/ --cov=.",
+            "pytest tests/unit/ tests/integration/ --cov=.",
             "Test Coverage Report",
         )
         if success:
