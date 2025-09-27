@@ -55,7 +55,6 @@ jobs:
     runs-on: ubuntu-22.04
     name: SonarCloud Analysis
     needs: [test-python, test-javascript]
-    if: always()
 
     steps:
       - name: Checkout code
