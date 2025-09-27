@@ -7,11 +7,13 @@ An intelligent agricultural monitoring system powered by AI agents that analyze 
 > **Note:** This project is a **proof of concept** demonstrating multi-agent AI systems for agricultural monitoring. It was developed using **vibecoding** - an iterative, AI-assisted development approach that emphasizes rapid prototyping and continuous refinement.
 
 ### **Vibecoding Development Process**
+- **AI-Assisted Architecture**: System design and implementation guided by AI collaboration
+- **Rapid Iteration**: Quick prototyping with immediate testing and refinement
+- **Continuous Enhancement**: Features evolved through iterative development cycles
+- **Real-time Problem Solving**: Issues addressed as they emerged during development
 
 ### **Educational Purpose**
-## 🔄 CI/CD Pipeline
 
-> Full CI/CD deep-dive: see [`docs/ci_cd.md`](docs/ci_cd.md) for job tables, roadmap, troubleshooting, and glossary.
 - 📚 **Learning Tool**: Demonstrates modern AI agent architectures
 - 🔬 **Research Platform**: Explores multi-agent coordination in agricultural contexts
 - 💡 **Innovation Showcase**: Illustrates possibilities of AI-driven agricultural analysis
@@ -737,7 +739,7 @@ This section covers end-to-end testing of the full AgroTech AI system with real 
    - SoilSense assesses environmental factors
    - CropMaster provides final recommendations
 
-## � CI/CD Pipeline
+## 🚀 CI/CD Pipeline
 
 End‑to‑end automation is handled with **GitHub Actions** using two primary workflows:
 
