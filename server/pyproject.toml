@@ -46,6 +46,8 @@ dev = [
     "flake8-pyproject>=1.2.3",
     "mypy>=1.0.0",
     "pre-commit>=3.0.0",
+    "selenium>=4.15.0",
+    "webdriver-manager>=4.0.0",
 ]
 test = [
     "pytest>=7.4.4",
@@ -55,6 +57,8 @@ test = [
     "pytest-html>=4.1.1",
     "httpx>=0.25.2",
     "respx>=0.20.2",
+    "selenium>=4.15.0",
+    "webdriver-manager>=4.0.0",
 ]
 
 [project.scripts]
@@ -81,6 +85,7 @@ asyncio_mode = "auto"
 markers = [
     "unit: Unit tests",
     "integration: Integration tests",
+    "acceptance: Acceptance/End-to-End tests",
     "slow: Slow tests",
     "ollama: Tests requiring Ollama connection",
 ]

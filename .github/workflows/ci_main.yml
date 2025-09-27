@@ -58,7 +58,6 @@ jobs:
     runs-on: ubuntu-22.04
     name: SonarCloud Analysis
     needs: [test-python, test-javascript]
-    if: always()
 
     steps:
       - name: Checkout code
@@ -124,18 +123,48 @@ jobs:
           lab-role-arn: ${{ secrets.LAB_ROLE_ARN }}
           vpc-id: ${{ secrets.VPC_ID }}
           subnet-ids: ${{ secrets.SUBNET_IDS }}
-  
+
+  # -------------------------------------
+  # Acceptance Tests on Staging Environment
+  # -------------------------------------
+  acceptance-tests:
+    needs: deploy-cfn-staging
+    runs-on: ubuntu-latest
+    name: E2E Acceptance Tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run acceptance tests against staging
+        id: acceptance-tests
+        uses: ./.github/actions/acceptance-tests
+        with:
+          app-base-url: ${{ needs.deploy-cfn-staging.outputs.alb_url }}
+          python-version: '3.12'
+          test-debug-mode: 'false'
+          wait-time: '30'
+
+      - name: Upload acceptance test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-test-results
+          path: ${{ steps.acceptance-tests.outputs.coverage-path }}
+
   deploy-cfn-prod:
-    needs: deploy-cfn-staging # Depende del job anterior (necesita image_uri)
+    needs: acceptance-tests # Depende de los acceptance tests (solo despliega si pasan)
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Solo en push a main
     steps:
       # 1. Checkout del código (para acceder a template.yaml)
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       ## 2. Llamar action para desplegar en AWS
       - name: Deploy to Prod
+        id: deploy-prod
         uses: ./.github/actions/aws-deploy
         with:
           docker-image-uri: "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_APP_NAME }}:${{ github.sha }}"
@@ -149,3 +178,46 @@ jobs:
           lab-role-arn: ${{ secrets.LAB_ROLE_ARN }}
           vpc-id: ${{ secrets.VPC_ID }}
           subnet-ids: ${{ secrets.SUBNET_IDS }}
+
+  # -------------------------------------
+  # Smoke Tests on Production Environment
+  # -------------------------------------
+  smoke-tests:
+    needs: deploy-cfn-prod
+    runs-on: ubuntu-latest
+    name: Production Smoke Tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run smoke tests against production
+        id: smoke-tests
+        continue-on-error: true
+        uses: ./.github/actions/smoke-tests
+        with:
+          app-base-url: ${{ needs.deploy-cfn-prod.outputs.alb_url }}
+          python-version: '3.12'
+          test-debug-mode: 'false'
+          wait-time: '45'
+
+      - name: Report smoke test results
+        shell: bash
+        run: |
+          echo "🔥 Smoke Test Results:"
+          echo "Status: ${{ steps.smoke-tests.outputs.test-status }}"
+          echo "Summary: ${{ steps.smoke-tests.outputs.test-summary }}"
+
+          if [ "${{ steps.smoke-tests.outputs.test-status }}" = "failure" ]; then
+            echo "⚠️ Smoke tests failed, but deployment pipeline continues"
+          else
+            echo "✅ Smoke tests passed successfully"
+          fi
+
+      - name: Upload smoke test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test-results
+          path: ${{ steps.smoke-tests.outputs.coverage-path }}

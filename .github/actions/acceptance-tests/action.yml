@@ -1,0 +1,98 @@
+name: 'AgroTech AI Acceptance Tests'
+description: 'Run end-to-end acceptance tests for AgroTech AI application'
+author: 'AgroTech AI Team'
+
+inputs:
+  app-base-url:
+    description: 'Base URL of the application to test'
+    required: true
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.12'
+  test-debug-mode:
+    description: 'Enable debug mode for tests'
+    required: false
+    default: 'false'
+  wait-time:
+    description: 'Time to wait for deployment to be ready (seconds)'
+    required: false
+    default: '30'
+
+outputs:
+  test-results:
+    description: 'Path to test results'
+    value: ${{ steps.run-tests.outputs.results-path }}
+  coverage-path:
+    description: 'Path to coverage reports'
+    value: ${{ steps.run-tests.outputs.coverage-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Chrome and dependencies
+      shell: bash
+      run: |
+        echo "🔧 Installing Chrome and dependencies..."
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+        echo "✅ Chrome installed successfully"
+
+    - name: Install Python dependencies
+      shell: bash
+      run: |
+        echo "📦 Installing Python dependencies..."
+        make py-install-dev
+        echo "✅ Dependencies installed successfully"
+
+    - name: Wait for deployment readiness
+      shell: bash
+      run: |
+        echo "⏳ Waiting ${{ inputs.wait-time }} seconds for deployment to be ready..."
+        sleep ${{ inputs.wait-time }}
+        echo "✅ Wait period completed"
+
+    - name: Validate application accessibility
+      shell: bash
+      run: |
+        echo "🔍 Checking if application is accessible..."
+        echo "Target URL: ${{ inputs.app-base-url }}"
+
+        # Try to reach the application with curl
+        if curl -s --connect-timeout 10 --max-time 30 "${{ inputs.app-base-url }}/health" > /dev/null; then
+          echo "✅ Application health endpoint is accessible"
+        else
+          echo "⚠️ Health endpoint not accessible, but continuing with tests..."
+        fi
+
+    - name: Run acceptance tests
+      id: run-tests
+      shell: bash
+      env:
+        APP_BASE_URL: ${{ inputs.app-base-url }}
+        TEST_DEBUG_MODE: ${{ inputs.test-debug-mode }}
+      run: |
+        echo "🧪 Starting acceptance tests..."
+        echo "Base URL: $APP_BASE_URL"
+        echo "Debug Mode: $TEST_DEBUG_MODE"
+
+        # Run acceptance tests
+        make py-test-acceptance
+
+        # Set outputs
+        echo "results-path=server/coverage" >> $GITHUB_OUTPUT
+        echo "coverage-path=server/coverage" >> $GITHUB_OUTPUT
+
+        echo "✅ Acceptance tests completed successfully"
+    
+
+branding:
+  icon: 'check-circle'
+  color: 'green'

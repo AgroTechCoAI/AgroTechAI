@@ -1,0 +1,191 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to rollback'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+      docker_tag:
+        description: 'Docker image tag to rollback to'
+        required: false
+        default: 'latest'
+        type: string
+      rollback_reason:
+        description: 'Reason for rollback'
+        required: false
+        default: 'Manual rollback via GitHub Actions'
+        type: string
+      confirm_rollback:
+        description: 'Confirm rollback (type "yes" to proceed)'
+        required: true
+        type: string
+
+env:
+  DOCKER_APP_NAME: agrotech-ai-app
+
+jobs:
+  validate-rollback:
+    runs-on: ubuntu-latest
+    name: Validate Rollback Request
+    outputs:
+      should_proceed: ${{ steps.validate.outputs.should_proceed }}
+      target_stack: ${{ steps.validate.outputs.target_stack }}
+      target_cluster: ${{ steps.validate.outputs.target_cluster }}
+      target_service: ${{ steps.validate.outputs.target_service }}
+
+    steps:
+      - name: Validate rollback confirmation
+        id: validate
+        run: |
+          echo "🔍 Validating rollback request..."
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Docker tag: ${{ github.event.inputs.docker_tag }}"
+          echo "Reason: ${{ github.event.inputs.rollback_reason }}"
+          echo "Confirmation: ${{ github.event.inputs.confirm_rollback }}"
+
+          # Check confirmation
+          if [ "${{ github.event.inputs.confirm_rollback }}" != "yes" ]; then
+            echo "❌ Rollback not confirmed. Please type 'yes' to proceed."
+            echo "should_proceed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Set environment-specific variables
+          if [ "${{ github.event.inputs.environment }}" = "production" ]; then
+            echo "target_stack=agrotech-production-stack" >> $GITHUB_OUTPUT
+            echo "target_cluster=agrotech-production-cluster" >> $GITHUB_OUTPUT
+            echo "target_service=agrotech-production-service" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.environment }}" = "staging" ]; then
+            echo "target_stack=agrotech-staging-stack" >> $GITHUB_OUTPUT
+            echo "target_cluster=agrotech-staging-cluster" >> $GITHUB_OUTPUT
+            echo "target_service=agrotech-staging-service" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Invalid environment: ${{ github.event.inputs.environment }}"
+            echo "should_proceed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          echo "should_proceed=true" >> $GITHUB_OUTPUT
+          echo "✅ Rollback request validated successfully"
+
+  rollback-deployment:
+    needs: validate-rollback
+    runs-on: ubuntu-latest
+    name: Execute Rollback
+    if: needs.validate-rollback.outputs.should_proceed == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Display rollback information
+        run: |
+          echo "🔄 ROLLBACK DEPLOYMENT INITIATED"
+          echo "=================================="
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Docker Image: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_APP_NAME }}:${{ github.event.inputs.docker_tag }}"
+          echo "Stack: ${{ needs.validate-rollback.outputs.target_stack }}"
+          echo "Cluster: ${{ needs.validate-rollback.outputs.target_cluster }}"
+          echo "Service: ${{ needs.validate-rollback.outputs.target_service }}"
+          echo "Reason: ${{ github.event.inputs.rollback_reason }}"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "=================================="
+
+      - name: Execute rollback
+        id: rollback
+        uses: ./.github/actions/rollback-deploy
+        with:
+          docker-image-tag: ${{ github.event.inputs.docker_tag }}
+          environment-name: ${{ github.event.inputs.environment }}
+          stack-name: ${{ needs.validate-rollback.outputs.target_stack }}
+          cluster-name: ${{ needs.validate-rollback.outputs.target_cluster }}
+          service-name: ${{ needs.validate-rollback.outputs.target_service }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          lab-role-arn: ${{ secrets.LAB_ROLE_ARN }}
+          vpc-id: ${{ secrets.VPC_ID }}
+          subnet-ids: ${{ secrets.SUBNET_IDS }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          rollback-reason: ${{ github.event.inputs.rollback_reason }}
+
+      - name: Post-rollback validation
+        run: |
+          echo "🏁 ROLLBACK DEPLOYMENT COMPLETED"
+          echo "================================="
+          echo "Status: ${{ steps.rollback.outputs.rollback-status }}"
+          echo "Summary: ${{ steps.rollback.outputs.rollback-summary }}"
+
+          if [ -n "${{ steps.rollback.outputs.alb_url }}" ]; then
+            echo "Application URL: ${{ steps.rollback.outputs.alb_url }}"
+          fi
+
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Docker Tag: ${{ github.event.inputs.docker_tag }}"
+          echo "Completed by: ${{ github.actor }}"
+          echo "================================="
+
+          # Create summary for the GitHub Actions summary page
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🔄 Rollback Deployment Summary
+
+          **Environment:** ${{ github.event.inputs.environment }}
+          **Docker Image:** \`${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_APP_NAME }}:${{ github.event.inputs.docker_tag }}\`
+          **Status:** ${{ steps.rollback.outputs.rollback-status }}
+          **Reason:** ${{ github.event.inputs.rollback_reason }}
+          **Triggered by:** ${{ github.actor }}
+
+          ### Results
+          ${{ steps.rollback.outputs.rollback-summary }}
+
+          $(if [ -n "${{ steps.rollback.outputs.alb_url }}" ]; then echo "**Application URL:** ${{ steps.rollback.outputs.alb_url }}"; fi)
+          EOF
+
+  post-rollback-smoke-test:
+    needs: [validate-rollback, rollback-deployment]
+    runs-on: ubuntu-latest
+    name: Post-Rollback Smoke Test
+    if: needs.validate-rollback.outputs.should_proceed == 'true' && github.event.inputs.environment == 'production'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run smoke tests on rollback
+        id: smoke-tests
+        continue-on-error: true
+        uses: ./.github/actions/smoke-tests
+        with:
+          app-base-url: ${{ needs.rollback-deployment.outputs.alb_url }}
+          python-version: '3.12'
+          test-debug-mode: 'false'
+          wait-time: '60'
+
+      - name: Report post-rollback test results
+        run: |
+          echo "🔥 Post-Rollback Smoke Test Results:"
+          echo "Status: ${{ steps.smoke-tests.outputs.test-status }}"
+          echo "Summary: ${{ steps.smoke-tests.outputs.test-summary }}"
+
+          # Add to GitHub Actions summary
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🔥 Post-Rollback Smoke Tests
+
+          **Status:** ${{ steps.smoke-tests.outputs.test-status }}
+          **Summary:** ${{ steps.smoke-tests.outputs.test-summary }}
+
+          $(if [ "${{ steps.smoke-tests.outputs.test-status }}" = "failure" ]; then echo "⚠️ **Note:** Smoke tests failed after rollback. Manual verification recommended."; fi)
+          EOF
+
+      - name: Upload post-rollback test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: post-rollback-smoke-test-results
+          path: ${{ steps.smoke-tests.outputs.coverage-path }}

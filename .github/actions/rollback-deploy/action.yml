@@ -1,0 +1,162 @@
+name: 'AgroTech AI Rollback Deployment'
+description: 'Rollback AgroTech AI application to the latest stable version in production'
+author: 'AgroTech AI Team'
+
+inputs:
+  docker-image-tag:
+    description: 'Docker image tag to rollback to (default: latest)'
+    required: false
+    default: 'latest'
+  environment-name:
+    description: 'Environment to rollback (production/staging)'
+    required: false
+    default: 'production'
+  stack-name:
+    description: 'CloudFormation stack name'
+    required: true
+  cluster-name:
+    description: 'ECS cluster name'
+    required: true
+  service-name:
+    description: 'ECS service name'
+    required: true
+  aws-access-key-id:
+    description: 'AWS Access Key ID'
+    required: true
+  aws-secret-access-key:
+    description: 'AWS Secret Access Key'
+    required: true
+  aws-session-token:
+    description: 'AWS Session Token'
+    required: true
+  lab-role-arn:
+    description: 'AWS Lab Role ARN'
+    required: true
+  vpc-id:
+    description: 'VPC ID for deployment'
+    required: true
+  subnet-ids:
+    description: 'Subnet IDs for deployment'
+    required: true
+  dockerhub-username:
+    description: 'DockerHub username'
+    required: true
+  rollback-reason:
+    description: 'Reason for rollback'
+    required: false
+    default: 'Manual rollback requested'
+
+outputs:
+  rollback-status:
+    description: 'Status of rollback deployment'
+    value: ${{ steps.rollback-deploy.outputs.deployment-status }}
+  alb_url:
+    description: 'Application Load Balancer URL'
+    value: ${{ steps.rollback-deploy.outputs.alb_url }}
+  rollback-summary:
+    description: 'Summary of rollback operation'
+    value: ${{ steps.rollback-deploy.outputs.rollback-summary }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate rollback parameters
+      shell: bash
+      run: |
+        echo "🔍 Validating rollback parameters..."
+        echo "Environment: ${{ inputs.environment-name }}"
+        echo "Docker Image: ${{ inputs.dockerhub-username }}/agrotech-ai-app:${{ inputs.docker-image-tag }}"
+        echo "Stack: ${{ inputs.stack-name }}"
+        echo "Cluster: ${{ inputs.cluster-name }}"
+        echo "Service: ${{ inputs.service-name }}"
+        echo "Reason: ${{ inputs.rollback-reason }}"
+        echo "✅ Parameters validated"
+
+    - name: Get current deployment info
+      shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
+        AWS_SESSION_TOKEN: ${{ inputs.aws-session-token }}
+        AWS_DEFAULT_REGION: us-east-1
+      run: |
+        echo "📋 Getting current deployment information..."
+
+        # Try to get current task definition
+        CURRENT_TASK_DEF=$(aws ecs describe-services \
+          --cluster ${{ inputs.cluster-name }} \
+          --services ${{ inputs.service-name }} \
+          --query 'services[0].taskDefinition' \
+          --output text 2>/dev/null || echo "none")
+
+        if [ "$CURRENT_TASK_DEF" != "none" ] && [ "$CURRENT_TASK_DEF" != "None" ]; then
+          echo "Current task definition: $CURRENT_TASK_DEF"
+
+          # Get current image
+          CURRENT_IMAGE=$(aws ecs describe-task-definition \
+            --task-definition $CURRENT_TASK_DEF \
+            --query 'taskDefinition.containerDefinitions[0].image' \
+            --output text 2>/dev/null || echo "unknown")
+
+          echo "Current image: $CURRENT_IMAGE"
+        else
+          echo "⚠️ No current deployment found or service doesn't exist yet"
+        fi
+
+    - name: Perform rollback deployment
+      id: rollback-deploy
+      uses: ./.github/actions/aws-deploy
+      with:
+        docker-image-uri: "${{ inputs.dockerhub-username }}/agrotech-ai-app:${{ inputs.docker-image-tag }}"
+        environment-name: ${{ inputs.environment-name }}
+        stack-name: ${{ inputs.stack-name }}
+        cluster-name: ${{ inputs.cluster-name }}
+        service-name: ${{ inputs.service-name }}
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-session-token: ${{ inputs.aws-session-token }}
+        lab-role-arn: ${{ inputs.lab-role-arn }}
+        vpc-id: ${{ inputs.vpc-id }}
+        subnet-ids: ${{ inputs.subnet-ids }}
+
+    - name: Generate rollback summary
+      shell: bash
+      run: |
+        echo "📊 Generating rollback summary..."
+
+        if [ "${{ steps.rollback-deploy.outputs.deployment-status }}" = "success" ]; then
+          SUMMARY="✅ Rollback completed successfully to ${{ inputs.dockerhub-username }}/agrotech-ai-app:${{ inputs.docker-image-tag }}"
+          echo "rollback-summary=$SUMMARY" >> $GITHUB_OUTPUT
+          echo "$SUMMARY"
+          echo "🌐 Application URL: ${{ steps.rollback-deploy.outputs.alb_url }}"
+          echo "📝 Reason: ${{ inputs.rollback-reason }}"
+        else
+          SUMMARY="❌ Rollback failed for ${{ inputs.dockerhub-username }}/agrotech-ai-app:${{ inputs.docker-image-tag }}"
+          echo "rollback-summary=$SUMMARY" >> $GITHUB_OUTPUT
+          echo "$SUMMARY"
+        fi
+
+    - name: Verify rollback deployment
+      shell: bash
+      run: |
+        echo "🔍 Verifying rollback deployment..."
+
+        if [ -n "${{ steps.rollback-deploy.outputs.alb_url }}" ]; then
+          echo "⏳ Waiting 30 seconds for rollback to stabilize..."
+          sleep 30
+
+          echo "🏥 Performing health check on rollback deployment..."
+          if curl -s --connect-timeout 10 --max-time 30 "${{ steps.rollback-deploy.outputs.alb_url }}/health" > /dev/null; then
+            echo "✅ Rollback deployment health check passed"
+          elif curl -s --connect-timeout 10 --max-time 30 "${{ steps.rollback-deploy.outputs.alb_url }}/" > /dev/null; then
+            echo "✅ Rollback deployment root endpoint accessible"
+          else
+            echo "⚠️ Rollback deployment health check failed, but deployment may still be starting"
+          fi
+        else
+          echo "⚠️ No ALB URL available for health check"
+        fi
+
+branding:
+  icon: 'rewind'
+  color: 'red'

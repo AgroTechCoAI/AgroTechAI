@@ -1,0 +1,107 @@
+name: 'AgroTech AI Smoke Tests'
+description: 'Run smoke tests to validate critical path functionality of AgroTech AI application'
+author: 'AgroTech AI Team'
+
+inputs:
+  app-base-url:
+    description: 'Base URL of the application to test'
+    required: true
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.12'
+  test-debug-mode:
+    description: 'Enable debug mode for tests'
+    required: false
+    default: 'false'
+  wait-time:
+    description: 'Time to wait for deployment to be ready (seconds)'
+    required: false
+    default: '15'
+
+outputs:
+  test-results:
+    description: 'Path to test results'
+    value: ${{ steps.run-smoke-tests.outputs.results-path }}
+  coverage-path:
+    description: 'Path to coverage reports'
+    value: ${{ steps.run-smoke-tests.outputs.coverage-path }}
+  test-status:
+    description: 'Status of smoke tests (success/failure)'
+    value: ${{ steps.run-smoke-tests.outputs.test-status }}
+  test-summary:
+    description: 'Summary of smoke test results'
+    value: ${{ steps.run-smoke-tests.outputs.test-summary }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Python dependencies
+      shell: bash
+      run: |
+        echo "📦 Installing Python dependencies for smoke tests..."
+        make py-install-dev
+        echo "✅ Dependencies installed successfully"
+
+    - name: Wait for deployment readiness
+      shell: bash
+      run: |
+        echo "⏳ Waiting ${{ inputs.wait-time }} seconds for deployment to be ready..."
+        sleep ${{ inputs.wait-time }}
+        echo "✅ Wait period completed"
+
+    - name: Validate application health
+      shell: bash
+      run: |
+        echo "🔍 Performing application health check..."
+        echo "Target URL: ${{ inputs.app-base-url }}"
+
+        # Try to reach the application health endpoint
+        if curl -s --connect-timeout 10 --max-time 30 "${{ inputs.app-base-url }}/health" > /dev/null; then
+          echo "✅ Application health endpoint is accessible"
+        elif curl -s --connect-timeout 10 --max-time 30 "${{ inputs.app-base-url }}/" > /dev/null; then
+          echo "✅ Application root endpoint is accessible"
+        else
+          echo "⚠️ Application endpoints not accessible via curl, but continuing with smoke tests..."
+        fi
+
+    - name: Run smoke tests
+      id: run-smoke-tests
+      shell: bash
+      env:
+        APP_BASE_URL: ${{ inputs.app-base-url }}
+        TEST_DEBUG_MODE: ${{ inputs.test-debug-mode }}
+      run: |
+        echo "🔥 Starting smoke tests..."
+        echo "Base URL: $APP_BASE_URL"
+        echo "Debug Mode: $TEST_DEBUG_MODE"
+
+        # Run smoke tests and capture exit code
+        set +e
+        make py-test-smoke
+        TEST_EXIT_CODE=$?
+        set -e
+
+        # Set outputs based on test results
+        echo "results-path=server/coverage" >> $GITHUB_OUTPUT
+        echo "coverage-path=server/coverage" >> $GITHUB_OUTPUT
+
+        if [ $TEST_EXIT_CODE -eq 0 ]; then
+          echo "test-status=success" >> $GITHUB_OUTPUT
+          echo "test-summary=✅ Smoke tests passed successfully" >> $GITHUB_OUTPUT
+        else
+          echo "test-status=failure" >> $GITHUB_OUTPUT
+          echo "test-summary=❌ Smoke tests failed (exit code: $TEST_EXIT_CODE)" >> $GITHUB_OUTPUT
+        fi
+
+        # Always exit with success to prevent pipeline failure
+        exit 0
+
+branding:
+  icon: 'zap'
+  color: 'orange'
