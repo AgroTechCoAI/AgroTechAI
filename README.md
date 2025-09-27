@@ -13,7 +13,7 @@ An intelligent agricultural monitoring system powered by AI agents that analyze 
 - **Real-time Problem Solving**: Issues addressed as they emerged during development
 
 ### **Educational Purpose**
-This proof of concept serves as:
+
 - 📚 **Learning Tool**: Demonstrates modern AI agent architectures
 - 🔬 **Research Platform**: Explores multi-agent coordination in agricultural contexts
 - 💡 **Innovation Showcase**: Illustrates possibilities of AI-driven agricultural analysis
@@ -739,36 +739,141 @@ This section covers end-to-end testing of the full AgroTech AI system with real 
    - SoilSense assesses environmental factors
    - CropMaster provides final recommendations
 
-## 🚀 CI/CD Integration
+## 🚀 CI/CD Pipeline
 
-The project includes GitHub Actions workflows for automated testing and deployment:
+End‑to‑end automation is handled with **GitHub Actions** using two primary workflows:
 
-### **Workflow Structure:**
-- **Feature branches** (`feature/*`, `fix/*`): Run tests and quality checks
-- **Main branch**: Run tests + build and push Docker images to registry
+1. `ci_main.yml` (continuous integration & auto-deploy on `main`)
+2. `production-release.yml` (manual versioned production release)
 
-### **Unified Docker Image Build:**
-```yaml
-# .github/workflows/ci_main.yml
-- name: Build and push Docker image
-  uses: ./.github/actions/docker-push
-  with:
-    image-name: agrotech-ai-app
-    context-path: './env-deployment'
-    dockerfile-path: './env-deployment/Dockerfile'
+### 🧬 Workflow Overview (`ci_main.yml`)
+Triggered on:
+- Push to `main`
+- Manual run (`workflow_dispatch`)
+
+Execution Flow:
+1. **test-python** – Pytest + quality checks (coverage artifact)
+2. **test-javascript** – Vitest + ESLint (coverage artifact)
+3. **check-code-statically** – SonarCloud analysis (waits for both test jobs)
+4. **build-agrotech-app-image** – Builds & pushes Docker image (tag: commit SHA)
+5. **deploy-cfn-staging** – Creates/updates AWS CloudFormation stack + ECS service (staging)
+6. **deploy-cfn-prod** – Promotes same image tag to production (sequential after staging)
+
+✅ Staging and production both deploy the **exact same immutable image**: `DOCKERHUB_USERNAME/agrotech-ai-app:<git-sha>` ensuring parity.
+
+```mermaid
+flowchart LR
+    A[Push to main] --> B[test-python]
+    A --> C[test-javascript]
+    B --> D[check-code-statically]
+    C --> D
+    D --> E[build-agrotech-app-image]
+    E --> F[deploy-cfn-staging]
+    F --> G[deploy-cfn-prod]
 ```
 
-### **Environment Variables for Production:**
-Add these secrets in GitHub repository settings:
-- `DOCKERHUB_USERNAME` - Docker registry username
-- `DOCKERHUB_TOKEN` - Docker registry access token
+### 🧪 Quality Gates
+- Separate language pipelines isolate failures early.
+- Coverage reports (Python & JS) are uploaded as artifacts and ingested by SonarCloud.
+- SonarCloud enforces multi-language code quality metrics before any build/deploy.
 
-### **AWS ECS Deployment Ready:**
-The unified Docker image is optimized for cloud deployment:
-- **Single image** reduces deployment complexity
-- **Environment variables** handled via ECS task definition
-- **Health checks** included for container orchestration
-- **No build arguments** required for deployment
+### 🐳 Docker Image Strategy
+- Tag pushed automatically: `<commit-sha>` (immutable)
+- (Optional in release workflow) semantic tag: `vX.Y.Z` + `latest`
+- Single unified production Dockerfile (`env-deployment/Dockerfile`) bundles: FastAPI + React static build + Ollama bootstrap + Nginx + Supervisord.
+
+### ☁️ AWS Deployment (Staging → Production)
+Both deploy jobs use a reusable internal action (`./.github/actions/aws-deploy`) which:
+- Packages `template.yaml` and deploys CloudFormation stack
+- Registers / updates ECS Task Definition with provided image URI
+- Ensures ALB Target Group health checks (`/health`) pass
+- Forces an ECS service deployment roll to new task definition
+
+Promotion Model:
+- Production waits for successful staging CloudFormation deployment (basic gate)
+- Same image digest ensures zero “worked-in-staging-but-not-prod” drift
+
+### 🔐 Required GitHub Secrets
+| Secret | Purpose |
+|--------|---------|
+| `DOCKERHUB_USERNAME` | Auth for Docker Hub push |
+| `DOCKERHUB_TOKEN` | Docker Hub access token |
+| `AWS_ACCESS_KEY_ID` | AWS programmatic credentials |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret key |
+| `AWS_SESSION_TOKEN` | (If using temporary credentials) |
+| `LAB_ROLE_ARN` | Execution / task role reference |
+| `VPC_ID` | Target VPC ID for ECS services |
+| `SUBNET_IDS` | Comma-separated subnet IDs |
+| `SONAR_TOKEN` | SonarCloud authentication |
+
+### 📦 Artifacts Produced
+- `python-coverage-reports/` (lcov / XML used by SonarCloud)
+- `javascript-coverage-reports/`
+
+Artifacts are short‑lived but provide auditable evidence of test execution.
+
+### 🚀 Manual Versioned Release (`production-release.yml`)
+Triggered manually with inputs:
+- `version` (required) e.g. `v1.2.0`
+- `release_notes` (optional)
+
+Steps:
+1. Rebuilds production image from source (ensures reproducibility) 
+2. Pushes tags: `:<version>` and `:latest`
+3. (Future) Could publish a GitHub Release + changelog
+
+Use this when you want a human-readable tag for external deployments or rollback anchors.
+
+### 🛡️ Reliability Techniques Implemented
+- Immutable image tagging (commit SHA)
+- Single build context for all runtime components (no mismatch risk)
+- Sequential environment promotion (staging before prod)
+- Centralized Docker build logic via composite action
+- Explicit parameterization of infra via CloudFormation template
+
+### 🔭 Planned / Recommended Enhancements
+| Category | Improvement | Benefit |
+|----------|------------|---------|
+| Build | Merge dual tagging into single multi-tag build | Shorter pipeline time |
+| Quality Gates | Add acceptance test job after staging deploy (blocking prod) | Prevent bad promotion |
+| Security | Sign images (cosign) & verify in deploy | Supply chain integrity |
+| Deployment | Pin ECS task to image digest (sha256:...) | Stronger immutability |
+| Release | Auto-generate GitHub Release notes | Consistent changelogs |
+| Governance | Manual approval / environment protection for prod | Change control |
+| Reliability | Capture previous task definition for rollback | Fast recovery |
+| Observability | Publish deployment metadata (image, commit, time) to a status page | Traceability |
+| Testing | Add smoke test hitting `/health` post-deploy | Early failure detection |
+
+### 🧵 Example Image References
+```
+docker pull <dockerhub-user>/agrotech-ai-app:1a2b3c4   # CI auto-tag (commit)
+docker pull <dockerhub-user>/agrotech-ai-app:v1.2.0    # Manual release
+docker pull <dockerhub-user>/agrotech-ai-app:latest    # Floating convenience tag
+```
+
+### 🔍 Quick Troubleshooting
+| Symptom | Likely Cause | Action |
+|---------|--------------|--------|
+| Deploy job fails: image not found | Push step failed / wrong tag | Check build logs & Docker Hub repo |
+| Staging succeeds, prod fails | Infra drift or capacity | Inspect CloudFormation events & ECS service events |
+| Sonar step skipped | Prior test job failed | Open test job logs; fix test or lint errors |
+| Coverage missing in Sonar | Artifact name mismatch | Verify upload step & static-analysis inputs |
+
+### 🧪 (Future) Acceptance & Smoke Tests (Not Yet Active)
+Planned placement:
+1. Deploy Staging → run acceptance tests (client ↔ server full flow)
+2. On success → deploy Production → run lightweight smoke (health + simple analysis)
+
+---
+This pipeline balances **speed (parallel tests)** with **confidence (sequential promotion)** while keeping the optimization surface clear for future governance and release maturity improvements.
+
+### 📸 CI/CD Architecture Diagram
+
+<p align="center">
+  <img src="docs/images/architecture_diagram.png" alt="AgroTech AI CI/CD and Deployment Architecture" width="900" />
+  <br/>
+  <em>Figure: End-to-end flow – code commit → tests & quality gates → Docker build → staged deployment → production promotion (immutable image).</em>
+</p>
 
 ## 📝 Configuration
 
