@@ -36,6 +36,10 @@ py-test-coverage:
 py-test-ollama:
 	cd server && python tests/test_runner.py ollama
 
+# Run smoke tests (critical path validation)
+py-test-smoke:
+	cd server && python tests/test_runner.py smoke
+
 # Run acceptance tests (end-to-end)
 py-test-acceptance:
 	cd server && python tests/test_runner.py acceptance

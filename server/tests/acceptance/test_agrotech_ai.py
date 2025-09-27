@@ -250,7 +250,7 @@ def test_text_based_agents_workflow(browser, test_image, working_agents):
     assert wait_for_websocket_connection(browser), "WebSocket connection not established"
 
     # Get test image path
-    test_image_path = os.path.join(os.path.dirname(__file__), "test_images", test_image)
+    test_image_path = os.path.join(os.path.dirname(__file__), "..", "test_images", test_image)
 
     # Skip if test image doesn't exist
     if not os.path.exists(test_image_path):

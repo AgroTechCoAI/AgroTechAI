@@ -23,7 +23,7 @@ def run_command(command, description):
 def main():
     """Main test runner function."""
     if len(sys.argv) < 2:
-        print("Usage: python test_runner.py [unit|integration|acceptance|all|coverage|lint]")
+        print("Usage: python test_runner.py [unit|integration|smoke|acceptance|all|coverage|lint]")
         sys.exit(1)
 
     test_type = sys.argv[1]
@@ -49,6 +49,12 @@ def main():
         success = run_command(
             "pytest tests/integration/ -v --tb=short -m 'ollama'",
             "Integration Tests (with Ollama)",
+        )
+
+    elif test_type == "smoke":
+        success = run_command(
+            "pytest tests/smoke/ -v --tb=short -s",
+            "Smoke Tests (Critical Path)",
         )
 
     elif test_type == "acceptance":
@@ -104,7 +110,7 @@ def main():
     else:
         print(f"Unknown test type: {test_type}")
         print(
-            "Available options: unit, integration, ollama, acceptance, all, coverage, lint, format"
+            "Available options: unit, integration, ollama, smoke, acceptance, all, coverage, lint, format"
         )
         sys.exit(1)
 
