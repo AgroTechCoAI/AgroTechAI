@@ -124,9 +124,38 @@ jobs:
           lab-role-arn: ${{ secrets.LAB_ROLE_ARN }}
           vpc-id: ${{ secrets.VPC_ID }}
           subnet-ids: ${{ secrets.SUBNET_IDS }}
-  
+
+  # -------------------------------------
+  # Acceptance Tests on Staging Environment
+  # -------------------------------------
+  acceptance-tests:
+    needs: deploy-cfn-staging
+    runs-on: ubuntu-latest
+    name: E2E Acceptance Tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run acceptance tests against staging
+        id: acceptance-tests
+        uses: ./.github/actions/acceptance-tests
+        with:
+          app-base-url: ${{ needs.deploy-cfn-staging.outputs.alb_url }}
+          python-version: '3.12'
+          test-debug-mode: 'false'
+          wait-time: '30'
+
+      - name: Upload acceptance test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-test-results
+          path: ${{ steps.acceptance-tests.outputs.coverage-path }}
+
   deploy-cfn-prod:
-    needs: deploy-cfn-staging # Depende del job anterior (necesita image_uri)
+    needs: acceptance-tests # Depende de los acceptance tests (solo despliega si pasan)
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Solo en push a main
     steps:
