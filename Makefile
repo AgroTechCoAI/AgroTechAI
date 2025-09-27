@@ -36,6 +36,10 @@ py-test-coverage:
 py-test-ollama:
 	cd server && python tests/test_runner.py ollama
 
+# Run acceptance tests (end-to-end)
+py-test-acceptance:
+	cd server && python tests/test_runner.py acceptance
+
 # Run all JavaScript tests (unit + integration)
 js-test:
 	cd client && npm test -- --run
