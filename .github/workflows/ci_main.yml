@@ -1,5 +1,10 @@
 name: CI/CD Pipeline
 
+permissions:
+  contents: write  # Required for pushing tags in production release
+  actions: read
+  checks: write
+
 on:
   push:
     branches:
