@@ -1,0 +1,145 @@
+# All-in-one Kubernetes manifest for AgroTech AI Demo
+# Apply with: kubectl apply -f all-in-one.yaml
+# Delete with: kubectl delete -f all-in-one.yaml
+
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agrotech-ai
+  labels:
+    app: agrotech-ai
+---
+# ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agrotech-ai-config
+  namespace: agrotech-ai
+data:
+  OLLAMA_HOST: "0.0.0.0"
+  OLLAMA_NUM_PARALLEL: "4"
+  OLLAMA_TEXT_MODEL: "gemma3:270m"
+  OLLAMA_VISION_MODEL: "gemma3:270m"
+  OLLAMA_URL: "http://localhost:11434"
+  APP_PORT: "8000"
+  LOG_LEVEL: "info"
+---
+# Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: agrotech-ai-secret
+  namespace: agrotech-ai
+type: Opaque
+data:
+  api-key: ZGVtby1hcGkta2V5LTEyMzQ1
+---
+# PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ollama-models-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: "/tmp/ollama-models"
+    type: DirectoryOrCreate
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-models-pvc
+  namespace: agrotech-ai
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 10Gi
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agrotech-ai
+  namespace: agrotech-ai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: agrotech-ai
+  template:
+    metadata:
+      labels:
+        app: agrotech-ai
+    spec:
+      containers:
+      - name: agrotech-ai
+        image: edwaraco05/agrotech-ai-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+        - containerPort: 11434
+          name: ollama
+        envFrom:
+        - configMapRef:
+            name: agrotech-ai-config
+        env:
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agrotech-ai-secret
+              key: api-key
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "1000m"
+          limits:
+            memory: "8Gi"
+            cpu: "2000m"
+        volumeMounts:
+        - name: ollama-models
+          mountPath: /root/.ollama
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 45
+          periodSeconds: 10
+      volumes:
+      - name: ollama-models
+        persistentVolumeClaim:
+          claimName: ollama-models-pvc
+---
+# Service - LoadBalancer (minikube tunnel required for local access)
+apiVersion: v1
+kind: Service
+metadata:
+  name: agrotech-ai-service
+  namespace: agrotech-ai
+spec:
+  type: LoadBalancer
+  selector:
+    app: agrotech-ai
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+  sessionAffinity: ClientIP
+

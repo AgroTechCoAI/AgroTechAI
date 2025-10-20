@@ -1,0 +1,45 @@
+# PersistentVolume - Cluster-level storage resource
+# PVs are storage in the cluster that has been provisioned by an administrator
+# or dynamically provisioned using Storage Classes
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ollama-models-pv
+  labels:
+    app: agrotech-ai
+    component: storage
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce  # Can be mounted as read-write by a single node
+  persistentVolumeReclaimPolicy: Retain  # Data persists after PVC deletion
+  storageClassName: local-storage
+  hostPath:
+    # For demo purposes - in production, use cloud storage (EBS, GCE PD, etc.)
+    path: "/mnt/data/ollama-models"
+    type: DirectoryOrCreate
+---
+# PersistentVolumeClaim - User's request for storage
+# PVCs consume PV resources and are used by pods to access storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-models-pvc
+  namespace: agrotech-ai
+  labels:
+    app: agrotech-ai
+    component: storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 10Gi
+  selector:
+    matchLabels:
+      app: agrotech-ai
+      component: storage
+

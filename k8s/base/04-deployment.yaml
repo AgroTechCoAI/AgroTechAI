@@ -1,0 +1,130 @@
+# Deployment - Declarative updates for Pods and ReplicaSets
+# Deployments ensure the desired number of pod replicas are running and handle rolling updates
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agrotech-ai-deployment
+  namespace: agrotech-ai
+  labels:
+    app: agrotech-ai
+    component: application
+  annotations:
+    kubernetes.io/change-cause: "Initial deployment with gemma3:270m model"
+spec:
+  # Replica management
+  replicas: 2  # Demonstrates horizontal scaling
+
+  # Selector to identify pods managed by this deployment
+  selector:
+    matchLabels:
+      app: agrotech-ai
+      component: application
+
+  # Strategy for updating pods
+  strategy:
+    type: RollingUpdate  # Zero-downtime deployments
+    rollingUpdate:
+      maxSurge: 1        # Max pods created above desired replicas
+      maxUnavailable: 0  # Ensures no downtime during updates
+
+  # Pod template
+  template:
+    metadata:
+      labels:
+        app: agrotech-ai
+        component: application
+        version: v1.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      # Container specification
+      containers:
+      - name: agrotech-ai
+        image: edwaraco05/agrotech-ai-app:latest
+        imagePullPolicy: Always
+
+        # Ports exposed by the container
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+        - name: ollama
+          containerPort: 11434
+          protocol: TCP
+
+        # Environment variables from ConfigMap
+        envFrom:
+        - configMapRef:
+            name: agrotech-ai-config
+
+        # Environment variables from Secret
+        env:
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agrotech-ai-secret
+              key: api-key
+
+        # Resource limits and requests - Critical for cluster stability
+        resources:
+          requests:
+            memory: "4Gi"    # Minimum guaranteed memory
+            cpu: "1000m"     # 1 CPU core
+          limits:
+            memory: "8Gi"    # Maximum memory allowed
+            cpu: "2000m"     # 2 CPU cores max
+
+        # Volume mounts
+        volumeMounts:
+        - name: ollama-models
+          mountPath: /root/.ollama
+
+        # Liveness probe - Restarts container if unhealthy
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60   # Wait for Ollama to start and pull models
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+
+        # Readiness probe - Controls traffic routing to pod
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 45
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+
+        # Startup probe - For slow-starting containers
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 12  # 2 minutes to start (12 * 10s)
+
+      # Volumes
+      volumes:
+      - name: ollama-models
+        persistentVolumeClaim:
+          claimName: ollama-models-pvc
+
+      # Restart policy
+      restartPolicy: Always
+
+      # DNS policy
+      dnsPolicy: ClusterFirst
+
+      # Security context (optional but recommended)
+      securityContext:
+        fsGroup: 1000
+

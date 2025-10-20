@@ -1,0 +1,31 @@
+# ConfigMap - Non-sensitive configuration data for the application
+# ConfigMaps decouple configuration from container images, making apps more portable
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agrotech-ai-config
+  namespace: agrotech-ai
+  labels:
+    app: agrotech-ai
+    component: configuration
+data:
+  # Ollama Configuration
+  OLLAMA_HOST: "0.0.0.0"
+  OLLAMA_NUM_PARALLEL: "4"
+  OMP_NUM_THREADS: "4"
+  OLLAMA_NUM_THREADS: "6"
+  OLLAMA_MAX_LOADED_MODELS: "2"
+  OLLAMA_FLASH_ATTENTION: "1"
+
+  # AI Models to be pulled on startup - Using lightweight model for demo
+  OLLAMA_TEXT_MODEL: "gemma3:270m"
+  OLLAMA_VISION_MODEL: "gemma3:270m"
+
+  # Application Configuration
+  OLLAMA_URL: "http://localhost:11434"
+  APP_PORT: "8000"
+  LOG_LEVEL: "info"
+
+  # Environment
+  ENVIRONMENT: "kubernetes"
+

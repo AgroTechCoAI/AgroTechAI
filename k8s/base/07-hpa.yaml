@@ -1,0 +1,56 @@
+# HorizontalPodAutoscaler - Automatic scaling based on metrics
+# Automatically scales the number of pods based on CPU/memory utilization
+# Requires metrics-server to be installed in the cluster
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: agrotech-ai-hpa
+  namespace: agrotech-ai
+  labels:
+    app: agrotech-ai
+    component: autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: agrotech-ai-deployment
+
+  # Scaling boundaries
+  minReplicas: 1    # Minimum pods
+  maxReplicas: 5    # Maximum pods for demo
+
+  # Scaling metrics
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70  # Scale up when CPU > 70%
+
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80  # Scale up when memory > 80%
+
+  # Scaling behavior (optional - controls scale up/down rate)
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300  # Wait 5 min before scaling down
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60  # Max 50% pods removed per minute
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30  # Can double pods every 30 seconds
+      - type: Pods
+        value: 2
+        periodSeconds: 30  # Or add max 2 pods every 30 seconds
+      selectPolicy: Max  # Use the policy that scales up most
+

@@ -1,0 +1,13 @@
+# Namespace - Logical cluster isolation for AgroTech AI resources
+# Namespaces provide a scope for names and allow resource quotas and access control
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agrotech-ai
+  labels:
+    app: agrotech-ai
+    environment: demo
+    managed-by: kubectl
+  annotations:
+    description: "AgroTech AI - Agricultural Monitoring System with Multi-Agent AI"
+

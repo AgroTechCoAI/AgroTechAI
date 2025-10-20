@@ -1,0 +1,31 @@
+# Ingress - HTTP routing to services (for local demo with minikube/kind)
+# Requires Ingress Controller to be enabled (minikube addons enable ingress)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agrotech-ai-ingress
+  namespace: agrotech-ai
+  labels:
+    app: agrotech-ai
+    component: networking
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"  # For image uploads
+    # WebSocket support for real-time communication
+    nginx.ingress.kubernetes.io/websocket-services: "agrotech-ai-service"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:  # No hostname - works directly with minikube IP
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: agrotech-ai-service
+            port:
+              number: 80
+

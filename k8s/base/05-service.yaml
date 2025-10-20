@@ -1,0 +1,86 @@
+# Service - Stable network endpoint for accessing pods
+# Services provide load balancing and service discovery for pods
+# ClusterIP Service - Internal cluster access only
+apiVersion: v1
+kind: Service
+metadata:
+  name: agrotech-ai-service
+  namespace: agrotech-ai
+  labels:
+    app: agrotech-ai
+    component: networking
+spec:
+  type: ClusterIP  # Only accessible within the cluster
+  selector:
+    app: agrotech-ai
+    component: application
+  ports:
+  - name: http
+    port: 80         # Service port
+    targetPort: 8000 # Container port
+    protocol: TCP
+  - name: ollama
+    port: 11434
+    targetPort: 11434
+    protocol: TCP
+  sessionAffinity: ClientIP  # Sticky sessions for WebSocket support
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800  # 3 hours
+---
+# LoadBalancer Service - External access (cloud environments)
+# In cloud providers (AWS, GCP, Azure), this creates an external load balancer
+apiVersion: v1
+kind: Service
+metadata:
+  name: agrotech-ai-lb
+  namespace: agrotech-ai
+  labels:
+    app: agrotech-ai
+    component: networking
+    service-type: loadbalancer
+  annotations:
+    # Cloud-specific annotations (uncomment as needed)
+    # AWS
+    # service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    # GCP
+    # cloud.google.com/load-balancer-type: "External"
+spec:
+  type: LoadBalancer
+  selector:
+    app: agrotech-ai
+    component: application
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+    protocol: TCP
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+---
+# NodePort Service - Alternative for local clusters (minikube, kind)
+# Exposes service on each Node's IP at a static port
+apiVersion: v1
+kind: Service
+metadata:
+  name: agrotech-ai-nodeport
+  namespace: agrotech-ai
+  labels:
+    app: agrotech-ai
+    component: networking
+    service-type: nodeport
+spec:
+  type: NodePort
+  selector:
+    app: agrotech-ai
+    component: application
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+    nodePort: 30080  # Accessible at <NodeIP>:30080
+    protocol: TCP
+  sessionAffinity: ClientIP
+
