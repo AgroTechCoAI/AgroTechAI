@@ -151,6 +151,15 @@ Sistema de monitoreo agrícola con IA que analiza imágenes de cultivos en tiemp
 
 ---
 
+## 4.1 Caso: AgroTechAI - Arquitectura Propuesta
+
+La siguiente imagen muestra la arquitectura de AgroTechAI a alto nivel. Más adelante, se describen los modos de despliegue que este enfoque habilita.
+
+<figure style="text-align:center;">
+  <img src="arquitectura_alto_nivel_agrotech.png" alt="Arquitectura de AgroTechAI" />
+  <figcaption>Imagen generada con ChatGPT</figcaption>
+</figure>
+
 
 ## 5. El Problema de Performance
 
