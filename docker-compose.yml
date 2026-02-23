@@ -70,8 +70,8 @@ services:
     # Environment variables
     environment:
       - OLLAMA_URL=http://ollama:11434
-      - OLLAMA_TEXT_MODEL=gemma3:4b
-      - OLLAMA_VISION_MODEL=qwen2.5vl:3b
+      - OLLAMA_TEXT_MODEL=gemma3:270m
+      - OLLAMA_VISION_MODEL=moondream
 
     # Dependencies
     depends_on:

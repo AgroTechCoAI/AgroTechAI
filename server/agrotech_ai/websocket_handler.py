@@ -79,6 +79,9 @@ class WebSocketHandler:
         elif message_type == "image_analysis":
             logger.info("📸 Processing image analysis")
             await self.handle_image_analysis(websocket, message)
+        elif message_type == "sensor_analysis":
+            logger.info("📊 Processing sensor-only analysis (no image)")
+            await self.handle_sensor_analysis(websocket, message)
         else:
             logger.warning("❓ Unknown message type: %s", message_type)
             await websocket.send_json(
@@ -144,6 +147,38 @@ class WebSocketHandler:
             image_base64,
             environment_description,
             "📸 Análisis de Imagen",
+        )
+
+    async def handle_sensor_analysis(
+        self, websocket: WebSocket, message: Dict[str, Any]
+    ):
+        """Handle sensor-only analysis without image (uses AgriVision, SoilSense, CropMaster)"""
+        crop_description = message.get("crop_description", "")
+        environment_description = message.get("environment_description", "")
+
+        if not crop_description:
+            await websocket.send_json(
+                {
+                    "type": "error",
+                    "message": "Se requiere descripción del cultivo (crop_description)",
+                }
+            )
+            return
+
+        if not environment_description:
+            await websocket.send_json(
+                {
+                    "type": "error",
+                    "message": "Se requiere descripción de condiciones ambientales",
+                }
+            )
+            return
+
+        await self.analyze_scenario(
+            websocket,
+            crop_description,
+            environment_description,
+            "📊 Análisis de Sensores",
         )
 
     async def _run_concurrent_analysis(

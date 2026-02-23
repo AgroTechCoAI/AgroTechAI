@@ -10,7 +10,7 @@ import sys
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
-from .agents import MODEL_NAME
+from .agents import MODEL_NAME, VISION_MODEL_NAME
 from .ollama_client import check_ollama_connection
 from .websocket_handler import websocket_handler
 
@@ -121,7 +121,12 @@ async def health_check():
 
     logger.info("💊 Health check result: %s (Ollama: %s)", status, ollama_text)
 
-    return {"status": status, "ollama": ollama_text, "model": MODEL_NAME}
+    return {
+        "status": status,
+        "ollama": ollama_text,
+        "text_model": MODEL_NAME,
+        "vision_model": VISION_MODEL_NAME,
+    }
 
 
 def main():
