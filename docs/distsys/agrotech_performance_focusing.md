@@ -555,7 +555,7 @@ Esta arquitectura optimiza para recursos limitados, no para throughput máximo. 
 |---------|-----------|---------|------------|
 | **Ollama** (actual) | CPU/GPU NVIDIA | Fácil setup, API simple | Lento en CPU-only |
 | **vLLM** | GPU NVIDIA | Máximo throughput, batching óptimo | Hardware costoso |
-| **Vulkan backend** | Cualquier GPU | CPU + apoyo de GPU integrada | Configuración más compleja |
+| **Vulkan backend** [14] | Cualquier GPU | CPU + apoyo de GPU integrada | Configuración más compleja |
 | **rkllama** [13] | NPU (ej. Orange Pi 5) | Libera CPU, eficiente en recursos | Hardware específico |
 
 **¿Por qué elegimos Ollama?**
@@ -566,7 +566,7 @@ Esta arquitectura optimiza para recursos limitados, no para throughput máximo. 
 | Compatibilidad | Funciona en CPU-only sin configuración adicional |
 | Comunidad | Modelos pre-optimizados (moondream, gemma3) |
 
-**Optimización futura**: Migrar a rkllama (NPU) o Vulkan (GPU integrada) podría mejorar eficiencia 2-3x [13].
+**Optimización futura**: Migrar a rkllama [13] (NPU) o Vulkan [14] (GPU integrada) podría mejorar eficiencia 2-3x.
 
 **Trade-off 4: Orquestación (Automatización vs Recursos)**
 
@@ -701,5 +701,7 @@ Patrón replicable para aplicaciones de ML en arquitectura Fog:
 [12] E. A. Rayo Cortés, "Análisis de Disponibilidad y Resiliencia en Sistemas de Monitoreo Agrícola," EAFIT, 2026. Análisis interno del proyecto AgroTechAI sobre MTBF, MTTR y renovabilidad de métricas en contexto rural colombiano.
 
 [13] NotPunchnox, "rkllama: Run LLMs on Rockchip NPU," 2024. [Online]. Available: https://github.com/NotPunchnox/rkllama. Runtime optimizado para NPU en Orange Pi 5 y dispositivos con Rockchip RK3588, más eficiente en recursos que Ollama para edge computing.
+
+[14] Khronos Group, "Vulkan - Cross-platform GPU API," 2024. [Online]. Available: https://www.vulkan.org/. API de gráficos de bajo nivel que permite acceso uniforme a GPUs de diferentes fabricantes, utilizable como backend para inferencia de ML en hardware heterogéneo.
 
 ---
