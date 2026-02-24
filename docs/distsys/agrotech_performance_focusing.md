@@ -19,56 +19,41 @@ Performance en sistemas distribuidos es la capacidad de un sistema para ejecutar
 
 **Dimensiones Clave**
 
-- **Latencia**: Tiempo de respuesta end-to-end (p50, p99)
-- **Throughput**: Operaciones por unidad de tiempo
-- **Utilización**: % de recursos efectivamente usados
-- **Eficiencia**: Output / Recursos consumidos
+| Dimensión | Definición | Métrica típica |
+|-----------|------------|----------------|
+| **Latencia** | Tiempo de respuesta end-to-end | p50, p99 |
+| **Throughput** | Operaciones por unidad de tiempo | req/s, ops/min |
+| **Utilización** | % de recursos efectivamente usados | CPU%, RAM% |
+| **Eficiencia** | Output / Recursos consumidos | ops/watt, ops/$ |
 
-**Por qué importa en Edge/Fog**
+**Por qué importa en Fog/Edge**
 
-En arquitecturas Edge/Fog, los recursos del **servidor puente** (gateway local) son escasos:
-- Un modelo de ML que funciona en cloud con 32GB RAM debe adaptarse a 4GB
-- Los dispositivos de borde (sensores, celulares) envían datos al puente para procesamiento local
-- El puente debe procesar sin depender de conectividad a la nube [6]
+| Restricción | Cloud | Fog/Edge (servidor puente) |
+|-------------|-------|---------------------------|
+| RAM disponible | 32-128GB | 4-16GB |
+| Conectividad | Estable | Intermitente o nula [6] |
+| Costo por nodo | $$$$ | < $200 |
 
-Performance aquí significa **hacer más con menos**, manteniendo baja latencia hacia los dispositivos de borde.
+Performance en Fog/Edge significa **hacer más con menos**, manteniendo baja latencia hacia los dispositivos de borde.
 
 
 ---
 
 ## 2. Estado del Arte: AgriTech con IA
 
-**Microsoft FarmBeats** [8]
+| Solución | Procesamiento | Conectividad | Costo HW | Costo Op. | Ref |
+|----------|---------------|--------------|----------|-----------|-----|
+| Microsoft FarmBeats | Cloud (Azure) | Requiere internet | Enterprise | Suscripción | [8] |
+| John Deere Operations Center | Edge embebido | Satelital | $15,000+ | Suscripción | [9] |
+| AWS IoT Greengrass | Edge + Cloud | Requiere para updates | ~$500+ | Pay-per-use | [10] |
+| Climate FieldView (Bayer) | Cloud (SaaS) | Requiere internet | N/A | $1,000+/año | [11] |
+| **AgroTechAI (SBC)** | **Fog/Edge local** | **Intermitente/offline** | **$99-150** | **$0 (open source)** | - |
 
-- Edge computing para agricultura. 
-- Usa TV white spaces para conectividad rural. 
-- Requiere Azure IoT Hub, sensores propietarios, y configuración cloud. 
-- Orientado a grandes operaciones en EE.UU.
-
-**John Deere Operations Center** [9]
-
-- Agricultura de precisión con ML embebido en maquinaria. 
-- Hardware propietario ($$$), requiere tractores John Deere, conectividad satelital. 
-- Costo: $15,000+ USD por implementación básica.
-
-**AWS IoT Greengrass + SageMaker** [10]
-
-- ML en el borde con gestión cloud. 
-- Requiere cuenta AWS
-- Dependencia de internet para deployment/updates
-- Modelo pay-per-use. Latencia de gestión: depende de conectividad.
-
-**Climate FieldView (Bayer)** [11]
-
-- Predicción de cultivos SaaS. 
-- Datos enviados a cloud para procesamiento. 
-- Suscripción anual ~$1,000+ USD. 
-- Disponible en 23 países
-- Enfocado en maíz/soja en grandes extensiones (220M+ acres).
+**Limitación común en soluciones existentes**: Dependencia de conectividad estable y/o hardware costoso.
 
 ---
 
-## 2.1 Estado del Arte: AWS IoT, Arquitectura de referencia
+## 2.1 Arquitectura de Referencia: AWS IoT para Smart Farm
 
 Esta es una **arquitectura de referencia** para una granja conectada que integra sensores IoT, visión por computadora e inferencia de machine learning en el borde, utilizando servicios de AWS para escalabilidad, análisis y visualización.
 
@@ -77,142 +62,110 @@ Esta es una **arquitectura de referencia** para una granja conectada que integra
   <figcaption>Imagen tomada de <a href="https://docs.aws.amazon.com/architecture-diagrams/latest/smart-farm-on-aws/smart-farm-on-aws.html">https://docs.aws.amazon.com/architecture-diagrams/latest/smart-farm-on-aws/smart-farm-on-aws.html</a></figcaption>
 </figure>
 
-**Componentes**
+**Componentes por Capa**
 
-1. **Sensores y drones**: Dispositivos sin FreeRTOS envían datos mediante **AWS Lambda** (conversión de protocolos).
-2. **Sensores con FreeRTOS**: Se conectan a **AWS IoT Greengrass** para operar con conectividad intermitente.
-3. **Ingesta desde borde**: **Greengrass** transmite datos a **Kinesis Data Streams**.
-4. **Video en tiempo real**: Streaming y reproducción con **Kinesis Video Streams**.
-5. **Procesamiento y notificaciones**: Análisis en tiempo real con **Apache Flink** y alertas vía **Amazon SNS**.
-6. **Almacenamiento y análisis**: **Amazon S3** como data lake y **OpenSearch** para consultas.
-7. **Integración empresarial**: Conexión segura de datos locales mediante **Direct Connect**.
-8. **Acceso seguro externo**: Consumo privado de datos con **PrivateLink**.
-9. **Interfaces y visualización**: APIs con **API Gateway** y dashboards con **QuickSight**.
-10. **Machine Learning en el borde**: Modelos con **SageMaker** y etiquetado con **Ground Truth**.
-11. **Catálogo y consultas**: **Glue** para esquema y catálogo; **Athena** para consultas SQL.
-12. **Seguridad centralizada**: Monitoreo con **IoT Device Defender** y **Security Hub**.
+| Capa | Servicios AWS | Función |
+|------|---------------|---------|
+| **Edge** | IoT Greengrass, FreeRTOS | Conectividad intermitente, inferencia local |
+| **Ingesta** | Kinesis Data/Video Streams | Streaming de datos y video |
+| **Procesamiento** | Apache Flink, Lambda, SNS | Análisis real-time, alertas |
+| **Almacenamiento** | S3, OpenSearch | Data lake, consultas |
+| **ML** | SageMaker, Ground Truth | Entrenamiento, etiquetado |
+| **Seguridad** | IoT Device Defender, Security Hub | Monitoreo centralizado |
+
+**Observación**: Esta arquitectura requiere ~12 servicios cloud coordinados. Para edge con recursos limitados, se necesita simplificar.
 
 
 ---
 
-## 3. Brecha: ¿Por qué no funcionan en Colombia?
+## 3. Brecha: Desafíos para Edge con Recursos Limitados
 
-**Problema de Conectividad**
+> **SBC (Single Board Computer)**: Computador completo en una sola placa (ej. Raspberry Pi, Orange Pi). Típicamente 4-16GB RAM, bajo consumo energético, costo $50-150 USD. Ideales como servidores puente en arquitecturas Edge/Fog.
 
-- El 60% de zonas rurales colombianas tiene conectividad intermitente o nula [7]. 
-- Soluciones cloud-dependent pueden fallar cuando más se necesitan [3]: durante la temporada de cultivo en campo.
+| Desafío | Dato | Impacto en Performance |
+|---------|------|----------------------|
+| **Conectividad** | 60% zonas rurales con internet intermitente [7] | Soluciones cloud-dependent fallan |
+| **Costo** | Hardware enterprise: $1K-$15K+ | Inviable para múltiples nodos edge |
+| **Recursos** | Modelos LLM típicos: 8-32GB RAM | Incompatibles con SBCs (4-8GB) |
 
-**Problema de Costo**
+**Requisitos para Edge Computing con IA**
 
-- PIB per cápita agrícola colombiano: ~$3,500 USD/año. 
-- Hardware John Deere ($15K+) o suscripciones SaaS ($1K+/año) son inviables para pequeños agricultores (70% del sector).
-
-**Problema de Escala**
-
-- Soluciones diseñadas para farms de 1,000+ hectáreas. 
-- Finca promedio colombiana: 5-20 hectáreas. 
-- El ROI de soluciones enterprise no aplica.
-
-**Gap Identificado**
-
-Se necesita: 
-- IA local 
-- Hardware económico (<$500)
-- Sin dependencia cloud
-- Para pequeña/mediana agricultura tropical.
+| Requisito | Objetivo |
+|-----------|----------|
+| Procesamiento local | Inferencia sin dependencia cloud |
+| Hardware económico | < $200 USD por nodo |
+| Modelos optimizados | < 4GB RAM total |
+| Baja latencia | p99 < 180s para diagnóstico |
 
 
 ---
 
-## 4. Caso: AgroTechAI - Nuestra Propuesta
+## 4. Caso de Estudio: AgroTechAI como PoC de Performance
 
-**Qué es AgroTechAI**
+**Relación con el caso de referencia (AWS Smart Farm)**
 
-Sistema de monitoreo agrícola con IA que analiza imágenes de cultivos en tiempo real. Usa LLMs multimodales locales (Ollama) para diagnóstico. Arquitectura **Fog**: procesa en el servidor puente y sincroniza con la nube cuando hay conectividad. Puede operar en **modo local** sin dependencia de cloud.
+| Aspecto | AWS Smart Farm (Referencia) | AgroTechAI (PoC) |
+|---------|----------------------------|------------------|
+| Arquitectura | 12+ servicios cloud | 1 contenedor consolidado |
+| Dependencia cloud | Alta | Mínima (modo Fog/Local) |
+| Costo | Enterprise ($$$) | SBC ($99-150) |
+| **Objetivo** | Escalabilidad cloud | **Validar técnicas de performance en edge** |
 
-**Diferenciadores vs Estado del Arte**
+AgroTechAI es una Prueba de Concepto (PoC) que toma como referencia arquitecturas enterprise (AWS Smart Farm) y aplica técnicas de optimización de performance para funcionar en hardware de recursos limitados.
 
-| Aspecto | Soluciones Existentes | AgroTechAI |
-|---------|----------------------|------------|
-| Conectividad | Requiere internet constante | Fog (intermitente) o 100% offline |
-| Costo hardware | $1,000 - $15,000+ | ~$200 (mini PC como servidor puente) |
-| Modelo de pago | Suscripción/licencia | Open source |
-| Procesamiento | Cloud obligatorio | Servidor puente + nube opcional |
-| Dispositivos borde | Sensores propietarios | Celular + sensores estándar |
-| Flexibilidad | Una sola configuración | Modo Fog o Modo Local |
-
-**Arquitectura Multi-Agente**
-
-4 agentes coordinados via WebSocket local: 
-- ImageVision
-- AgriVision
-- SoilSense
-- CropMaster
-
----
-
-## 4.1 Caso: AgroTechAI - Arquitectura Propuesta
-
-La siguiente imagen muestra la arquitectura de AgroTechAI a alto nivel. Más adelante, se describen los modos de despliegue que este enfoque habilita.
+| Agente | Modelo | Función | Desafío de Performance |
+|--------|--------|---------|----------------------|
+| ImageVision | moondream (~1.8B) | Análisis de imagen | Mayor consumo de recursos |
+| AgriVision | gemma3:270m | Salud del cultivo | Latencia de inferencia |
+| SoilSense | gemma3:270m | Condiciones ambientales | Concurrencia |
+| CropMaster | gemma3:270m | Decisión final | Orquestación |
 
 <figure style="text-align:center;">
   <img src="arquitectura_alto_nivel_agrotech.png" alt="Arquitectura de AgroTechAI" />
-  <figcaption>Imagen generada con ChatGPT</figcaption>
+  <figcaption>Arquitectura Fog: servidor puente procesa localmente, sincroniza con nube cuando hay conectividad</figcaption>
 </figure>
 
+---
 
 ## 5. El Problema de Performance
 
 **Conflicto Fundamental**
 
-- Los LLMs requieren recursos intensivos (RAM, CPU, GPU).
-- La inferencia de un modelo de 4B parámetros puede consumir 8-16GB RAM. 
-- En Edge, típicamente tenemos 2-8GB totales.
-
-**Conectividad e infraestructura:**
-- Zonas rurales con coberturas inestables e interrumpidas de internet y señal móvil.
-- Compatibilidad y sincronización entre los recursos físicos y el software (Heterogeneidad).
+| Componente | Requisito típico | Disponible en Fog/Edge |
+|------------|------------------|------------------------|
+| LLM 4B+ params | 8-16GB RAM | 2-8GB total |
+| Inferencia GPU | NVIDIA recomendado | CPU-only común |
+| Conectividad | Estable para updates | Intermitente/nula |
 
 **Métricas del Problema**
 
-- Modelos LLM típicos (4B+ params) → ~8GB RAM mínimo
-- Raspberry Pi 4 → 4-8GB RAM total
-- Mini PC económico → 8-16GB RAM total
-- **Solución**: Modelos optimizados para Fog (moondream ~2GB, gemma3:270m ~1GB)
+| Hardware | RAM Total | ¿Soporta LLM 4B+? |
+|----------|-----------|-------------------|
+| Raspberry Pi 4 | 4-8GB | ❌ Insuficiente |
+| Mini PC económico | 8-16GB | ⚠️ Ajustado |
+| **Modelos optimizados** | moondream ~2GB, gemma3:270m ~1GB | ✅ Viable |
 
 **Trade-off Identificado**
 
-- Calidad del modelo (parámetros) vs. Recursos disponibles vs. Latencia de respuesta. 
-  - No podemos maximizar las tres simultáneamente.
-- Reducción del impacto ambiental al optimizar recursos y procesos.
+| Dimensión | Maximizar | Consecuencia |
+|-----------|-----------|--------------|
+| Calidad del modelo | Más parámetros | Más RAM, mayor latencia |
+| Recursos disponibles | Menos RAM | Modelos más pequeños |
+| Latencia de respuesta | Más rápido | Menos precisión |
+
+No podemos maximizar las tres simultáneamente. Optimizar recursos también reduce impacto ambiental.
 
 
 ---
 
 ## 6. Solución: Arquitectura Consolidada
 
-**Decisión 1: Consolidación de Servicios**
+**Decisiones de Diseño**
 
-En lugar de contenedores aislados (Ollama + API + Frontend + Nginx), consolidamos todo en un solo contenedor gestionado por Supervisord. 
-Eliminamos overhead de red virtual entre servicios.
-
-**Decisión 2: Modelos Optimizados para Fog**
-
-- Producción usa:
-  - `moondream` (~1.8B parámetros) para análisis de imágenes (ImageVision)
-  - `gemma3:270m` (270M parámetros) para análisis de texto (AgriVision, SoilSense, CropMaster)
-- Reducción significativa en RAM: de ~8GB a ~3GB total.
-
-**Configuración de Producción**
-
-```yaml
-resources:
-  limits:
-    memory: 4G    # Total para todo el sistema
-    cpus: '2.0'
-  reservations:
-    memory: 1G
-```
+| Decisión | Implementación | Beneficio |
+|----------|----------------|-----------|
+| Consolidación de servicios | Un contenedor (Supervisord) en lugar de 4 aislados | Elimina overhead de red virtual |
+| Modelos optimizados | moondream + gemma3:270m (ver Sección 4) | Reduce RAM de ~8GB a ~3GB |
 
 ---
 
@@ -265,8 +218,10 @@ resources:
 
 **Por qué Supervisord como PID 1**
 
-- Gestión unificada del ciclo de vida de procesos co-ubicados.
-- Un solo punto de control para: Nginx, FastAPI, Ollama, Model-Puller.
+| Beneficio | Descripción |
+|-----------|-------------|
+| Gestión unificada | Ciclo de vida de procesos co-ubicados |
+| Punto de control único | Nginx, FastAPI, Ollama, Model-Puller |
 
 **Orden de Inicio (Priority) - Configuración Real**
 
@@ -279,9 +234,11 @@ resources:
 
 **Beneficio de Performance**
 
-- Comunicación localhost (`127.0.0.1:5000`) en lugar de red Docker bridge
-- Latencia inter-servicio: ~0.1ms vs ~1-2ms (reducción 20x)
-- Logs centralizados: `/var/log/supervisor/` con rotación a 10MB
+| Aspecto | Docker bridge | Consolidado (localhost) | Mejora |
+|---------|---------------|------------------------|--------|
+| Latencia inter-servicio | ~1-2ms | ~0.1ms | 20x |
+| Comunicación | Red virtual | `127.0.0.1:5000` | Directa |
+| Logs | Distribuidos | `/var/log/supervisor/` (10MB rotación) | Centralizados |
 
 
 ---
@@ -306,7 +263,15 @@ def check_ollama_connection() -> bool:
     return response.status_code == 200
 ```
 
-**Probes en Kubernetes (Configuración Real)**
+**Health Checks según Entorno de Deployment**
+
+| Entorno | Mecanismo | Configuración |
+|---------|-----------|---------------|
+| **Servidor puente (Docker Compose)** | Docker healthcheck | `test: curl -f http://localhost:8000/health` |
+| **Servidor puente (systemd)** | systemd watchdog | `WatchdogSec=30`, `Restart=on-failure` |
+| **Modo Fog con nube (K8s)** | Probes (startup, liveness, readiness) | Ver tabla abajo |
+
+**Probes en Kubernetes (solo aplica en modo Fog con infraestructura cloud)**
 
 | Probe | Initial Delay | Period | Timeout | Retries | Propósito |
 |-------|---------------|--------|---------|---------|-----------|
@@ -314,12 +279,16 @@ def check_ollama_connection() -> bool:
 | Readiness | 45s | 10s | 5s | 3 | Controla tráfico |
 | Liveness | 60s | 30s | 10s | 3 | Reinicia si falla |
 
+> **Nota**: K8s requiere un control plane (2-4GB RAM adicionales). Para el servidor puente standalone, Docker Compose o systemd son más apropiados.
+
 **Impacto en MTTR (Mean Time To Recovery)**
 
-- Detección de fallo: máx 30s (liveness period)
-- Reinicio contenedor: ~5-10s
-- Carga modelo: ~60-90s
-- **MTTR total estimado: < 2 minutos**
+| Fase | Tiempo | Acumulado |
+|------|--------|-----------|
+| Detección de fallo | máx 30s | 30s |
+| Reinicio contenedor | ~5-10s | 40s |
+| Carga modelo | ~60-90s | ~2 min |
+| **MTTR total** | | **< 2 minutos** |
 
 
 ---
@@ -349,8 +318,29 @@ timeout = 60             # Timeout por request (segundos)
 
 **Implicación**
 
-La consolidación y selección de modelos optimizados permiten deployment en hardware de servidor puente real (mini PC ~$200 USD) con solo **4GB RAM** y **2 CPU cores**, que actúa como gateway entre los dispositivos de borde (sensores, celulares) y procesa la inferencia de IA localmente.
+La consolidación y selección de modelos optimizados permiten deployment en hardware de servidor puente real con solo **4GB RAM** y **2 CPU cores**, que actúa como gateway entre los dispositivos de borde (sensores, celulares) y procesa la inferencia de IA localmente.
 
+---
+
+## 9.1 Hardware Recomendado para Servidor Puente
+
+**Opciones de SBC (Single Board Computer) para Inferencia LLM**
+
+| SBC | RAM | NPU/Acelerador | Precio | Modelos soportados |
+|-----|-----|----------------|--------|-------------------|
+| **Orange Pi 5 Pro** | 16GB LPDDR5 | RK3588S NPU | ~$100-150 | 7B/13B (Mistral, Llama 3) |
+| **Luckfox Core3576** | Variable | RK3576 NPU (rknn-llm) | ~$99 | Modelos cuantizados |
+| **Radxa ROCK Pi N10** | 4-8GB | NPU 3 TOPS | ~$99 | Modelos pequeños |
+| **Raspberry Pi 5 + AI HAT+** | 8GB LPDDR4X | Hailo 10H (26 TOPS) | ~$130 | Modelos cuantizados |
+
+**Selección según Caso de Uso**
+
+| Escenario | Hardware sugerido | Justificación |
+|-----------|-------------------|---------------|
+| Máxima capacidad de modelo | Orange Pi 5 Pro 16GB | 16GB permite cargar modelos 7B-13B completos |
+| Máxima eficiencia energética | Luckfox Core3576 | NPU especializado, CPU libre |
+| Facilidad de setup | Raspberry Pi 5 + AI HAT+ | Comunidad amplia, documentación extensa |
+| Balance costo/rendimiento | Radxa ROCK Pi N10 | NPU dedicado a precio accesible |
 
 ---
 
@@ -367,19 +357,48 @@ OLLAMA_MAX_LOADED_MODELS=2 # Modelos en memoria
 
 **Variables Predictoras de Performance [1]**
 
-- Tiempo de CPU explica **70% de varianza** en latencia
-- Lecturas de disco: predictor secundario clave
-- RAM asignada: rendimiento decrece con over-provisioning (>3.24%)
+| Variable | Impacto | Observación |
+|----------|---------|-------------|
+| Tiempo de CPU | 70% de varianza en latencia | Predictor principal |
+| Lecturas de disco | Secundario | I/O bound en modelos grandes |
+| RAM asignada | Negativo si >3.24% over-provisioning | Más no siempre es mejor |
 
-**CTQ (Critical To Quality)**
-
-Latencia p99 < 180s para diagnóstico de imagen en campo.
+**CTQ (Critical To Quality)**: Latencia p99 < 180s para diagnóstico de imagen en campo.
 
 ---
 
-## 10.1 Resultados: Autoescalado y Métricas Operativas
+## 10.1 Resultados: Orquestación y Métricas Operativas
 
-**Horizontal Pod Autoscaler (HPA) - Configuración Real**
+**Orquestación según Entorno**
+
+| Entorno | Orquestador | RAM Overhead | Escalamiento |
+|---------|-------------|--------------|--------------|
+| **Servidor puente** | Docker Compose | ~50-100MB | Manual |
+| **Servidor puente** | systemd-nspawn | ~0 | Manual |
+| **Modo Fog con nube** | K8s/K3s | 512MB-4GB | HPA automático |
+
+**Servidor Puente: Docker Compose**
+
+```yaml
+services:
+  agrotech:
+    image: agrotech-consolidated:latest
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+```
+
+**Modo Fog con Nube: HPA en Kubernetes**
+
+> Esta configuración aplica cuando existe infraestructura cloud. El control plane de K8s consume 2-4GB RAM adicionales, por lo que no es viable en el servidor puente standalone.
 
 ```yaml
 minReplicas: 1
@@ -387,15 +406,6 @@ maxReplicas: 5
 metrics:
   - cpu: targetUtilization 70%
   - memory: targetUtilization 80%
-behavior:
-  scaleDown:
-    stabilizationWindowSeconds: 300  # 5 min estabilización
-    policies:
-      - type: Percent, value: 50, periodSeconds: 60
-  scaleUp:
-    stabilizationWindowSeconds: 0    # Inmediato
-    policies:
-      - type: Percent, value: 100, periodSeconds: 30
 ```
 
 **Parámetros de Generación LLM Optimizados**
@@ -407,55 +417,17 @@ behavior:
 | num_predict | 300 | Máx tokens respuesta |
 | timeout | 60s | Límite por request |
 
-**Resultados del Benchmark con Imagen (5 requests)**
+**Resultados del Benchmark (5 requests cada escenario)**
 
-| Métrica | Valor Medido |
-|---------|--------------|
-| p50 | 18,675ms (~19s) |
-| p90 | 48,517ms (~49s) |
-| **p99** | **48,517ms (~49s)** |
-| Promedio | 24,904ms (~25s) |
-| Tasa éxito | 100% |
+| Métrica | Con Imagen | Solo Sensores | Diferencia |
+|---------|------------|---------------|------------|
+| p50 | 19s | 9s | 2.1x |
+| p99 | **49s** | **9s** | **5.3x** |
+| Throughput | 2.4/min | 6.8/min | 2.8x |
+| RAM pico | ~3GB | ~2GB | 1.5x |
+| Tasa éxito | 100% | 100% | = |
 
-**Latencia por Agente - Con Imagen (promedios)**
-
-| Agente | Latencia | Función |
-|--------|----------|---------|
-| ImageVision | 13,231ms | Análisis de imagen (moondream) |
-| AgriVision | 6,944ms | Salud del cultivo (gemma3:270m) |
-| SoilSense | 6,944ms | Condiciones ambientales (gemma3:270m) |
-| CropMaster | 0.1ms | Decisión final (gemma3:270m) |
-
----
-
-**Resultados del Benchmark Solo Sensores (5 requests, sin imagen)**
-
-Escenario alternativo: análisis basado únicamente en datos de sensores (texto), sin procesamiento de imagen. Usa solo AgriVision, SoilSense y CropMaster.
-
-| Métrica | Valor Medido |
-|---------|--------------|
-| p50 | 8,653ms (~9s) |
-| p90 | 9,299ms (~9s) |
-| **p99** | **9,299ms (~9s)** |
-| Promedio | 8,854ms (~9s) |
-| Tasa éxito | 100% |
-
-**Latencia por Agente - Solo Sensores (promedios)**
-
-| Agente | Latencia | Función |
-|--------|----------|---------|
-| AgriVision | 4,367ms | Salud del cultivo (gemma3:270m) |
-| SoilSense | 4,367ms | Condiciones ambientales (gemma3:270m) |
-| CropMaster | 0.11ms | Decisión final (gemma3:270m) |
-
-**Comparación: Con Imagen vs Solo Sensores**
-
-| Escenario | p99 Latencia | Throughput | Uso Principal |
-|-----------|--------------|------------|---------------|
-| Con Imagen | 49s | 2.4/min | Diagnóstico visual de cultivos |
-| Solo Sensores | **9s** | **6.8/min** | Monitoreo continuo, alertas rápidas |
-
-> **Insight**: El análisis de solo sensores es **5.3x más rápido** que el análisis con imagen, ideal para monitoreo continuo donde no se requiere diagnóstico visual.
+**Uso recomendado**: Con imagen para diagnóstico visual completo; solo sensores para monitoreo continuo y alertas rápidas.
 
 ---
 
@@ -488,36 +460,29 @@ Performance no es solo hacer cosas rápido, es hacer cosas eficientemente dentro
 
 **Conexión con Teoría de Sistemas Distribuidos**
 
-1. **Fallos Parciales [2]**: En sistemas consolidados, un componente puede fallar mientras el contenedor reporta "healthy". Los health checks compuestos (FastAPI → Ollama) detectan esta condición.
-
-2. **Estabilidad como Filtro de Eficiencia [5]**: Al priorizar nodos estables (alto uptime), los costos de migración de VMs se vuelven irrelevantes. El servidor puente mantiene alta permanencia.
-
-3. **El "Depende" como Axioma [3]**: No existen soluciones universales. Para Edge con recursos limitados, consolidación gana. Para Cloud con recursos abundantes, aislamiento gana.
-
-4. **Renovabilidad de Métricas [12]**: En entornos rurales con reparaciones precarias, el MTBF histórico pierde validez. Por eso priorizamos CTQ basado en comportamiento (latencia, consumo) sobre predicciones estadísticas.
+| Concepto | Aplicación en AgroTechAI | Ref |
+|----------|-------------------------|-----|
+| Fallos Parciales | Health checks compuestos detectan fallas internas | [2] |
+| Estabilidad como Filtro | Servidor puente con alta permanencia, sin migración | [5] |
+| El "Depende" | Consolidación para Fog/Edge, aislamiento para Cloud | [3] |
+| Renovabilidad de Métricas | CTQ basado en comportamiento, no MTBF histórico | [12] |
 
 
 ---
 
 ## 12. Ventajas de la Arquitectura
 
-**Operacionales**
-
-- Deployment simplificado: una imagen, un contenedor
-- Menor superficie de ataque: menos puntos de entrada
-- Recuperación automática: Supervisord + health checks
-
-**De Performance**
-
-- Latencia predecible: sin variabilidad de red virtual
-- Utilización eficiente: recursos compartidos sin overhead
-- Escalamiento vertical simple: aumentar límites del contenedor
-
-**De Costo**
-
-- Hardware más económico: funciona en mini PC de ~$200 USD
-- Menor consumo energético: menos procesos de orquestación
-- Sin licencias: stack completamente open source
+| Categoría | Ventaja | Detalle |
+|-----------|---------|---------|
+| **Operacional** | Deployment simplificado | Una imagen, un contenedor |
+| **Operacional** | Menor superficie de ataque | Menos puntos de entrada |
+| **Operacional** | Recuperación automática | Supervisord + health checks |
+| **Performance** | Latencia predecible | Sin variabilidad de red virtual |
+| **Performance** | Utilización eficiente | Recursos compartidos sin overhead |
+| **Performance** | Escalamiento vertical | Aumentar límites del contenedor |
+| **Costo** | Hardware económico | SBC de ~$99-150 USD |
+| **Costo** | Menor consumo energético | Menos procesos de orquestación |
+| **Costo** | Sin licencias | Stack completamente open source |
 
 
 ---
@@ -526,7 +491,7 @@ Performance no es solo hacer cosas rápido, es hacer cosas eficientemente dentro
 
 **Riesgo 1: Punto Único de Fallo**
 
-Consolidación = si el contenedor cae, todo cae. Mitigación: health checks agresivos + restart policies + réplicas en Kubernetes.
+Consolidación = si el contenedor cae, todo cae. Mitigación: health checks agresivos + restart policies (Docker Compose o systemd). En modo Fog con nube, réplicas adicionales pueden absorber fallos.
 
 **Riesgo 2: Escalamiento Horizontal Limitado**
 
@@ -584,12 +549,81 @@ Esta arquitectura optimiza para recursos limitados, no para throughput máximo. 
 | **Fog** | Compartido: nube absorbe sincronización, CI/CD, backups |
 | **Local** | Operador local: cooperativa, técnico agrícola, agricultor |
 
-**El "Depende"**
+**Trade-off 3: Runtime de Inferencia (Simplicidad vs Eficiencia)**
 
-La elección del modo depende del contexto:
-- **Conectividad disponible** → Modo Fog aprovecha sincronización
-- **Sin conectividad / datos sensibles** → Modo Local es viable
-- **Capacidad técnica local** → Factor decisivo para modo Local
+| Runtime | Requisito | Ventaja | Desventaja |
+|---------|-----------|---------|------------|
+| **Ollama** (actual) | CPU/GPU NVIDIA | Fácil setup, API simple | Lento en CPU-only |
+| **vLLM** | GPU NVIDIA | Máximo throughput, batching óptimo | Hardware costoso |
+| **Vulkan backend** | Cualquier GPU | CPU + apoyo de GPU integrada | Configuración más compleja |
+| **rkllama** [13] | NPU (ej. Orange Pi 5) | Libera CPU, eficiente en recursos | Hardware específico |
+
+**¿Por qué elegimos Ollama?**
+
+| Razón | Detalle |
+|-------|---------|
+| Simplicidad | Una línea instala todo |
+| Compatibilidad | Funciona en CPU-only sin configuración adicional |
+| Comunidad | Modelos pre-optimizados (moondream, gemma3) |
+
+**Optimización futura**: Migrar a rkllama (NPU) o Vulkan (GPU integrada) podría mejorar eficiencia 2-3x [13].
+
+**Trade-off 4: Orquestación (Automatización vs Recursos)**
+
+| Orquestador | RAM Overhead | Escalamiento | Caso de uso |
+|-------------|--------------|--------------|-------------|
+| **systemd-nspawn** | ~0 | Manual | Servidor puente con recursos mínimos |
+| **Docker Compose** | ~50-100MB | Manual | Servidor puente, fácil configuración |
+| **K3s** | ~512MB-1GB | Semi-automático | Edge con múltiples nodos |
+| **Kubernetes** | 2-4GB | HPA automático | Modo Fog con infraestructura cloud |
+
+**¿Por qué no Kubernetes en el servidor puente?**
+
+En un Orange Pi de 4GB, el control plane de K8s consumiría 50-100% de la RAM disponible, dejando insuficiente para la aplicación. Para un servidor puente standalone, Docker Compose o systemd proporcionan restart policies y health checks con overhead mínimo.
+
+**Trade-off 5: Lenguaje (Velocidad de Desarrollo vs Eficiencia en Runtime)**
+
+| Lenguaje | RAM Runtime | Startup | Binario | Caso de uso |
+|----------|-------------|---------|---------|-------------|
+| **Python** (actual) | ~50-100MB | ~500ms-1s | Requiere intérprete | PoC, desarrollo rápido |
+| **Go** | ~5-10MB | ~10-50ms | Self-contained | APIs, microservicios |
+| **Rust** | ~2-5MB | ~5-20ms | Self-contained | Máximo rendimiento |
+| **Zig/Nim** | ~1-5MB | ~5-20ms | Self-contained | Ultra ligero, emergente |
+
+**¿Por qué Python actualmente?**
+
+| Razón | Detalle |
+|-------|---------|
+| Ecosistema ML | FastAPI, requests, Pillow |
+| Velocidad de desarrollo | Validar concepto rápidamente |
+| Integración | API directa con Ollama |
+
+**Optimización futura**: Reescribir en Go/Rust reduciría memoria ~10x y startup ~20x.
+
+**Trade-off 6: LLM vs Modelo ML Específico (Flexibilidad vs Eficiencia)**
+
+| Enfoque | RAM | Latencia | Datos requeridos | Flexibilidad |
+|---------|-----|----------|------------------|--------------|
+| **LLM genérico** (actual) | ~2-3GB | ~10-50s | Ninguno (zero-shot) | Alta (cualquier prompt) |
+| **ML específico** (futuro) | ~50-200MB | ~10-100ms | Miles de muestras etiquetadas | Baja (tarea específica) |
+
+**¿Por qué LLM actualmente?**
+
+| Razón | Detalle |
+|-------|---------|
+| Sin datos etiquetados | No hay dataset de enfermedades de cultivos colombianos |
+| Flexibilidad | Puede responder preguntas no anticipadas |
+| Prototipado rápido | Valida el concepto sin entrenar modelos |
+
+**Estrategia de transición**:
+
+| Fase | Enfoque | Objetivo |
+|------|---------|----------|
+| 1. Actual | LLM (moondream + gemma3) | Validar concepto, recolectar datos |
+| 2. Híbrido | ML para clasificación + LLM para explicación | Reducir latencia en tareas comunes |
+| 3. Futuro | ML específico (CNN/ViT) | Máxima eficiencia con datos suficientes |
+
+> **Insight**: El LLM es el bootstrap. Con suficientes datos recolectados en producción, un modelo ML específico podría reducir latencia de ~10s a ~100ms (100x) y RAM de ~3GB a ~200MB (15x).
 
 ---
 
@@ -597,24 +631,20 @@ La elección del modo depende del contexto:
 
 **Hallazgo Principal**
 
-La consolidación de servicios con modelos optimizados (moondream + gemma3:270m) permite ejecutar sistemas de IA en servidores puente con **4GB RAM** y **2 CPU cores**, cumpliendo el CTQ de latencia **p99 < 180s**:
-- **Con imagen**: p99 = 49s (diagnóstico visual completo)
-- **Solo sensores**: p99 = 9s (monitoreo continuo, **5.3x más rápido**)
+La consolidación de servicios con modelos optimizados (moondream + gemma3:270m) permite ejecutar sistemas de IA en servidores puente con **4GB RAM** y **2 CPU cores**, cumpliendo el CTQ de latencia **p99 < 180s**.
 
-**Resultados Validados**
-
-| Métrica | Objetivo | Con Imagen | Solo Sensores |
-|---------|----------|------------|---------------|
-| Latencia p99 | < 180s | 49s | 9s |
-| Tasa de éxito | > 99% | 100% | 100% |
-| RAM | < 4GB | ~3GB | ~2GB |
-| Throughput | - | 2.4/min | 6.8/min |
+| Métrica | Objetivo | Con Imagen | Solo Sensores | Estado |
+|---------|----------|------------|---------------|--------|
+| Latencia p99 | < 180s | 49s | 9s (5.3x) | **CUMPLE** |
+| Tasa de éxito | > 99% | 100% | 100% | **CUMPLE** |
+| RAM | < 4GB | ~3GB | ~2GB | **CUMPLE** |
+| Throughput | - | 2.4/min | 6.8/min | - |
 
 **Lecciones de Performance**
 
 1. **Modelo pequeño + hardware disponible > modelo grande + hardware inexistente**
 2. **Latencia de red virtual es costo oculto**: Docker bridge añade ~2ms vs ~0.1ms localhost
-3. **Health checks compuestos son críticos**: Detectan fallos parciales que Kubernetes no ve
+3. **Health checks compuestos son críticos**: Detectan fallos parciales que el orquestador no ve
 4. **MTTR sobre MTBF** [12]: En entornos rurales, priorizar recuperación rápida sobre infalibilidad
 5. **Selección de modelos importa**: moondream + gemma3:270m logran balance calidad/velocidad
 6. **Dos modos de operación**: Análisis con imagen para diagnóstico visual, solo sensores para monitoreo continuo (5.3x más rápido)
@@ -622,18 +652,24 @@ La consolidación de servicios con modelos optimizados (moondream + gemma3:270m)
 **El Axioma del "Depende"**
 
 La arquitectura óptima depende del contexto [3]:
-- **Recursos limitados**: Consolidación en servidor puente gana
-- **Conectividad disponible**: Modo Fog aprovecha sincronización con nube
-- **Sin conectividad**: Modo Local viable con trade-offs operativos
-- **Capacidad técnica local**: Factor decisivo para viabilidad del modo Local
+
+| Contexto | Arquitectura recomendada |
+|----------|-------------------------|
+| Recursos limitados | Consolidación en servidor puente |
+| Conectividad disponible | Modo Fog (sincronización con nube) |
+| Sin conectividad | Modo Local (trade-offs operativos) |
+| Capacidad técnica local | Factor decisivo para modo Local |
 
 **Aplicabilidad**
 
-Patrón replicable para cualquier aplicación de ML en arquitectura Fog:
-- IoT industrial con gateway local + sincronización cloud
-- Visión por computador en campo con backup a nube
-- NLP (Procesamiento de Lenguaje Natural) embebido con actualizaciones remotas
-- Sistemas que requieren operar offline pero beneficiarse de conectividad cuando existe
+Patrón replicable para aplicaciones de ML en arquitectura Fog:
+
+| Dominio | Ejemplo |
+|---------|---------|
+| IoT industrial | Gateway local + sincronización cloud |
+| Visión por computador | Procesamiento en campo + backup a nube |
+| NLP embebido | Inferencia local + actualizaciones remotas |
+| Sistemas offline-first | Operar sin conexión, sincronizar cuando exista |
 
 
 ---
@@ -663,5 +699,7 @@ Patrón replicable para cualquier aplicación de ML en arquitectura Fog:
 [11] Bayer Crop Science, "Climate FieldView: Digital Farming Platform," 2024. [Online]. Available: https://www.bayer.com/en/agriculture/digital-farming
 
 [12] E. A. Rayo Cortés, "Análisis de Disponibilidad y Resiliencia en Sistemas de Monitoreo Agrícola," EAFIT, 2026. Análisis interno del proyecto AgroTechAI sobre MTBF, MTTR y renovabilidad de métricas en contexto rural colombiano.
+
+[13] NotPunchnox, "rkllama: Run LLMs on Rockchip NPU," 2024. [Online]. Available: https://github.com/NotPunchnox/rkllama. Runtime optimizado para NPU en Orange Pi 5 y dispositivos con Rockchip RK3588, más eficiente en recursos que Ollama para edge computing.
 
 ---
