@@ -36,6 +36,13 @@ Performance en sistemas distribuidos es la capacidad de un sistema para ejecutar
 
 Performance en Fog/Edge significa **hacer más con menos**, manteniendo baja latencia hacia los dispositivos de borde.
 
+---
+
+## 1.1 AgroTechAI: Contexto del Caso de Estudio
+
+**AgroTechAI** es un sistema de asistencia agrícola basado en IA que permite a agricultores obtener diagnósticos de cultivos mediante análisis de imágenes y datos de sensores. El sistema utiliza modelos de lenguaje (LLM) y visión por computadora para generar recomendaciones sobre salud de cultivos, condiciones del suelo y acciones correctivas.
+
+En este trabajo, AgroTechAI sirve como **Prueba de Concepto (PoC)** para validar técnicas de optimización de performance en arquitecturas Fog/Edge, demostrando que es posible ejecutar inferencia de IA en hardware de bajo costo (~$99-150 USD) bajo las restricciones del entorno rural colombiano.
 
 ---
 
