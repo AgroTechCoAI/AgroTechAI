@@ -26,15 +26,15 @@ Performance en sistemas distribuidos es la capacidad de un sistema para ejecutar
 | **Utilización** | % de recursos efectivamente usados | CPU%, RAM% |
 | **Eficiencia** | Output / Recursos consumidos | ops/watt, ops/$ |
 
-**Por qué importa en Fog/Edge**
+**Por qué importa en Fog**
 
-| Restricción | Cloud | Fog/Edge (servidor puente) |
+| Restricción | Cloud | Fog (servidor puente) |
 |-------------|-------|---------------------------|
 | RAM disponible | 32-128GB | 4-16GB |
 | Conectividad | Estable | Intermitente o nula [6] |
 | Costo por nodo | $$$$ | < $200 |
 
-Performance en Fog/Edge significa **hacer más con menos**, manteniendo baja latencia hacia los dispositivos de borde.
+Performance en Fog significa **hacer más con menos**, manteniendo baja latencia hacia los dispositivos de borde.
 
 ---
 
@@ -42,7 +42,7 @@ Performance en Fog/Edge significa **hacer más con menos**, manteniendo baja lat
 
 **AgroTechAI** es un sistema de asistencia agrícola basado en IA que permite a agricultores obtener diagnósticos de cultivos mediante análisis de imágenes y datos de sensores. El sistema utiliza modelos de lenguaje (LLM) y visión por computadora para generar recomendaciones sobre salud de cultivos, condiciones del suelo y acciones correctivas.
 
-En este trabajo, AgroTechAI sirve como **Prueba de Concepto (PoC)** para validar técnicas de optimización de performance en arquitecturas Fog/Edge, demostrando que es posible ejecutar inferencia de IA en hardware de bajo costo (~$99-150 USD) bajo las restricciones del entorno rural colombiano.
+En este trabajo, AgroTechAI sirve como **Prueba de Concepto (PoC)** para validar técnicas de optimización de performance en arquitecturas Fog, demostrando que es posible ejecutar inferencia de IA en hardware de bajo costo (~$99-150 USD) bajo las restricciones del entorno rural colombiano.
 
 ---
 
@@ -54,7 +54,7 @@ En este trabajo, AgroTechAI sirve como **Prueba de Concepto (PoC)** para validar
 | John Deere Operations Center | Edge embebido | Satelital | $15,000+ | Suscripción | [9] |
 | AWS IoT Greengrass | Edge + Cloud | Requiere para updates | ~$500+ | Pay-per-use | [10] |
 | Climate FieldView (Bayer) | Cloud (SaaS) | Requiere internet | N/A | $1,000+/año | [11] |
-| **AgroTechAI (SBC)** | **Fog/Edge local** | **Intermitente/offline** | **$99-150** | **$0 (open source)** | - |
+| **AgroTechAI (SBC)** | **Fog local** | **Intermitente/offline** | **$99-150** | **$0 (open source)** | - |
 
 **Limitación común en soluciones existentes**: Dependencia de conectividad estable y/o hardware costoso.
 
@@ -80,22 +80,22 @@ Esta es una **arquitectura de referencia** para una granja conectada que integra
 | **ML** | SageMaker, Ground Truth | Entrenamiento, etiquetado |
 | **Seguridad** | IoT Device Defender, Security Hub | Monitoreo centralizado |
 
-**Observación**: Esta arquitectura requiere ~12 servicios cloud coordinados. Para edge con recursos limitados, se necesita simplificar.
+**Observación**: Esta arquitectura requiere ~12 servicios cloud coordinados. Para fog con recursos limitados, se necesita simplificar.
 
 
 ---
 
-## 3. Brecha: Desafíos para Edge con Recursos Limitados
+## 3. Brecha: Desafíos para Fog con Recursos Limitados
 
-> **SBC (Single Board Computer)**: Computador completo en una sola placa (ej. Raspberry Pi, Orange Pi). Típicamente 4-16GB RAM, bajo consumo energético, costo $50-150 USD. Ideales como servidores puente en arquitecturas Edge/Fog.
+> **SBC (Single Board Computer)**: Computador completo en una sola placa (ej. Raspberry Pi, Orange Pi). Típicamente 4-16GB RAM, bajo consumo energético, costo $50-150 USD. Ideales como servidores puente en arquitecturas Fog.
 
 | Desafío | Dato | Impacto en Performance |
 |---------|------|----------------------|
 | **Conectividad** | 60% zonas rurales con internet intermitente [7] | Soluciones cloud-dependent fallan |
-| **Costo** | Hardware enterprise: $1K-$15K+ | Inviable para múltiples nodos edge |
+| **Costo** | Hardware enterprise: $1K-$15K+ | Inviable para múltiples nodos fog |
 | **Recursos** | Modelos LLM típicos: 8-32GB RAM | Incompatibles con SBCs (4-8GB) |
 
-**Requisitos para Edge Computing con IA**
+**Requisitos para Fog Computing con IA**
 
 | Requisito | Objetivo |
 |-----------|----------|
@@ -116,7 +116,7 @@ Esta es una **arquitectura de referencia** para una granja conectada que integra
 | Arquitectura | 12+ servicios cloud | 1 contenedor consolidado |
 | Dependencia cloud | Alta | Mínima (modo Fog/Local) |
 | Costo | Enterprise ($$$) | SBC ($99-150) |
-| **Objetivo** | Escalabilidad cloud | **Validar técnicas de performance en edge** |
+| **Objetivo** | Escalabilidad cloud | **Validar técnicas de performance en fog** |
 
 AgroTechAI es una Prueba de Concepto (PoC) que toma como referencia arquitecturas enterprise (AWS Smart Farm) y aplica técnicas de optimización de performance para funcionar en hardware de recursos limitados.
 
@@ -138,7 +138,7 @@ AgroTechAI es una Prueba de Concepto (PoC) que toma como referencia arquitectura
 
 **Conflicto Fundamental**
 
-| Componente | Requisito típico | Disponible en Fog/Edge |
+| Componente | Requisito típico | Disponible en Fog |
 |------------|------------------|------------------------|
 | LLM 4B+ params | 8-16GB RAM | 2-8GB total |
 | Inferencia GPU | NVIDIA recomendado | CPU-only común |
@@ -471,7 +471,7 @@ Performance no es solo hacer cosas rápido, es hacer cosas eficientemente dentro
 |----------|-------------------------|-----|
 | Fallos Parciales | Health checks compuestos detectan fallas internas | [2] |
 | Estabilidad como Filtro | Servidor puente con alta permanencia, sin migración | [5] |
-| El "Depende" | Consolidación para Fog/Edge, aislamiento para Cloud | [3] |
+| El "Depende" | Consolidación para Fog, aislamiento para Cloud | [3] |
 | Renovabilidad de Métricas | CTQ basado en comportamiento, no MTBF histórico | [12] |
 
 
@@ -581,7 +581,7 @@ Esta arquitectura optimiza para recursos limitados, no para throughput máximo. 
 |-------------|--------------|--------------|-------------|
 | **systemd-nspawn** | ~0 | Manual | Servidor puente con recursos mínimos |
 | **Docker Compose** | ~50-100MB | Manual | Servidor puente, fácil configuración |
-| **K3s** | ~512MB-1GB | Semi-automático | Edge con múltiples nodos |
+| **K3s** | ~512MB-1GB | Semi-automático | Fog con múltiples nodos |
 | **Kubernetes** | 2-4GB | HPA automático | Modo Fog con infraestructura cloud |
 
 **¿Por qué no Kubernetes en el servidor puente?**
